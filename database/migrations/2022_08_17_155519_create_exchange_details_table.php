@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cities', function (Blueprint $table) {
+        Schema::create('exchange_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('exchange_id')->references('id')->on('exchanges');
+            $table->float('amount')->default(0);
+            $table->foreignId('currency_id')->references('id')->on('currencies');
+            $table->float('factor')->default(1);
+            $table->float('amount_after')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cities');
+        Schema::dropIfExists('exchange_details');
     }
 };

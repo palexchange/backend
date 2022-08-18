@@ -15,6 +15,12 @@ return new class extends Migration
     {
         Schema::create('parties', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('id_no');
+            $table->string('phone');
+            $table->string('address');
+            $table->foreignId('country_id')->nullable()->references('id')->on('countries');
+            $table->foreignId('city_id')->nullable()->references('id')->on('cities');
             $table->timestamps();
         });
     }

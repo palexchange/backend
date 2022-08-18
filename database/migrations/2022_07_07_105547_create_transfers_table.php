@@ -19,7 +19,17 @@ return new class extends Migration
             $table->dateTime('issued_at')->default(DB::raw('now()'));
             $table->integer('type')->default(0);
             $table->foreignId('sender_party_id')->nullable()->references('id')->on('parties');
+            $table->string('sender_id_no')->nullable();
+            $table->string('sender_phone')->nullable();
+            $table->string('sender_address')->nullable();
+            $table->string('sender_notes')->nullable();
             $table->foreignId('receiver_party_id')->nullable()->references('id')->on('parties');
+            $table->string('receiver_id_no')->nullable();
+            $table->string('receiver_phone')->nullable();
+            $table->string('receiver_address')->nullable();
+            $table->string('receiver_notes')->nullable();
+            $table->foreignId('receiver_country_id')->nullable()->references('id')->on('countries');
+            $table->foreignId('receiver_city_id')->nullable()->references('id')->on('cities');
             $table->integer('commision_side')->default(0);
             $table->float('commision')->default(0);
             $table->boolean('is_commision_percentage')->default(0);

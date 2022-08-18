@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('entries', function (Blueprint $table) {
             $table->id();
+            $table->dateTime('date');
+            $table->integer('status')->default(0);
+            $table->integer('document_type')->nullable();
+            $table->unsignedBigInteger('document_id')->nullable();
             $table->timestamps();
         });
     }
