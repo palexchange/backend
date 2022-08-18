@@ -19,9 +19,9 @@ return new class extends Migration
             $table->float('amount')->default(0);
             $table->foreignId('main_currency_id')->references('id')->on('currencies');
             $table->foreignId('currency_id')->references('id')->on('currencies');
+            $table->float('factor')->default(1);
             $table->foreignId('beneficiary_id')->references('id')->on('parties');
             $table->integer('number')->nullable();
-            $table->float('factor')->default(1);
             $table->foreignId('user_id')->nullable()->references('id')->on('users');
             $table->timestamps();
         });

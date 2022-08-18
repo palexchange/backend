@@ -25,6 +25,14 @@ class StoreEntryTransactionRequest extends FormRequest
     {
         return [
             //
+            'entry_id'=>'required|exists:entries,id',
+            'debtor'=>'integer',
+            'creditor'=>'integer',
+            'account_id'=>'required|exists:accounts,id',
+            'source_type'=>'sometimes|integer',
+            'source_id'=>'sometimes|integer',
+            'subject_type'=>'sometimes|integer',
+            'subject_id'=>'sometimes|integer',
         ];
     }
 }

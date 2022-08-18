@@ -25,6 +25,11 @@ class StoreExchangeRequest extends FormRequest
     {
         return [
             //
+            'date'=>'required|date',
+            'amount'=>'required|numeric',
+            'currency_id'=>'required|exists:currencies,id',
+            'beneficiary_id'=>'required|exists:parties,id',
+            'number'=>'nullable',
         ];
     }
 }

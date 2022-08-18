@@ -21,6 +21,10 @@ return new class extends Migration
             $table->float('debtor')->default(0);
             $table->float('creditor')->default(0);
             $table->foreignId('account_id')->references('id')->on('accounts');
+            $table->integer('source_type')->nullable();
+            $table->unsignedBigInteger('source_type')->nullable();
+            $table->integer('subject_type')->nullable();
+            $table->unsignedBigInteger('subject_type')->nullable();
             $table->timestamps();
         });
     }

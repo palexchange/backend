@@ -42,7 +42,7 @@ return new class extends Migration
             $table->float('exchange_rate_to_delivery_currency');
             $table->float('other_amounts_on_receiver')->default(0);
             $table->float('other_amounts_on_sender')->default(0);
-            $table->foreignId('office_id')->nullable()->references('id')->on('offices');
+            $table->foreignId('office_id')->nullable()->references('id')->on('parties');
             $table->foreignId('office_currency_id')->nullable()->references('id')->on('currencies');
             $table->float('office_commision')->default(0);
             $table->integer('office_commision_type')->default(0);

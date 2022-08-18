@@ -25,6 +25,8 @@ class UpdateSettingRequest extends FormRequest
     {
         return [
             //
+            'key'=>'required',
+            'value'=>'nullable'
         ];
     }
 }

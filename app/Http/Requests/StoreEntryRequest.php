@@ -25,6 +25,10 @@ class StoreEntryRequest extends FormRequest
     {
         return [
             //
+            'date'=>'required|timestamp',
+            'status'=>'required|in:0,1,128,255',
+            'document_type'=>'sometimes|integer',
+            'document_id'=>'sometimes|integer'
         ];
     }
 }

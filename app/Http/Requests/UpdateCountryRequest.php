@@ -25,6 +25,9 @@ class UpdateCountryRequest extends FormRequest
     {
         return [
             //
+            'name'=>'nullable',
+            'iso3'=>'nullable',
+            'currency_id'=>'sometimes|exists:currencies,id'
         ];
     }
 }

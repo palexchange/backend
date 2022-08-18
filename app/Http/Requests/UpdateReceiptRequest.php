@@ -24,7 +24,13 @@ class UpdateReceiptRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'date'=>'sometimes|date',
+            'amount'=>'sometimes|numeric',
+            'main_currency_id'=>'sometimes|exists:currencies,id',
+            'currency_id'=>'sometimes|exists:currencies,id',
+            'factor'=>'sometimes|numeric',
+            'beneficiary_id'=>'sometimes|exists:parties,id',
+            'number'=>'nullable',
         ];
     }
 }

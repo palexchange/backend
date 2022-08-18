@@ -24,7 +24,10 @@ class UpdateEntryRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'date'=>'sometimes|timestamp',
+            'status'=>'sometimes|in:0,1,128,255',
+            'document_type'=>'sometimes|integer',
+            'document_id'=>'sometimes|integer'
         ];
     }
 }

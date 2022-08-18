@@ -25,6 +25,8 @@ class StoreAccountTypeRequest extends FormRequest
     {
         return [
             //
+            'name'=>'required',
+            'parent_id'=>'sometimes|exists:account_types,id',
         ];
     }
 }

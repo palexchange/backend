@@ -24,7 +24,11 @@ class UpdateExchangeDetailRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'exhange_id'=>'required|exists:exchanges,id',
+            'amount'=>'sometimes|numeric',
+            'currency_id'=>'sometimes|exists:currencies,id',
+            'factor'=>'sometimes|integer',
+            'amount_after'=>'sometimes|integer'
         ];
     }
 }

@@ -25,6 +25,9 @@ class StoreCountryRequest extends FormRequest
     {
         return [
             //
+            'name'=>'required',
+            'iso3'=>'required',
+            'currency_id'=>'sometimes|exists:currencies,id'
         ];
     }
 }

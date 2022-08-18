@@ -24,7 +24,9 @@ class StoreFileRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'file' => 'required',
+            'attachable_type' => 'required|numeric',
+            'attachable_id' => 'required|numeric',
         ];
     }
 }

@@ -25,6 +25,8 @@ class UpdateCurrencyRequest extends FormRequest
     {
         return [
             //
+            'name'=>'required'
+            
         ];
     }
 }

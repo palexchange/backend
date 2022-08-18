@@ -24,7 +24,13 @@ class UpdatePartyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'=>'nullable',
+            'id_no'=>'nullable',
+            'phone'=>'nullable',
+            'address'=>'nullable',
+            'country_id'=>'sometimes|exists:countries,id',
+            'city_id'=>'sometimes|exists:cities,id',
+            'type'=>'sometimes|in:0,1'
         ];
     }
 }

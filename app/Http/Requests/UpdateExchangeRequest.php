@@ -24,7 +24,11 @@ class UpdateExchangeRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'date'=>'sometimes|date',
+            'amount'=>'sometimes|numeric',
+            'currency_id'=>'sometimes|exists:currencies,id',
+            'beneficiary_id'=>'sometimes|exists:parties,id',
+            'number'=>'nullable',
         ];
     }
 }

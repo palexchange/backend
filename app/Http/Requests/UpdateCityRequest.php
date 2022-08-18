@@ -25,6 +25,8 @@ class UpdateCityRequest extends FormRequest
     {
         return [
             //
+            'name'=>'nullable',
+            'country_id'=>'sometimes|exists:countries,id'
         ];
     }
 }

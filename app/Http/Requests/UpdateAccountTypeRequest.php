@@ -24,7 +24,8 @@ class UpdateAccountTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'=>'nullable',
+            'parent_id'=>'sometimes|exists:account_types,id',
         ];
     }
 }

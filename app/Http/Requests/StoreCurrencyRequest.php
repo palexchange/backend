@@ -25,6 +25,7 @@ class StoreCurrencyRequest extends FormRequest
     {
         return [
             //
+            'name'=>'required'
         ];
     }
 }
