@@ -1,0 +1,3422 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "PalExchange",
+        "description": "",
+        "version": "1.0.0"
+    },
+    "host": "http:\/\/localhost",
+    "basePath": "\/",
+    "paths": {
+        "\/sanctum\/csrf-cookie": {
+            "get": {
+                "summary": "Return an empty response simply to trigger the storage of the CSRF cookie in the browser.",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/_ignition\/health-check": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/_ignition\/execute-solution": {
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/_ignition\/update-config": {
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/api\/user": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/api\/account": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "type_id"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "parent_id": {
+                                    "type": "string"
+                                },
+                                "type_id": {
+                                    "type": "string"
+                                },
+                                "code": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "notes": {
+                                    "type": "string"
+                                },
+                                "is_transaction": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/account\/{account}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "type_id"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "parent_id": {
+                                    "type": "string"
+                                },
+                                "type_id": {
+                                    "type": "string"
+                                },
+                                "code": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "notes": {
+                                    "type": "string"
+                                },
+                                "is_transaction": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "type_id"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "parent_id": {
+                                    "type": "string"
+                                },
+                                "type_id": {
+                                    "type": "string"
+                                },
+                                "code": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "notes": {
+                                    "type": "string"
+                                },
+                                "is_transaction": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/account_type": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "parent_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/account_type\/{account_type}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account_type",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account_type",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "parent_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account_type",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "parent_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "account_type",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/city": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "country_id"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "country_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/city\/{city}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "city",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "city",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "country_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "city",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "country_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "city",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/country": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "iso3"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "iso3": {
+                                    "type": "string"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/country\/{country}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "iso3": {
+                                    "type": "string"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "iso3": {
+                                    "type": "string"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/currency": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/currency\/{currency}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "currency",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "currency",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "currency",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "currency",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/entry": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "date",
+                                "status"
+                            ],
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "0",
+                                        "1",
+                                        "128",
+                                        "255"
+                                    ]
+                                },
+                                "document_type": {
+                                    "type": "integer"
+                                },
+                                "document_id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/entry\/{entry}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "0",
+                                        "1",
+                                        "128",
+                                        "255"
+                                    ]
+                                },
+                                "document_type": {
+                                    "type": "integer"
+                                },
+                                "document_id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "0",
+                                        "1",
+                                        "128",
+                                        "255"
+                                    ]
+                                },
+                                "document_type": {
+                                    "type": "integer"
+                                },
+                                "document_id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/entry_transaction": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "entry_id",
+                                "account_id"
+                            ],
+                            "properties": {
+                                "entry_id": {
+                                    "type": "string"
+                                },
+                                "debtor": {
+                                    "type": "integer"
+                                },
+                                "creditor": {
+                                    "type": "integer"
+                                },
+                                "account_id": {
+                                    "type": "string"
+                                },
+                                "source_type": {
+                                    "type": "integer"
+                                },
+                                "source_id": {
+                                    "type": "integer"
+                                },
+                                "subject_type": {
+                                    "type": "integer"
+                                },
+                                "subject_id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/entry_transaction\/{entry_transaction}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "entry_id": {
+                                    "type": "string"
+                                },
+                                "debtor": {
+                                    "type": "integer"
+                                },
+                                "creditor": {
+                                    "type": "integer"
+                                },
+                                "account_id": {
+                                    "type": "string"
+                                },
+                                "source_type": {
+                                    "type": "integer"
+                                },
+                                "source_id": {
+                                    "type": "integer"
+                                },
+                                "subject_type": {
+                                    "type": "integer"
+                                },
+                                "subject_id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "entry_id": {
+                                    "type": "string"
+                                },
+                                "debtor": {
+                                    "type": "integer"
+                                },
+                                "creditor": {
+                                    "type": "integer"
+                                },
+                                "account_id": {
+                                    "type": "string"
+                                },
+                                "source_type": {
+                                    "type": "integer"
+                                },
+                                "source_id": {
+                                    "type": "integer"
+                                },
+                                "subject_type": {
+                                    "type": "integer"
+                                },
+                                "subject_id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "entry_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/exchange": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "date",
+                                "amount",
+                                "currency_id",
+                                "beneficiary_id"
+                            ],
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "beneficiary_id": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/exchange\/{exchange}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "beneficiary_id": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "beneficiary_id": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/exchange_detail": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "exhange_id",
+                                "amount",
+                                "currency_id"
+                            ],
+                            "properties": {
+                                "exhange_id": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "factor": {
+                                    "type": "integer"
+                                },
+                                "amount_after": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/exchange_detail\/{exchange_detail}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange_detail",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange_detail",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "exhange_id"
+                            ],
+                            "properties": {
+                                "exhange_id": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "factor": {
+                                    "type": "integer"
+                                },
+                                "amount_after": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange_detail",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "exhange_id"
+                            ],
+                            "properties": {
+                                "exhange_id": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "factor": {
+                                    "type": "integer"
+                                },
+                                "amount_after": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "exchange_detail",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/file": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "file",
+                                "attachable_type",
+                                "attachable_id"
+                            ],
+                            "properties": {
+                                "file": {
+                                    "type": "string"
+                                },
+                                "attachable_type": {
+                                    "type": "number"
+                                },
+                                "attachable_id": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/file\/{file}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "file",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "file",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "file",
+                                "attachable_type",
+                                "attachable_id"
+                            ],
+                            "properties": {
+                                "file": {
+                                    "type": "string"
+                                },
+                                "attachable_type": {
+                                    "type": "number"
+                                },
+                                "attachable_id": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "file",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "file",
+                                "attachable_type",
+                                "attachable_id"
+                            ],
+                            "properties": {
+                                "file": {
+                                    "type": "string"
+                                },
+                                "attachable_type": {
+                                    "type": "number"
+                                },
+                                "attachable_id": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "file",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/office": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/api\/office\/{office}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "office",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "office",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "office",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "office",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/party": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "id_no": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
+                                "address": {
+                                    "type": "string"
+                                },
+                                "country_id": {
+                                    "type": "string"
+                                },
+                                "city_id": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/party\/{party}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "party",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "party",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "id_no": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
+                                "address": {
+                                    "type": "string"
+                                },
+                                "country_id": {
+                                    "type": "string"
+                                },
+                                "city_id": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "party",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "id_no": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
+                                "address": {
+                                    "type": "string"
+                                },
+                                "country_id": {
+                                    "type": "string"
+                                },
+                                "city_id": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "party",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/receipt": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "date",
+                                "amount",
+                                "main_currency_id",
+                                "currency_id",
+                                "beneficiary_id"
+                            ],
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "main_currency_id": {
+                                    "type": "string"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "factor": {
+                                    "type": "number"
+                                },
+                                "beneficiary_id": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/receipt\/{receipt}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "receipt",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "receipt",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "main_currency_id": {
+                                    "type": "string"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "factor": {
+                                    "type": "number"
+                                },
+                                "beneficiary_id": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "receipt",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "type": "number"
+                                },
+                                "main_currency_id": {
+                                    "type": "string"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "factor": {
+                                    "type": "number"
+                                },
+                                "beneficiary_id": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "receipt",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/setting": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "key"
+                            ],
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/setting\/{setting}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "setting",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "setting",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "key"
+                            ],
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "setting",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "key"
+                            ],
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "setting",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/stock": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "date",
+                                "currency_id",
+                                "main_currency_id"
+                            ],
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "opened_at": {
+                                    "type": "string"
+                                },
+                                "closed_at": {
+                                    "type": "string"
+                                },
+                                "start_selling_price": {
+                                    "type": "number"
+                                },
+                                "final_selling_price": {
+                                    "type": "number"
+                                },
+                                "start_purchasing_price": {
+                                    "type": "number"
+                                },
+                                "final_purchasing_price": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "main_currency_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/stock\/{stock}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "date",
+                                "currency_id",
+                                "main_currency_id"
+                            ],
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "opened_at": {
+                                    "type": "string"
+                                },
+                                "closed_at": {
+                                    "type": "string"
+                                },
+                                "start_selling_price": {
+                                    "type": "number"
+                                },
+                                "final_selling_price": {
+                                    "type": "number"
+                                },
+                                "start_purchasing_price": {
+                                    "type": "number"
+                                },
+                                "final_purchasing_price": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "main_currency_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "date",
+                                "currency_id",
+                                "main_currency_id"
+                            ],
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "opened_at": {
+                                    "type": "string"
+                                },
+                                "closed_at": {
+                                    "type": "string"
+                                },
+                                "start_selling_price": {
+                                    "type": "number"
+                                },
+                                "final_selling_price": {
+                                    "type": "number"
+                                },
+                                "start_purchasing_price": {
+                                    "type": "number"
+                                },
+                                "final_purchasing_price": {
+                                    "type": "number"
+                                },
+                                "currency_id": {
+                                    "type": "string"
+                                },
+                                "main_currency_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/stock_transaction": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "stock_id",
+                                "selling_price",
+                                "purchasing_price",
+                                "time"
+                            ],
+                            "properties": {
+                                "stock_id": {
+                                    "type": "string"
+                                },
+                                "selling_price": {
+                                    "type": "number"
+                                },
+                                "purchasing_price": {
+                                    "type": "number"
+                                },
+                                "time": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/stock_transaction\/{stock_transaction}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "stock_id",
+                                "selling_price",
+                                "purchasing_price",
+                                "time"
+                            ],
+                            "properties": {
+                                "stock_id": {
+                                    "type": "string"
+                                },
+                                "selling_price": {
+                                    "type": "number"
+                                },
+                                "purchasing_price": {
+                                    "type": "number"
+                                },
+                                "time": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "stock_id",
+                                "selling_price",
+                                "purchasing_price",
+                                "time"
+                            ],
+                            "properties": {
+                                "stock_id": {
+                                    "type": "string"
+                                },
+                                "selling_price": {
+                                    "type": "number"
+                                },
+                                "purchasing_price": {
+                                    "type": "number"
+                                },
+                                "time": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock_transaction",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/transfer": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "type",
+                                "sender_party_id",
+                                "receiver_party_id",
+                                "received_amount",
+                                "to_send_amount",
+                                "received_currency_id",
+                                "delivery_currency_id",
+                                "reference_currency_id",
+                                "exchange_rate_to_reference_currency",
+                                "exchange_rate_to_delivery_currency",
+                                "office_id",
+                                "office_currency_id"
+                            ],
+                            "properties": {
+                                "issued_at": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "integer"
+                                },
+                                "sender_party_id": {
+                                    "type": "string"
+                                },
+                                "sender_id_no": {
+                                    "type": "string"
+                                },
+                                "sender_phone": {
+                                    "type": "string"
+                                },
+                                "sender_address": {
+                                    "type": "string"
+                                },
+                                "sender_notes": {
+                                    "type": "string"
+                                },
+                                "receiver_party_id": {
+                                    "type": "string"
+                                },
+                                "receiver_id_no": {
+                                    "type": "string"
+                                },
+                                "receiver_phone": {
+                                    "type": "string"
+                                },
+                                "receiver_address": {
+                                    "type": "string"
+                                },
+                                "receiver_notes": {
+                                    "type": "string"
+                                },
+                                "receiver_country_id": {
+                                    "type": "string"
+                                },
+                                "receiver_city_id": {
+                                    "type": "string"
+                                },
+                                "commision_side": {
+                                    "type": "integer"
+                                },
+                                "commision": {
+                                    "type": "number"
+                                },
+                                "is_commision_percentage": {
+                                    "type": "boolean"
+                                },
+                                "received_amount": {
+                                    "type": "number"
+                                },
+                                "to_send_amount": {
+                                    "type": "number"
+                                },
+                                "received_currency_id": {
+                                    "type": "string"
+                                },
+                                "delivery_currency_id": {
+                                    "type": "string"
+                                },
+                                "reference_currency_id": {
+                                    "type": "string"
+                                },
+                                "exchange_rate_to_reference_currency": {
+                                    "type": "number"
+                                },
+                                "exchange_rate_to_delivery_currency": {
+                                    "type": "number"
+                                },
+                                "other_amounts_on_receiver": {
+                                    "type": "number"
+                                },
+                                "other_amounts_on_sender": {
+                                    "type": "number"
+                                },
+                                "office_id": {
+                                    "type": "string"
+                                },
+                                "office_currency_id": {
+                                    "type": "string"
+                                },
+                                "office_commision": {
+                                    "type": "number"
+                                },
+                                "office_commision_type": {
+                                    "type": "integer"
+                                },
+                                "returned_commision": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/transfer\/{transfer}": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "transfer",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            },
+            "put": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "transfer",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "issued_at": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "integer"
+                                },
+                                "sender_party_id": {
+                                    "type": "string"
+                                },
+                                "sender_id_no": {
+                                    "type": "string"
+                                },
+                                "sender_phone": {
+                                    "type": "string"
+                                },
+                                "sender_address": {
+                                    "type": "string"
+                                },
+                                "sender_notes": {
+                                    "type": "string"
+                                },
+                                "receiver_party_id": {
+                                    "type": "string"
+                                },
+                                "receiver_id_no": {
+                                    "type": "string"
+                                },
+                                "receiver_phone": {
+                                    "type": "string"
+                                },
+                                "receiver_address": {
+                                    "type": "string"
+                                },
+                                "receiver_notes": {
+                                    "type": "string"
+                                },
+                                "receiver_country_id": {
+                                    "type": "string"
+                                },
+                                "receiver_city_id": {
+                                    "type": "string"
+                                },
+                                "commision_side": {
+                                    "type": "integer"
+                                },
+                                "commision": {
+                                    "type": "number"
+                                },
+                                "is_commision_percentage": {
+                                    "type": "boolean"
+                                },
+                                "received_amount": {
+                                    "type": "number"
+                                },
+                                "to_send_amount": {
+                                    "type": "number"
+                                },
+                                "received_currency_id": {
+                                    "type": "string"
+                                },
+                                "delivery_currency_id": {
+                                    "type": "string"
+                                },
+                                "reference_currency_id": {
+                                    "type": "string"
+                                },
+                                "exchange_rate_to_reference_currency": {
+                                    "type": "number"
+                                },
+                                "exchange_rate_to_delivery_currency": {
+                                    "type": "number"
+                                },
+                                "other_amounts_on_receiver": {
+                                    "type": "number"
+                                },
+                                "other_amounts_on_sender": {
+                                    "type": "number"
+                                },
+                                "office_id": {
+                                    "type": "string"
+                                },
+                                "office_currency_id": {
+                                    "type": "string"
+                                },
+                                "office_commision": {
+                                    "type": "number"
+                                },
+                                "office_commision_type": {
+                                    "type": "integer"
+                                },
+                                "returned_commision": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "transfer",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "issued_at": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "integer"
+                                },
+                                "sender_party_id": {
+                                    "type": "string"
+                                },
+                                "sender_id_no": {
+                                    "type": "string"
+                                },
+                                "sender_phone": {
+                                    "type": "string"
+                                },
+                                "sender_address": {
+                                    "type": "string"
+                                },
+                                "sender_notes": {
+                                    "type": "string"
+                                },
+                                "receiver_party_id": {
+                                    "type": "string"
+                                },
+                                "receiver_id_no": {
+                                    "type": "string"
+                                },
+                                "receiver_phone": {
+                                    "type": "string"
+                                },
+                                "receiver_address": {
+                                    "type": "string"
+                                },
+                                "receiver_notes": {
+                                    "type": "string"
+                                },
+                                "receiver_country_id": {
+                                    "type": "string"
+                                },
+                                "receiver_city_id": {
+                                    "type": "string"
+                                },
+                                "commision_side": {
+                                    "type": "integer"
+                                },
+                                "commision": {
+                                    "type": "number"
+                                },
+                                "is_commision_percentage": {
+                                    "type": "boolean"
+                                },
+                                "received_amount": {
+                                    "type": "number"
+                                },
+                                "to_send_amount": {
+                                    "type": "number"
+                                },
+                                "received_currency_id": {
+                                    "type": "string"
+                                },
+                                "delivery_currency_id": {
+                                    "type": "string"
+                                },
+                                "reference_currency_id": {
+                                    "type": "string"
+                                },
+                                "exchange_rate_to_reference_currency": {
+                                    "type": "number"
+                                },
+                                "exchange_rate_to_delivery_currency": {
+                                    "type": "number"
+                                },
+                                "other_amounts_on_receiver": {
+                                    "type": "number"
+                                },
+                                "other_amounts_on_sender": {
+                                    "type": "number"
+                                },
+                                "office_id": {
+                                    "type": "string"
+                                },
+                                "office_currency_id": {
+                                    "type": "string"
+                                },
+                                "office_commision": {
+                                    "type": "number"
+                                },
+                                "office_commision_type": {
+                                    "type": "integer"
+                                },
+                                "returned_commision": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "transfer",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ]
+            }
+        },
+        "\/api\/auth\/login": {
+            "post": {
+                "summary": "Get a JWT via given credentials.",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/api\/auth\/me": {
+            "post": {
+                "summary": "Get the authenticated User.",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/api\/auth\/logout": {
+            "post": {
+                "summary": "Log the user out (Invalidate the token).",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/api\/auth\/refresh": {
+            "post": {
+                "summary": "Refresh a token.",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/api\/auth\/user": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "\/": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -5,7 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Exchange extends Model
+class Exchange extends BaseModel implements Document
 {
     use HasFactory;
+
+    public function confirm()
+    {
+        
+    }
+    public function dispose()
+    {
+        
+    }
 }
