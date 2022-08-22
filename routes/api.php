@@ -14,6 +14,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+$controllers = require base_path('vendor/composer/autoload_classmap.php');
+$controllers = array_keys($controllers);
+$controllers = array_filter($controllers, function ($controller) {
+    return (strpos($controller, 'Controllers') !== false) && strlen($controller) > 0 && strpos($controller, 'Base') == false && strpos($controller, 'Auth') == false && strpos($controller, 'App') >= 0;
 });
+
+array_map(function ($controller) {
+    if (method_exists($controller, 'routeName'))
+        Route::apiResource($controller::routeName(), $controller);
+}, $controllers);
+
+
+
+
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
