@@ -31,6 +31,7 @@ class ExchangeController extends Controller
             foreach ($request->translations as $translation)
                 $exchange->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
+        DocumentStoredEvent::dispatch($exchange);
         return new ExchangeResource($exchange);
     }
     public function show(Request $request,Exchange $exchange)
