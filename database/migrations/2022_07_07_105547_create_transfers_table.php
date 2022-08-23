@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('issued_at')->default(DB::raw('now()'));
+            $table->dateTime('issued_at')->default(DB::raw('GETDATE()'));
             $table->integer('type')->default(0);
             $table->foreignId('sender_party_id')->nullable()->references('id')->on('parties');
             $table->string('sender_id_no')->nullable();
