@@ -2,81 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        $requestData = $request->all();
-        $validator = Validator::make($requestData,[
-            'name' => 'required|max:55',
-            'email' => 'email|required|unique:users',
-            'password' => 'required|confirmed'
+        $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
+    }
+
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login()
+    {
+       
+        $credentials = request(['email', 'password']);
+        $token = auth()->attempt($credentials);
+        if ($token) {
+            ilog($credentials);
+            $user = User::where('email', '=', $credentials['email'])->first();
+            $token = $user->createToken('PalExchange Personal Access Client');
+            return $this->respondWithToken($token);
+        }
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return response()->json(auth()->user());
+    }
+    public function user()
+    {
+        $user = auth()->user();
+        return response()->json(compact('user'));
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        auth()->logout();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth()->refresh());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token)
+    {
+
+        return response()->json([
+            'token' => $token->accessToken,
+            'token_type' =>  'bearer',
+            'user' => auth()->user()
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $requestData['password'] = Hash::make($requestData['password']);
-
-        $user = User::create($requestData);
-
-        return response([ 'status' => true, 'message' => 'User successfully register.' ], 200);
-    }
-
-    public function login(Request $request)
-    {
-        //return response(['msg: ' => 'Helo, World Login'], 202);
-        $requestData = $request->all();
-        
-        $validator = Validator::make($requestData,[
-            'email' => 'email|required',
-            'password' => 'required'
-        ]);
-        
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422);
-        }
-        $user = User::where('email', $request->email)->first();
-        if ($user) {
-        if (Hash::check($request->password, $user->password)) {
-            $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-            $response = ['token' => $token];
-            return response($response, 200);
-        } else {
-            $response = ["message" => "Password mismatch"];
-            return response($response, 422);
-        }
-        } else {
-            $response = ["message" =>'User does not exist'];
-            return response($response, 422);
-    }
-    }
-
-    public function me(Request $request)
-    {
-        $user = $request->user();
-
-        return response()->json(['user' => $user], 200);
-    }
-
-    public function logout (Request $request)
-    {
-        $token = $request->user()->token();
-        if($token == null) return response(['message' => 'Unauthenticated'], 200);
-        $token->revoke();
-        $response = ['message' => 'You have been successfully logged out!'];
-        return response($response, 200);
     }
 }

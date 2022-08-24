@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Events\DocumentStoredEvent;
 use App\Http\Requests\StoreExchangeRequest;
 use App\Http\Requests\UpdateExchangeRequest;
 use App\Http\Resources\ExchangeResource;
@@ -31,6 +33,7 @@ class ExchangeController extends Controller
             foreach ($request->translations as $translation)
                 $exchange->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
+        DocumentStoredEvent::dispatch($exchange);
         return new ExchangeResource($exchange);
     }
     public function show(Request $request,Exchange $exchange)

@@ -18,7 +18,7 @@ class CurrencyPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class CurrencyPolicy
      */
     public function view(User $user, Currency $currency)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class CurrencyPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class CurrencyPolicy
      */
     public function update(User $user, Currency $currency)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class CurrencyPolicy
      */
     public function delete(User $user, Currency $currency)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class CurrencyPolicy
      */
     public function restore(User $user, Currency $currency)
     {
-        //
+        return true;
     }
 
     /**
