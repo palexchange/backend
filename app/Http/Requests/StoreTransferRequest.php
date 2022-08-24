@@ -25,8 +25,12 @@ class StoreTransferRequest extends FormRequest
     {
         return [
             //
-            'issued_at'=>'sometimes|date',
             'type'=>'required|integer',
+            'issued_at'=>'sometimes|date',
+            'status'=>'sometimes',
+            'number'=>'sometimes',
+            'type'=>'required|integer',
+            'delivering_type'=>'required|integer',
             'sender_party_id'=>'required|exists:parties,id',
             'sender_id_no'=>'nullable',
             'sender_phone'=>'nullable',
@@ -54,6 +58,7 @@ class StoreTransferRequest extends FormRequest
             'office_id'=>'required|exists:parties,id',
             'office_currency_id'=>'required|exists:currencies,id',
             'office_commision'=>'sometimes|numeric',
+            'exchange_rate_to_office_currency'=>'sometimes|numeric',
             'office_commision_type'=>'sometimes|integer',
             'returned_commision'=>'sometimes|numeric'
         ];

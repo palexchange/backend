@@ -18,6 +18,9 @@ return new class extends Migration
             $table->id();
             $table->dateTime('issued_at')->default(DB::raw('now()'));
             $table->integer('type')->default(0);
+            $table->integer('status')->default(0); // 
+            $table->integer('number')->nullable(); // 
+            $table->integer('delivering_type')->default(1); // 1=> تسليم يد /
             $table->foreignId('sender_party_id')->nullable()->references('id')->on('parties');
             $table->string('sender_id_no')->nullable();
             $table->string('sender_phone')->nullable();
@@ -30,7 +33,7 @@ return new class extends Migration
             $table->string('receiver_notes')->nullable();
             $table->foreignId('receiver_country_id')->nullable()->references('id')->on('countries');
             $table->foreignId('receiver_city_id')->nullable()->references('id')->on('cities');
-            $table->integer('commision_side')->default(0);
+            $table->integer('commision_side')->default(1); // 1 sender ,  2 receiver
             $table->float('commision')->default(0);
             $table->boolean('is_commision_percentage')->default(0);
             $table->float('received_amount');
@@ -45,6 +48,7 @@ return new class extends Migration
             $table->foreignId('office_id')->nullable()->references('id')->on('parties');
             $table->foreignId('office_currency_id')->nullable()->references('id')->on('currencies');
             $table->float('office_commision')->default(0);
+            $table->float('exchange_rate_to_office_currency')->default(0);
             $table->integer('office_commision_type')->default(0);
             $table->float('returned_commision')->default(0);
             $table->timestamps();
