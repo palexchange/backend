@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,26 +17,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+$controllers = require base_path('vendor/composer/autoload_classmap.php');
+$controllers = array_keys($controllers);
+$controllers = array_filter($controllers, function ($controller) {
+    return (strpos($controller, 'Controllers') !== false) && strlen($controller) > 0 && strpos($controller, 'Base') == false && strpos($controller, 'Auth') == false && strpos($controller, 'App') >= 0;
 });
 $controllers = require base_path('vendor/composer/autoload_classmap.php');
 $controllers = array_keys($controllers);
 $controllers = array_filter($controllers, function ($controller) {
     return (strpos($controller, 'Controllers') !== false) && (strpos($controller, 'Controllers\\Controller') === false)  && strlen($controller) > 0 && strpos($controller, 'Laravel') === false && strpos($controller, 'Auth') === false && (strpos($controller, 'Controller')   !== false);
 });
-// dd($controllers);
+
 array_map(function ($controller) {
-    // $controllerName = str_replace('App\Http\Controllers\\', '', $controller);
-    // $models = substr($controllerName, 0, -10);
-    // $models = preg_split('/(?=[A-Z])/', $models, -1, PREG_SPLIT_NO_EMPTY);
-    // $models = array_map(function ($model) {
-    //     return lcfirst($model);
-    // }, $models);
-    // $params = join(".", $models);
-    // dd($controller);
-    if (method_exists($controller, 'routeName'))
+
+    if (method_exists($controller, 'routeName')) {
+        // Artisan::call('make:resource ' . ucfirst(Str::camel($controller::routeName())) . 'Resource ');
         Route::apiResource($controller::routeName(), $controller);
+    }
 }, $controllers);
 
 Route::group([

@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Currency extends BaseModel
+class Beneficiary extends BaseModel
 {
     use HasFactory;
-    public function stocks()
+    public function scopeSort($query, $request)
     {
-        return $this->hasMany(Stock::class, 'currency_id', 'id');
+    }
+    public function scopeSearch($query, $request)
+    {
     }
 }

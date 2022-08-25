@@ -18,12 +18,12 @@ return new class extends Migration
             $table->date('date');
             $table->dateTime('opened_at')->nullable();
             $table->dateTime('closed_at')->nullable();
-            $table->foreignId('cuurency_id')->nullable()->references('id')->on('currencies');
-            $table->foreignId('ref_cuurency_id')->nullable()->references('id')->on('currencies');
-            $table->float('start_selling_price')->default(0);
-            $table->float('final_selling_price')->default(0);
-            $table->float('start_purchasing_price')->default(0);
-            $table->float('final_purchasing_price')->default(0);
+            $table->foreignId('currency_id')->nullable()->references('id')->on('currencies')->onDelete('cascade');
+            $table->foreignId('ref_currency_id')->nullable()->references('id')->on('currencies')->onDelete('cascade');
+            $table->float('start_selling_price', 12, 5)->default(0);
+            $table->float('final_selling_price', 12, 5)->default(0);
+            $table->float('start_purchasing_price', 12, 5)->default(0);
+            $table->float('final_purchasing_price', 12, 5)->default(0);
             $table->timestamps();
         });
     }
