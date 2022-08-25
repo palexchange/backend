@@ -47,6 +47,7 @@ return new class extends Migration
             $table->float('office_commision')->default(0);
             $table->integer('office_commision_type')->default(0);
             $table->float('returned_commision')->default(0);
+            $table->foreignId('entry_id')->nullable()->references('id')->on('entries');
             $table->timestamps();
         });
     }

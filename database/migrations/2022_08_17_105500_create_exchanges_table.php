@@ -21,12 +21,13 @@ return new class extends Migration
             $table->foreignId('beneficiary_id')->references('id')->on('parties');
             $table->integer('number')->nullable();
             $table->foreignId('user_id')->nullable()->references('id')->on('users');
+            $table->foreignId('entry_id')->nullable()->references('id')->on('entries');
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrations.غا
      *
      * @return void
      */
