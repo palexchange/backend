@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('iso3');
+            $table->string('name_ar');
+            $table->string('name_en');
+            $table->string('iso3')->nullable();
             $table->foreignId('currency_id')->nullable()->references('id')->on('currencies');
             $table->timestamps();
         });
