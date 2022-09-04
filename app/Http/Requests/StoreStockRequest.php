@@ -25,15 +25,15 @@ class StoreStockRequest extends FormRequest
     {
         return [
             //
-            'date'=>'required|date',
-            'opened_at'=>'sometimes|timestamp',
-            'closed_at'=>'sometimes|timestamp',
-            'start_selling_price'=>'sometimes|numeric',
-            'final_selling_price'=>'sometimes|numeric',
-            'start_purchasing_price'=>'sometimes|numeric',
-            'final_purchasing_price'=>'sometimes|numeric',
-            'currency_id'=>'required|exists:currencies,id',
-            'main_currency_id'=>'required|exists:currencies,id',
+            '*.date' => 'required|date',
+            '*.opened_at' => 'nullable|date_format:Y-m-d H:i:s',
+            '*.closed_at' => 'nullable|date_format:Y-m-d H:i:s',
+            '*.start_selling_price' => 'sometimes|numeric',
+            '*.final_selling_price' => 'sometimes|numeric',
+            '*.start_purchasing_price' => 'sometimes|numeric',
+            '*.final_purchasing_price' => 'sometimes|numeric',
+            '*.ref_currency_id' => 'required|exists:currencies,id',
+            '*.currency_id' => 'required|exists:currencies,id',
         ];
     }
 }

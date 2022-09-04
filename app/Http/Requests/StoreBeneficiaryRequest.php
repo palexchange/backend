@@ -25,8 +25,9 @@ class StoreBeneficiaryRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'mobile' => 'required',
-            'id_no' => 'required',
+            'mobile' => 'sometimes',
+            'id_no' => 'sometimes',
+            'address' => 'sometimes',
             'id_image' => 'sometimes|exists:files,id',
             'default_currency' => 'sometimes|exists:currencies,id'
         ];

@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Beneficiary extends BaseModel
 {
     use HasFactory;
+    public function scopeSort($query, $request)
+    {
+    }
+    public function scopeSearch($query, $request)
+    {
+    }
 }

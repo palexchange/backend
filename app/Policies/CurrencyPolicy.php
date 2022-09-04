@@ -89,6 +89,6 @@ class CurrencyPolicy
      */
     public function forceDelete(User $user, Currency $currency)
     {
-        //
+        return true;
     }
 }

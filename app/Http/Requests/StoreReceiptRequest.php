@@ -32,6 +32,7 @@ class StoreReceiptRequest extends FormRequest
             'factor'=>'sometimes|numeric',
             'beneficiary_id'=>'required|exists:parties,id',
             'number'=>'nullable',
+            'type'=>'required|integer',
 
         ];
     }

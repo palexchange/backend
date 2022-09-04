@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('beneficiaries', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('name');
-            $table->string('mobile');
-            $table->string('id_no');
+            $table->string('mobile')->nullable();
+            $table->string('id_no')->nullable();
             $table->string('address')->nullable();
-            $table->foreignId('default_currency')->references('id')->on('currencies');
-            $table->foreignId('id_image')->nullable()->references('id')->on('files');
+            $table->foreignId('default_currency')->nullable()->references('id')->on('currencies');
+            $table->timestamps();
+            // $table->foreignId('id_image')->nullable()->references('id')->on('files');
         });
     }
 

@@ -18,7 +18,7 @@ class PartyPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class PartyPolicy
      */
     public function view(User $user, Party $party)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class PartyPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class PartyPolicy
      */
     public function update(User $user, Party $party)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class PartyPolicy
      */
     public function delete(User $user, Party $party)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class PartyPolicy
      */
     public function restore(User $user, Party $party)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class PartyPolicy
      */
     public function forceDelete(User $user, Party $party)
     {
-        //
+        return true;
     }
 }

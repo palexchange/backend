@@ -21,7 +21,7 @@ class DocumentStoredEvent
      * @return void
      */
     public Document $document;
-    public function __construct(Document $document,$b)
+    public function __construct(Document $document)
     {
         //
         $this->document = $document;
