@@ -24,7 +24,7 @@ class StoreExchangeDetailRequest extends FormRequest
     public function rules()
     {
         return [
-            'exhange_id'=>'required|exists:exchanges,id',
+            'exchange_id'=>'required|exists:exchanges,id',
             'amount'=>'required|numeric',
             'currency_id'=>'required|exists:currencies,id',
             'factor'=>'sometimes|numeric',

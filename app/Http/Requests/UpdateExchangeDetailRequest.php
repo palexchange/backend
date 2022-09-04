@@ -27,8 +27,8 @@ class UpdateExchangeDetailRequest extends FormRequest
             'exhange_id'=>'required|exists:exchanges,id',
             'amount'=>'sometimes|numeric',
             'currency_id'=>'sometimes|exists:currencies,id',
-            'factor'=>'sometimes|integer',
-            'amount_after'=>'sometimes|integer'
+            'factor'=>'sometimes|numeric',
+            'amount_after'=>'sometimes|numeric'
         ];
     }
 }

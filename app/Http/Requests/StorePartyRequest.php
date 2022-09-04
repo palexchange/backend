@@ -25,15 +25,14 @@ class StorePartyRequest extends FormRequest
     {
         return [
             //
-            'name' => 'required',
-            'id_no' => 'nullable',
-            'phone' => 'nullable',
-            'address' => 'nullable',
-            'country_id' => 'sometimes|exists:countries,id',
-            'city_id' => 'sometimes|exists:cities,id',
-            'default_currency_id' => 'sometimes|exists:currencies,id',
-            'type' => 'sometimes|in:0,1'
-
+            'name'=>'required',
+            'id_no'=>'nullable',
+            'phone'=>'nullable',
+            'address'=>'nullable',
+            'country_id'=>'sometimes|exists:countries,id',
+            'city_id'=>'sometimes|exists:cities,id',
+            'type'=>'sometimes|in:0,1',
+            'currency_id'=>'sometimes|exists:currencies,id',
         ];
     }
 }

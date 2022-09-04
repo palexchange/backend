@@ -18,7 +18,7 @@ class ExchangePolicy
      */
     public function viewAny(User $user)
     {
-        return true;
+       return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class ExchangePolicy
      */
     public function view(User $user, Exchange $exchange)
     {
-        return true;
+       return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class ExchangePolicy
      */
     public function create(User $user)
     {
-        return true;
+       return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class ExchangePolicy
      */
     public function update(User $user, Exchange $exchange)
     {
-        return true;
+       return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class ExchangePolicy
      */
     public function delete(User $user, Exchange $exchange)
     {
-        return true;
+       return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class ExchangePolicy
      */
     public function restore(User $user, Exchange $exchange)
     {
-        return true;
+       return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class ExchangePolicy
      */
     public function forceDelete(User $user, Exchange $exchange)
     {
-        return true;
+       return true;
     }
 }
