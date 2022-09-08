@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('stock_id')->references('id')->on('stocks');
             $table->float('selling_price')->default(0);
             $table->float('purchasing_price')->default(0);
-            $table->dateTime('time')->default(DB::raw('getdate()'));
+            $table->dateTime('time')->default(DB::raw('NOW()'));
             $table->timestamps();
         });
     }
