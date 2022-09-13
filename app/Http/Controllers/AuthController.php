@@ -28,6 +28,7 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
         $token = auth()->attempt($credentials);
+
         if ($token) {
             ilog($credentials);
             $user = User::where('email', '=', $credentials['email'])->first();

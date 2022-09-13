@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('status')->default(0);
             $table->integer('document_type')->nullable();
             $table->unsignedBigInteger('document_id')->nullable();
+            $table->foreignId('ref_currency_id')->nullable()->references('id')->on('currencies');
             $table->timestamps();
         });
     }
