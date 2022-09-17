@@ -76,7 +76,40 @@ class AccountingReportGenerator
         $entry_accounts = DB::select($sql);
         return response()->json(['items' => $entry_accounts, 'headers' => $headers]);
     }
+    public function currencyCredit(Request $request){
+        $from = $request->from ?? Carbon::now()->subDay()->toDateString();
+        $to = $request->to ?? Carbon::now()->addDay()->toDateString();
+        $currencies = $request->currencies;
+        $currencies_text=join(',',$currencies);
+        $sql = "
+        select currencies.name,currencies.id,currencies.account_id,sum(debtor-creditor) as balance
 
+        from currencies inner join entry_transactions on entry_transactions.account_id = currencies.account_id
+        inner join entries on entries.id=entry_transactions.entry_id
+        
+        
+        where entries.status=1 and entries.date between '$from' and '$to'
+        
+        and currencies.id in ($currencies_text)
+        group by currencies.id
+        ";
+
+        $headers = [
+            [
+                'text' => 'currency_name',
+                'value' => 'name'
+            ],
+            [
+                'text' => 'balance',
+                'value' => 'balance'
+            ],
+            
+        ];
+        $items = DB::select($sql);
+        return response()->json(['items' => $items, 'headers' => $headers]);
+
+
+    }
     public static function getLevels(Request $request)
     {
         $account = null;
