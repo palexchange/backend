@@ -18,7 +18,7 @@ class StockTransactionPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class StockTransactionPolicy
      */
     public function view(User $user, StockTransaction $stockTransaction)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class StockTransactionPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class StockTransactionPolicy
      */
     public function update(User $user, StockTransaction $stockTransaction)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class StockTransactionPolicy
      */
     public function delete(User $user, StockTransaction $stockTransaction)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class StockTransactionPolicy
      */
     public function restore(User $user, StockTransaction $stockTransaction)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class StockTransactionPolicy
      */
     public function forceDelete(User $user, StockTransaction $stockTransaction)
     {
-        //
+        return true;
     }
 }

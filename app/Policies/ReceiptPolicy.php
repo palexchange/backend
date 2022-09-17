@@ -18,7 +18,7 @@ class ReceiptPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class ReceiptPolicy
      */
     public function view(User $user, Receipt $receipt)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class ReceiptPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class ReceiptPolicy
      */
     public function update(User $user, Receipt $receipt)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class ReceiptPolicy
      */
     public function delete(User $user, Receipt $receipt)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class ReceiptPolicy
      */
     public function restore(User $user, Receipt $receipt)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class ReceiptPolicy
      */
     public function forceDelete(User $user, Receipt $receipt)
     {
-        //
+        return true;
     }
 }

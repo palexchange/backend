@@ -17,8 +17,8 @@ class SettingPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function viewAny(User $user)
-    {
-        //
+ {
+       return true;
     }
 
     /**
@@ -29,8 +29,8 @@ class SettingPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function view(User $user, Setting $setting)
-    {
-        //
+ {
+       return true;
     }
 
     /**
@@ -40,8 +40,8 @@ class SettingPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function create(User $user)
-    {
-        //
+ {
+       return true;
     }
 
     /**
@@ -52,8 +52,8 @@ class SettingPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function update(User $user, Setting $setting)
-    {
-        //
+ {
+       return true;
     }
 
     /**
@@ -64,8 +64,8 @@ class SettingPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function delete(User $user, Setting $setting)
-    {
-        //
+ {
+       return true;
     }
 
     /**
@@ -76,8 +76,8 @@ class SettingPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function restore(User $user, Setting $setting)
-    {
-        //
+ {
+       return true;
     }
 
     /**
@@ -88,7 +88,7 @@ class SettingPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function forceDelete(User $user, Setting $setting)
-    {
-        //
+ {
+       return true;
     }
 }

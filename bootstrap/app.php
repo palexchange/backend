@@ -11,6 +11,11 @@
 |
 */
 
+use App\Models\Exchange;
+use App\Models\Party;
+use App\Models\Transfer;
+use Illuminate\Database\Eloquent\Relations\Relation;
+
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
@@ -51,5 +56,9 @@ $app->singleton(
 | from the actual running of the application and sending responses.
 |
 */
-
+Relation::morphMap([
+    1 => Transfer::class,
+    2 => Party::class,
+    3 => Exchange::class
+]);
 return $app;

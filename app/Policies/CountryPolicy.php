@@ -18,7 +18,7 @@ class CountryPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class CountryPolicy
      */
     public function view(User $user, Country $country)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class CountryPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class CountryPolicy
      */
     public function update(User $user, Country $country)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class CountryPolicy
      */
     public function delete(User $user, Country $country)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class CountryPolicy
      */
     public function restore(User $user, Country $country)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class CountryPolicy
      */
     public function forceDelete(User $user, Country $country)
     {
-        //
+        return true;
     }
 }

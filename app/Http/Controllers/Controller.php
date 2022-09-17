@@ -16,7 +16,7 @@ class Controller extends BaseController
     public function __construct(Request $request)
     {
         $this->middleware('auth:api',['except'=>$this->except]);
-        $this->pagination = (request('itemsPerPage') ?? request('per_page')) ?? 15;
+        $this->pagination = (request('itemsPerPage') ?? request('per_page')) ?? 500;
         $this->bulk_store_mode = $request->bulk?'insert':'create';
     }
 }

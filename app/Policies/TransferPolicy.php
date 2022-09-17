@@ -18,7 +18,7 @@ class TransferPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class TransferPolicy
      */
     public function view(User $user, Transfer $transfer)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class TransferPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class TransferPolicy
      */
     public function update(User $user, Transfer $transfer)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class TransferPolicy
      */
     public function delete(User $user, Transfer $transfer)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class TransferPolicy
      */
     public function restore(User $user, Transfer $transfer)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class TransferPolicy
      */
     public function forceDelete(User $user, Transfer $transfer)
     {
-        //
+        return true;
     }
 }

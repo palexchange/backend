@@ -18,7 +18,7 @@ class CityPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class CityPolicy
      */
     public function view(User $user, City $city)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class CityPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class CityPolicy
      */
     public function update(User $user, City $city)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class CityPolicy
      */
     public function delete(User $user, City $city)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class CityPolicy
      */
     public function restore(User $user, City $city)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class CityPolicy
      */
     public function forceDelete(User $user, City $city)
     {
-        //
+        return true;
     }
 }

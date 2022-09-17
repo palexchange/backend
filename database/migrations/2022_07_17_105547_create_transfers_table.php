@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('issued_at')->default(DB::raw('now()'));
+            $table->dateTime('issued_at')->default(DB::raw('NOW()'));
             $table->integer('type')->default(0);
             $table->integer('status')->default(0); // 
             $table->integer('number')->nullable(); // 
@@ -33,10 +33,12 @@ return new class extends Migration
             $table->string('receiver_notes')->nullable();
             $table->foreignId('receiver_country_id')->nullable()->references('id')->on('countries');
             $table->foreignId('receiver_city_id')->nullable()->references('id')->on('cities');
-            $table->integer('commision_side')->default(1); // 1 sender ,  2 receiver
-            $table->float('commision')->default(0);
-            $table->boolean('is_commision_percentage')->default(0);
+            $table->integer('commission_side')->default(1); // 1 sender ,  2 receiver
+            $table->float('transfer_commission')->default(0);
+            $table->boolean('is_commission_percentage')->default(0);
             $table->float('received_amount');
+            $table->float('final_received_amount');
+            $table->float('a_received_amount')->default(0);
             $table->float('to_send_amount');
             $table->foreignId('received_currency_id')->nullable()->references('id')->on('currencies');
             $table->foreignId('delivery_currency_id')->nullable()->references('id')->on('currencies');
@@ -47,11 +49,11 @@ return new class extends Migration
             $table->float('other_amounts_on_sender')->default(0);
             $table->foreignId('office_id')->nullable()->references('id')->on('parties');
             $table->foreignId('office_currency_id')->nullable()->references('id')->on('currencies');
-            $table->float('office_commision')->default(0);
+            $table->float('office_commission')->default(0);
             $table->float('exchange_rate_to_office_currency')->default(0);
-            $table->integer('office_commision_type')->default(0);
-            $table->float('returned_commision')->default(0);
-            $table->foreignId('entry_id')->nullable()->references('id')->on('entries');
+            $table->integer('office_commission_type')->default(0);
+            $table->float('returned_commission')->default(0);
+            $table->float('office_amount')->default(0);
             $table->timestamps();
         });
     }

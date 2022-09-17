@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\DocumentStoredEvent;
+use App\Listeners\HandleDocumentStoreEvent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        DocumentStored::class=>[
+        DocumentStoredEvent::class=>[
             HandleDocumentStoreEvent::class
         ]
     ];

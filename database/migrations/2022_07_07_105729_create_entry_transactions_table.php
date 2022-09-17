@@ -20,6 +20,9 @@ return new class extends Migration
             $table->foreignId('entry_id')->references('id')->on('entries');
             $table->float('debtor')->default(0);
             $table->float('creditor')->default(0);
+            $table->float('exchange_rate')->default(1);
+            $table->float('ac_debtor')->default(0);
+            $table->float('ac_creditor')->default(0);
             $table->foreignId('account_id')->references('id')->on('accounts');
             $table->integer('source_type')->nullable();
             $table->unsignedBigInteger('source_id')->nullable();
