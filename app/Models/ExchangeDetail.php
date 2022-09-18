@@ -15,4 +15,18 @@ class ExchangeDetail extends BaseModel
             $query->where("exchange_id",$exchange_id);
         });
     }
+    public function currency(){
+        return $this->belongsTo(Currency::class);
+    }
+    public function log(Entry $entry){
+        return EntryTransaction::create([
+            'entry_id'=>$entry->id,
+            'account_id'=>$this->currency->account_id,
+            'creditor'=>$this->amount,
+            'debtor'=>0,
+            'ac_creditor'=>$this->amount_after,
+            'ac_debtor'=>0,
+            'exchange_rate'=>$this->factor
+        ]);
+    }
 }

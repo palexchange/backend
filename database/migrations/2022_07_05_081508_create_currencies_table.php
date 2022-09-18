@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('currencies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->foreignId('account_id')->nullable()->references('id')->on('accounts');
             $table->timestamps();
         });
     }

@@ -11,6 +11,7 @@
 |
 */
 
+use App\Models\Exchange;
 use App\Models\Party;
 use App\Models\Transfer;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -58,6 +59,6 @@ $app->singleton(
 Relation::morphMap([
     1 => Transfer::class,
     2 => Party::class,
-
+    3 => Exchange::class
 ]);
 return $app;

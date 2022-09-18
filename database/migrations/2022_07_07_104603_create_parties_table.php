@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('city_id')->nullable()->references('id')->on('cities');
             $table->foreignId('default_currency_id')->nullable()->references('id')->on('currencies');
             $table->integer('type')->default(0);
+            $table->foreignId('account_id')->nullable()->references('id')->on('accounts');
             $table->timestamps();
         });
     }
