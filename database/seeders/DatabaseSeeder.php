@@ -23,14 +23,9 @@ class DatabaseSeeder extends Seeder
             CurrencySeeder::class,
             CountrySeeder::class,
             StockSeeder::class,
+            SettingSeeder::class,
+            TransferSeeder::class,
+            ExchangeSeeder::class
         ]);
-
-
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSettingRequest extends FormRequest
+class StoreFiscalYearRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,6 @@ class StoreSettingRequest extends FormRequest
     {
         return [
             //
-            '*.key'=>'required',
-            '*.value'=>'nullable'
         ];
     }
 }

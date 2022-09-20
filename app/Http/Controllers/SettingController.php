@@ -26,11 +26,18 @@ class SettingController extends Controller
     }
     public function store(StoreSettingRequest $request)
     {
-        $setting = Setting::create($request->validated());
-        if ($request->translations) {
-            foreach ($request->translations as $translation)
-                $setting->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
+        $data = $request->validated();
+        // return $data;
+        foreach ($data as  $value) {
+            // return ($value);
+            $setting = Setting::updateOrCreate(['key' => $value['key']],[ 'value' => $value['value']]);
         }
+        // dd($data);
+        
+        // if ($request->translations) {
+        //     foreach ($request->translations as $translation)
+        //         $setting->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
+        // }
         return new SettingResource($setting);
     }
     public function show(Request $request,Setting $setting)
