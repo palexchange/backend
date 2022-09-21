@@ -28,7 +28,7 @@ class StoreExchangeDetailRequest extends FormRequest
             'amount'=>'required|numeric',
             'currency_id'=>'required|exists:currencies,id',
             'factor'=>'sometimes|numeric',
-            'amount_after'=>'sometimes|numeric'
+            'amount_after'=>'sometimes|numeric',
         ];
     }
 }

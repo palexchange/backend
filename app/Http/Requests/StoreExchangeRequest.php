@@ -29,7 +29,11 @@ class StoreExchangeRequest extends FormRequest
             'amount'=>'required|numeric',
             'currency_id'=>'required|exists:currencies,id',
             'beneficiary_id'=>'required|exists:parties,id',
-            'number'=>'nullable',
+            'number'=>'nullable|numeric',
+            'reference_currency_id'=>'required|exists:currencies,id',
+            'status'=>'nullable|numeric',
+            'exchange_rate'=>'nullable|numeric',
+            'amount_after'=>'nullable|numeric',
         ];
     }
 }

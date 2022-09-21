@@ -29,6 +29,7 @@ class UpdateExchangeRequest extends FormRequest
             'currency_id'=>'sometimes|exists:currencies,id',
             'beneficiary_id'=>'sometimes|exists:parties,id',
             'number'=>'nullable',
+            'status'=>'nullable',
         ];
     }
 }

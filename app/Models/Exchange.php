@@ -42,13 +42,13 @@ class Exchange extends BaseModel implements Document
     }
     public function confirm()
     {
-        $entry =  Entry::create([
+        $entry = $this->entry()->create([
             'date' => $this->date,
             'status' => 1,
             'ref_currency_id' => $this->reference_currency_id
         ]);
-        $entry->document()->associate($this)->save();
-        $this->entry()->associate($entry);
+        // $entry->document()->associate($this)->save();
+        // $this->entry()->associate($entry);
         // $this->logAmount()->handleCommision();
         EntryTransaction::create([
             'entry_id' => $entry->id,
@@ -68,6 +68,6 @@ class Exchange extends BaseModel implements Document
     }
     public function entry()
     {
-        return $this->belongsTo(Entry::class);
+        return $this->morphOne(Entry::class,'document');
     }
 }

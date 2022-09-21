@@ -32,6 +32,7 @@ class UpdatePartyRequest extends FormRequest
             'city_id'=>'sometimes|exists:cities,id',
             'type'=>'sometimes|in:0,1',
             'currency_id'=>'sometimes|exists:currencies,id',
+            'account_id'=>'sometimes|exists:accounts,id',
         ];
     }
 }
