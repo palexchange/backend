@@ -29,6 +29,7 @@ class StoreTransferRequest extends FormRequest
             'issued_at' => 'sometimes|date',
             'status' => 'sometimes',
             'number' => 'sometimes',
+            'final_received_amount' => 'required',
             'delivering_type' => 'required|integer',
             'sender_party_id' => 'required|exists:parties,id',
             'sender_id_no' => 'nullable',
@@ -40,8 +41,8 @@ class StoreTransferRequest extends FormRequest
             'receiver_phone' => 'nullable',
             'receiver_address' => 'nullable',
             'receiver_notes' => 'nullable',
-            'receiver_country_id' => 'sometimes|exists:countries,id',
-            'receiver_city_id' => 'sometimes|exists:cities,id',
+            'receiver_country_id' => 'nullable|exists:countries,id',
+            'receiver_city_id' => 'nullable|exists:cities,id',
             'commission_side' => 'sometimes|integer',
             'commission' => 'sometimes|numeric',
             'is_commission_percentage' => 'sometimes|boolean',
@@ -59,6 +60,8 @@ class StoreTransferRequest extends FormRequest
             'office_commission' => 'sometimes|numeric',
             'exchange_rate_to_office_currency' => 'sometimes|numeric',
             'office_commission_type' => 'sometimes|integer',
+            'transfer_commission' => 'sometimes|numeric',
+            'office_amount' => 'sometimes|numeric',
             'returned_commission' => 'sometimes|numeric'
         ];
     }

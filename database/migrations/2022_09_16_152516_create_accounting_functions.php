@@ -50,7 +50,7 @@ return new class extends Migration
             select 
                             case when entries.date<date_from then null else entries.document_id end as document_id, 
                             accounts.id as account_id,
-                            entries.number  as r_id, 
+                            entries.id  as r_id, 
                             sum(entry_transactions.debtor-entry_transactions.creditor) as balance, 
                             case when entries.date<date_from then null else sum(entry_transactions.creditor) end as creditor, 
                             case when entries.date<date_from then null else sum(entry_transactions.debtor) end as debtor, 

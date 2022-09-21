@@ -1,3 +1,11 @@
 {
-    "Contact":"ترجمة هنا"
+    "journal_no": "رقم القيد",
+    "public.date": "التاريخ",
+    "public.transaction_type": "نوع الحركة",
+    "public.debtor": "مدين",
+    "public.creditor": "دائن",
+    "currency_name": "العملة",
+    "balance": "الرصيد",
+    "public.accumulated_balance": "الرصيد التراكمي",
+    "Contact": "ترجمة هنا"
 }

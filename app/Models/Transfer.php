@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Rounded;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,13 +24,19 @@ class Transfer extends BaseModel implements Document
     ];
     public function confirm()
     {
-        $entry =  Entry::create([
-            'date' => $this->issued_at??Carbon::now(),
+        $this->entry()->create([
+            'date' => $this->issued_at ?? Carbon::now(),
             'status' => 1,
             'ref_currency_id' => $this->reference_currency_id
         ]);
-        $entry->document()->associate($this)->save();
-        $this->entry()->associate($entry);
+        // dd($entry);
+        // // $entry =  Entry::create([
+        // //     'date' => $this->issued_at ?? Carbon::now(),
+        // //     'status' => 1,
+        // //     'ref_currency_id' => $this->reference_currency_id
+        // // ]);
+        // // $entry->document()->associate($this)->save();
+        // // $this->entry()->associate($entry);
         $this->logAmount()->handleCommision();
     }
     public function dispose()
@@ -65,7 +72,7 @@ class Transfer extends BaseModel implements Document
         $transactions[] = [
             'account_id' => $transfer_commission_account_id,
             'amount' => $this->transfer_commission,
-            'type' => 0,
+            'type' => 1, // was 0
         ];
         if ($this->exchange_rate_to_office_currency != $this->exchange_rate_to_delivery_currency) {
             $transactions[] = [
@@ -118,7 +125,7 @@ class Transfer extends BaseModel implements Document
 
         // dd($transactions);
         foreach ($transactions as $transaction) {
-            if(!$transaction['account_id']){
+            if (!$transaction['account_id']) {
                 // dd($transfer_commission_account_id);
                 // dd($transaction);
             }
@@ -142,7 +149,7 @@ class Transfer extends BaseModel implements Document
 
     public function entry()
     {
-        return $this->belongsTo(Entry::class);
+        return $this->morphOne(Entry::class, 'document');
     }
 
     public function received_currency()

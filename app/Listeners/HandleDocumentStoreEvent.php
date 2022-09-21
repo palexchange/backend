@@ -26,6 +26,7 @@ class HandleDocumentStoreEvent
     public function handle($event)
     {
         //
+        logger("hello from listensers ");
         $document = $event->document;
         if ($document->status == 1) {
             $document->confirm();

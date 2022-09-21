@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Rounded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -50,13 +51,13 @@ class Exchange extends BaseModel implements Document
         $this->entry()->associate($entry);
         // $this->logAmount()->handleCommision();
         EntryTransaction::create([
-            'entry_id'=>$entry->id,
-            'account_id'=>$this->currency->account_id,
-            'debtor'=>$this->amount,
-            'creditor'=>0,
-            'ac_debtor'=>$this->amount_after,
-            'ac_creditor'=>0,
-            'exchange_rate'=>$this->exchange_rate
+            'entry_id' => $entry->id,
+            'account_id' => $this->currency->account_id,
+            'debtor' => $this->amount,
+            'creditor' => 0,
+            'ac_debtor' => $this->amount_after,
+            'ac_creditor' => 0,
+            'exchange_rate' => $this->exchange_rate
         ]);
         $this->details()->each(function ($detail) use ($entry) {
             $detail->log($entry);
