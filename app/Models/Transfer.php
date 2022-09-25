@@ -77,7 +77,8 @@ class Transfer extends BaseModel implements Document
         $transactions[] = [
             'account_id' => $account_id,
             'amount' => $this->transfer_commission,
-            'type' => 1, // was 0
+            'transaction_type' => 2,
+            'type' => 1,
         ];
         if ($this->exchange_rate_to_office_currency != $this->exchange_rate_to_delivery_currency) {
             $transactions[] = [

@@ -20,7 +20,7 @@ class AccountingReportGenerator
         $prev_balance = null;
         $after_balance = null;
         $account = request('account');
-        App::setlocale('ar');
+        // App::setlocale('ar');
         $headers = [
             [
                 'text' => __('journal_no'), //رقم القيد
@@ -55,6 +55,24 @@ class AccountingReportGenerator
                 'value' => 'creditor'
             ],
             [
+                'text' => __('balance'), //الرصيد   
+                'value' => 'balance'
+            ],
+            [
+                'text' => __('type_name'),
+                'value' => 'type_name'
+            ],
+            [
+                'text' => __('debtor_in_group_curr'), //مدين بعملة المجموهة
+                'value' => 'a_debtor'
+            ],
+            [
+                'text' => __('creditor_in_group_curr'), //دائن بعملة المجموهة
+                'value' => 'a_creditor'
+            ],
+
+
+            [
                 'text' => __('public.accumulated_balance'), //الرصيد التراكمي 
                 'value' => 'a_balance'
             ]
@@ -79,7 +97,7 @@ class AccountingReportGenerator
     }
     public  static function currencyCredit(Request $request)
     {
-        App::setlocale('ar');
+        // App::setlocale('ar');
         $from = $request->from ?? Carbon::now()->subDay()->toDateString();
         $to = $request->to ?? Carbon::now()->addDay()->toDateString();
         $currencies = $request->currencies;
