@@ -25,8 +25,8 @@ class StoreSettingRequest extends FormRequest
     {
         return [
             //
-            'key'=>'required',
-            'value'=>'nullable'
+            '*.key'=>'required',
+            '*.value'=>'nullable'
         ];
     }
 }
