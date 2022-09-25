@@ -14,7 +14,6 @@ class ExchangeDetail extends BaseModel
     // {
     //     return $this->hasOne(Currency::class,"id","currency_id");
     // }
-
     public function getCurrencyNameAttribute()
     {
         return $this->currency()->first("name")->name;
