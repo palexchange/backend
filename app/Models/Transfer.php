@@ -56,28 +56,34 @@ class Transfer extends BaseModel implements Document
         $sender_amount = $this->final_received_amount;
         $reciever_amount = $this->a_received_amount;
         $exchange_difference = 0;
+        $account_id = $entry->ref_currency->account_id;
         if ($this->exchange_rate_to_office_currency != $this->exchange_rate_to_delivery_currency) {
             $exchange_difference = $this->a_received_amount - $this->office_amount;
         }
         $transactions[] = [
-            'account_id' => $entry->ref_currency->account_id,
+            'account_id' => $account_id,
             'amount' => $sender_amount,
+            'transaction_type' => 1,
             'type' => 0,
         ];
         $transactions[] = [
-            'account_id' => $this->office->account_id,
+            'account_id' => $account_id,
             'amount' => $reciever_amount - $exchange_difference,
+            'transaction_type' => 1,
+            'subject_type' => 2,
+            'subject_id' => $this->office->id,
             'type' => 1
         ];
         $transactions[] = [
-            'account_id' => $transfer_commission_account_id,
+            'account_id' => $account_id,
             'amount' => $this->transfer_commission,
             'type' => 1, // was 0
         ];
         if ($this->exchange_rate_to_office_currency != $this->exchange_rate_to_delivery_currency) {
             $transactions[] = [
-                'account_id' => $exchange_difference_account_id,
+                'account_id' => $account_id,
                 'amount' => $exchange_difference,
+                'transaction_type' => 3,
                 'type' => 1,
             ];
         }
@@ -89,8 +95,9 @@ class Transfer extends BaseModel implements Document
         // }
         if ($this->other_amounts_on_sender) {
             $transactions[] = [
-                'account_id' => $transfer_expense_account_id,
+                'account_id' => $account_id,
                 'amount' => $this->other_amounts_on_sender,
+                'transaction_type' => 4,
                 'type' => 1,
             ];
         }
@@ -98,28 +105,38 @@ class Transfer extends BaseModel implements Document
 
         // office entry 
         $transactions[] = [
-            'account_id' => $this->office->account_id,
+            'account_id' => $account_id,
             'amount' => $this->a_received_amount - $exchange_difference,
             'type' => 0,
+            'transaction_type' => 1,
+            'subject_type' => 1,
+            'subject_id' => $this->office->id,
         ];
         if ($this->returned_commission) {
             $transactions[] = [
-                'account_id' => $returned_commission_account_id,
+                'account_id' => $account_id,
                 'amount' => $this->returned_commission,
                 'type' => 1,
+                'transaction_type' => 5,
+
             ];
         }
         if ($this->office_commission)
             $transactions[] = [
-                'account_id' => $transfer_commission_account_id,
+                'account_id' => $account_id,
                 'amount' => $this->office_commission,
                 'type' => 0,
+                'transaction_type' => 2,
+                'subject_type' => 1,
+                'subject_id' => $this->office->id,
+
             ];
         $amount = $this->office_amount - $this->returned_commission;
         $transactions[] = [
-            'account_id' => $entry->ref_currency->account_id,
+            'account_id' => $account_id,
             'amount' => $amount,
-            'type' => 1
+            'type' => 1,
+            'transaction_type' => 1,
             // 'creditor' => $this->a_received_amount - $exchange_difference - $this->office_commission - $this->other_amounts_on_sender - $this->returned_commission,
         ];
 
@@ -137,6 +154,8 @@ class Transfer extends BaseModel implements Document
                 'exchange_rate' => 1,
                 'ac_debtor' => !$transaction['type'] ? $transaction['amount'] : 0,
                 'ac_creditor' => !$transaction['type'] ? $transaction['amount'] : 0,
+                'transaction_type' => $transaction['transaction_type'],
+
             ]);
         }
         return $this;
