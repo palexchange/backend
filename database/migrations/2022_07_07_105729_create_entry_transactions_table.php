@@ -28,6 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('source_id')->nullable();
             $table->integer('subject_type')->nullable();
             $table->unsignedBigInteger('subject_id')->nullable();
+            $table->integer('transaction_type')->nullable()->index();
             $table->timestamps();
         });
     }

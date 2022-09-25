@@ -58,8 +58,8 @@ class AccountingReportGenerator
                 'value' => 'a_balance'
             ]
         ];
-        if ($account == null)
-            return response()->json(['items' => [], 'headers' => $headers]);
+        // if ($account == null)
+        //     return response()->json(['items' => [], 'headers' => $headers]);
 
         $from = request('from');
         $to = request('to');
