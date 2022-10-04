@@ -41,7 +41,7 @@ class TransferPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return  $user->hasPermissionTo('create_transfer');
     }
 
     /**
@@ -53,7 +53,7 @@ class TransferPolicy
      */
     public function update(User $user, Transfer $transfer)
     {
-        return true;
+        return  $user->hasPermissionTo('update_transfer');
     }
 
     /**
@@ -65,7 +65,7 @@ class TransferPolicy
      */
     public function delete(User $user, Transfer $transfer)
     {
-        return true;
+        return  $user->hasPermissionTo('delete_transfer');
     }
 
     /**

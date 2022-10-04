@@ -25,6 +25,9 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        Gate::before(function ($user) {
+            return $user->hasRole('super_admin') ? true : null;
+        });
         Passport::routes();
 
         // Passport::hashClientSecrets();

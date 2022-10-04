@@ -22,6 +22,10 @@ class SettingController extends Controller
     }
     public function index(Request $request)
     {
+        $first = 'im the one ';
+        $second = 'first';
+        $third = 'second';
+        dd($$$third);  
         return SettingResource::collection(Setting::search($request)->sort($request)->paginate($this->pagination));
     }
     public function store(StoreSettingRequest $request)

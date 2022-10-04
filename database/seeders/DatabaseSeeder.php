@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::create(['email' => 'test@test.com', 'password' => Hash::make('a123'), 'name' => 'test']);
         $this->call([
+            PermissionSeeder::class,
             CurrencySeeder::class,
             CountrySeeder::class,
             StockSeeder::class,

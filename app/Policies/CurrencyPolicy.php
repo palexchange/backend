@@ -41,7 +41,7 @@ class CurrencyPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->hasPermissionTo('create_currency');
     }
 
     /**
@@ -53,7 +53,7 @@ class CurrencyPolicy
      */
     public function update(User $user, Currency $currency)
     {
-        return true;
+        return $user->hasPermissionTo('update_currency');
     }
 
     /**
@@ -65,7 +65,7 @@ class CurrencyPolicy
      */
     public function delete(User $user, Currency $currency)
     {
-        return true;
+        return $user->hasPermissionTo('delete_currency');
     }
 
     /**

@@ -18,76 +18,51 @@ return new class extends Migration
         DROP FUNCTION IF EXISTS account_statement;
         CREATE OR REPLACE FUNCTION account_statement(a_id BIGINT, date_from DATE , date_to DATE,_active_only BOOLEAN)
         RETURNS TABLE(
-            document_id BIGINT,
-            account_id BIGINT,
-            r_id BIGINT,
-            balance DOUBLE PRECISION,
-            creditor DOUBLE PRECISION,
+            transaction_id BIGINT,
             debtor DOUBLE PRECISION,
-            document_type INT,
-            document_number BIGINT,
-            document_sub_type INT,
-            date TIMESTAMP,
-            type_name TEXT,
-            statement VARCHAR,
-            inside BOOLEAN,
+            creditor DOUBLE PRECISION,
+            exchange_rate DOUBLE PRECISION,
+            ac_debtor DOUBLE PRECISION,
+            ac_creditor DOUBLE PRECISION,
             entry_id BIGINT,
-            a_balance DOUBLE PRECISION,
-            r_n BIGINT,
-            a_debtor DOUBLE PRECISION,
-            a_creditor DOUBLE PRECISION
+            transaction_type INTEGER,
+            date TIMESTAMP,
+            document_type INTEGER,
+            document_number BIGINT,
+            document_id BIGINT,
+            document_sub_type INTEGER,
+            balance DOUBLE PRECISION,
+            r_id BIGINT,
+            account_id BIGINT,
+            inside INTEGER
         )
         AS $$
         BEGIN
         RETURN QUERY
-		select * from (
-        select distinct on (entry_id) *,
-            case when d.a_balance >0 and d.debtor is null then abs(d.a_balance) else 0 end as a_debtor,case when d.a_balance<=0 and d.creditor is null then abs(d.a_balance) else 0 end as a_creditor
-             from (
-        select *,
-                    sum(t.balance) over(partition by t.account_id order by t.date,t.r_id) as a_balance , ROW_NUMBER() over(partition by t.account_id order by t.date,t.account_id) as r_n from (
-                        
-            select 
-                            case when entries.date<date_from then null else entries.document_id end as document_id, 
-                            accounts.id as account_id,
-                            entries.id  as r_id, 
-                            sum(entry_transactions.debtor-entry_transactions.creditor) as balance, 
-                            case when entries.date<date_from then null else sum(entry_transactions.creditor) end as creditor, 
-                            case when entries.date<date_from then null else sum(entry_transactions.debtor) end as debtor, 
-                            case when entries.date<date_from then null else entries.document_type end as document_type,
-                            case when entries.date<date_from then null else entries.document_number end as document_number, 
-                            case when entries.date<date_from then null else entries.document_sub_type end as document_sub_type,
-                            entries.date as date, 
-                            case when entries.date<date_from then null else concat(entries.document_sub_type,'_',entries.document_type) end as type_name, 
-                            case when entries.date<date_from then 'opening_balance' else entries.statement end as statement,
-                            entries.date>date_from as inside,
-							case when entries.date<date_from then null else entries.id end as entry_id
-                        from entry_transactions inner join entries on entries.id = entry_transactions.entry_id inner join accounts on accounts.id = entry_transactions.account_id 
-                        where  entry_transactions.account_id in ( select id from get_account_with_children(a_id))
-                        and
-                        (
-                            case when _active_only then
-                                entries.id not in (select inverse_entry_id from entries where inverse_entry_id is not null) and entries.inverse_entry_id is null
-                            else true end
-                        )
-                        and entries.status=1
-                        and entries.date <= date_to
-                        group by
-                        entries.document_id, 
-                        accounts.id,
-                        entries.document_type, 
-                        entries.document_id, 
-                        entries.document_sub_type, 
-                        entries.date, 
-                        entries.number,
-                        entries.document_number,
-                        entries.statement,
-						entries.id
-                        order by r_id asc, CAST(entries.date AS DATE) asc
-                        )t 
-                        )d  order by entry_id, r_n desc )f
-						order by r_id asc
-						;
+		select distinct on(entry_id,transaction_id) * from (
+            select
+                case when entries.date<date_from then null else entry_transactions.id end as transaction_id,
+                entry_transactions.debtor ,
+                entry_transactions.creditor ,
+                entry_transactions.exchange_rate,
+                entry_transactions.ac_debtor ,
+                entry_transactions.ac_creditor ,
+                case when entries.date<date_from then null else entries.id end as entry_id,
+                entry_transactions.transaction_type,
+                entries.date,
+                entries.document_type,
+                entries.document_number,
+                entries.document_id,
+                entries.document_sub_type,
+            (entry_transactions.debtor - entry_transactions.creditor)  as balance,
+                ROW_NUMBER() over(order by entry_transactions.id) as r_id,
+                entry_transactions.account_id,
+                case when entries.date<date_from then 1 else 0 end as inside
+            from entry_transactions 
+            inner join entries ON entries.id = entry_transactions.entry_id
+            where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1 and entries.date < date_to
+                )e
+                order by entry_id,transaction_id, r_id desc;
         END $$ LANGUAGE plpgsql;
 ";
         DB::unprepared($sql);

@@ -41,7 +41,7 @@ class StockPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return  $user->hasPermissionTo('create_stock');
     }
 
     /**
@@ -53,7 +53,7 @@ class StockPolicy
      */
     public function update(User $user, Stock $stock)
     {
-        return true;
+        return  $user->hasPermissionTo('update_stock');
     }
 
     /**
@@ -65,7 +65,7 @@ class StockPolicy
      */
     public function delete(User $user, Stock $stock)
     {
-        return true;
+        return  $user->hasPermissionTo('delete_stock');
     }
 
     /**

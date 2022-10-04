@@ -41,7 +41,7 @@ class CityPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->hasPermissionTo('create_city');
     }
 
     /**
@@ -53,7 +53,7 @@ class CityPolicy
      */
     public function update(User $user, City $city)
     {
-        return true;
+        return $user->hasPermissionTo('update_city');
     }
 
     /**
@@ -65,7 +65,7 @@ class CityPolicy
      */
     public function delete(User $user, City $city)
     {
-        return true;
+        return $user->hasPermissionTo('delete_city');
     }
 
     /**
