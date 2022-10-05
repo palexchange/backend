@@ -204,4 +204,5 @@ class Transfer extends BaseModel implements Document
     {
         return $this->final_received_amount - $this->other_amounts_on_receiver - $this->office_amount;
     }
+ 
 }

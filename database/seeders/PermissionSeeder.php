@@ -30,6 +30,8 @@ class PermissionSeeder extends Seeder
             'party',
             'setting',
             'stock',
+            'user_account',
+            'user',
             'transfer'
         ];
 
@@ -51,12 +53,12 @@ class PermissionSeeder extends Seeder
         $user = User::create([
             'name' => 'super admin',
             'email' => 'admin@admin.com', //$this->faker->unique()->safeEmail(), //$this->faker->unique()->safeEmail(),
-            'password' => Hash::make(123456), // 123456
+            'password' => 123456, // 123456
             'remember_token' => Str::random(10),
             'role' => 1,
         ]);
         $user->assignRole($role1);
-        $user2 = User::create(['email' => 'test@test.com', 'password' => Hash::make('a123'), 'name' => 'test', 'role' => 2]);
+        $user2 = User::create(['email' => 'test@test.com', 'password' => 'a123', 'name' => 'test', 'role' => 2]);
         $user2->assignRole($role3);
     }
 }
