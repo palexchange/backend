@@ -17,11 +17,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('parent_id')->nullable()->references('id')->on('accounts');
+            $table->unsignedBigInteger('currency_id')->nullable();
             $table->bigInteger('type_id')->unsigned()->index();
             $table->string('code')->nullable();
-			$table->text('description')->nullable();
-			$table->text('notes')->nullable();
-			$table->boolean('is_transaction')->default(1)->index();
+            $table->text('notes')->nullable();
+            $table->boolean('is_transaction')->default(1)->index();
             $table->timestamps();
         });
     }
