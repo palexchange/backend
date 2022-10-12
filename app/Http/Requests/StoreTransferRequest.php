@@ -62,6 +62,7 @@ class StoreTransferRequest extends FormRequest
             'office_commission_type' => 'sometimes|integer',
             'transfer_commission' => 'sometimes|numeric',
             'office_amount' => 'sometimes|numeric',
+            'a_received_amount' => 'sometimes|numeric',
             'returned_commission' => 'sometimes|numeric'
         ];
     }

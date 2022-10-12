@@ -11,6 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
+    // من شيكل الي دينار
     public function up()
     {
         Schema::create('stocks', function (Blueprint $table) {

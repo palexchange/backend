@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AccountType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,6 +15,9 @@ class AccountTypeSeeder extends Seeder
      */
     public function run()
     {
-        //
+        AccountType::create(['name' => 'زبون']);
+        AccountType::create(['name' => 'مكتب']);
+        AccountType::create(['name' => 'صندوق']);
+        AccountType::create(['name' => 'ايرادات']);
     }
 }

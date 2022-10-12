@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Events\DocumentStoredEvent;
 use App\Http\Requests\StoreReceiptRequest;
 use App\Http\Requests\UpdateReceiptRequest;
 use App\Http\Resources\ReceiptResource;
@@ -13,12 +15,14 @@ use Illuminate\Support\Facades\Validator;
 class ReceiptController extends Controller
 {
 
-    public static function routeName(){
+    public static function routeName()
+    {
         return Str::snake("Receipt");
     }
-    public function __construct(Request $request){
+    public function __construct(Request $request)
+    {
         parent::__construct($request);
-        $this->authorizeResource(Receipt::class,Str::snake("Receipt"));
+        $this->authorizeResource(Receipt::class, Str::snake("Receipt"));
     }
     public function index(Request $request)
     {
@@ -31,22 +35,23 @@ class ReceiptController extends Controller
             foreach ($request->translations as $translation)
                 $receipt->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
+        DocumentStoredEvent::dispatch($receipt);
         return new ReceiptResource($receipt);
     }
-    public function show(Request $request,Receipt $receipt)
+    public function show(Request $request, Receipt $receipt)
     {
         return new ReceiptResource($receipt);
     }
     public function update(UpdateReceiptRequest $request, Receipt $receipt)
     {
         $receipt->update($request->validated());
-          if ($request->translations) {
+        if ($request->translations) {
             foreach ($request->translations as $translation)
                 $receipt->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
         return new ReceiptResource($receipt);
     }
-    public function destroy(Request $request,Receipt $receipt)
+    public function destroy(Request $request, Receipt $receipt)
     {
         $receipt->delete();
         return new ReceiptResource($receipt);
