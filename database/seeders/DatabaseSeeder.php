@@ -20,12 +20,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PermissionSeeder::class,
+            AccountSeeder::class,
+            AccountTypeSeeder::class,
             CurrencySeeder::class,
             CountrySeeder::class,
             StockSeeder::class,
-            SettingSeeder::class,
-            TransferSeeder::class,
-            ExchangeSeeder::class
+            // SettingSeeder::class,
+            // TransferSeeder::class,
+            // ExchangeSeeder::class
         ]);
     }
 }

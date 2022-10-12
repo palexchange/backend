@@ -54,28 +54,36 @@ class AccountingReportGenerator
                 'text' => __('public.creditor'), //دائن
                 'value' => 'creditor'
             ],
-            [
-                'text' => __('balance'), //الرصيد   
-                'value' => 'balance'
-            ],
+            // [
+            //     'text' => __('balance'), //الرصيد   
+            //     'value' => 'balance'
+            // ],
             [
                 'text' => __('type_name'),
                 'value' => 'type_name'
             ],
             [
+                'text' => __('exchange rate'),
+                'value' => 'exchange_rate'
+            ],
+            [
                 'text' => __('debtor_in_group_curr'), //مدين بعملة المجموهة
-                'value' => 'a_debtor'
+                'value' => 'ac_debtor'
             ],
             [
                 'text' => __('creditor_in_group_curr'), //دائن بعملة المجموهة
-                'value' => 'a_creditor'
+                'value' => 'ac_creditor'
+            ],
+            [
+                'text' => __('public.accumulated_balance'), //دائن بعملة المجموهة
+                'value' => 'acc_balance'
             ],
 
 
-            [
-                'text' => __('public.accumulated_balance'), //الرصيد التراكمي 
-                'value' => 'a_balance'
-            ]
+            // [
+            //     'text' => __('public.accumulated_balance'), //الرصيد التراكمي 
+            //     'value' => 'a_balance'
+            // ]
         ];
         // if ($account == null)
         //     return response()->json(['items' => [], 'headers' => $headers]);
@@ -90,7 +98,7 @@ class AccountingReportGenerator
         if ($request->to)
             $to = $request->to;
         $last_before = Carbon::parse($from)->subDay()->toDateString();
-        $sql = "select *,case when t.document_id is null then null else r_id end as r_id ,case when t.document_id is null then '$last_before' else date end as date from account_statement($account,'$from','$to',false)t order by case when r_id is null then '$last_before'::date else t.date end,t.r_id";
+        $sql = "select *,case when t.document_id is null then null else r_id end as r_id ,case when t.document_id is null then '$last_before' else date end as date from account_statement($account,'$from','$to',false)t order by t.r_id ";
         // dd($sql);
         $entry_accounts = DB::select($sql);
         return response()->json(['items' => $entry_accounts, 'headers' => $headers]);

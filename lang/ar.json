@@ -8,6 +8,7 @@
     "balance": "الرصيد",
     "public.accumulated_balance": "الرصيد التراكمي",
     "type_name": "اسم الحركة",
+    "exchange rate": "معامل التحويل",
     "Contact": "ترجمة هنا",
     "debtor_in_group_curr": "مدين بعملة المجموعة",
     "creditor_in_group_curr": "دائن بعملة المجموعة"

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->foreignId('reference_currency_id')->references('id')->on('currencies');
             $table->float('exchange_rate')->default(1);
             $table->float('amount_after')->default(0);
+            $table->float('profit')->default(0);
             $table->integer('status')->default(0);
             $table->timestamps();
         });

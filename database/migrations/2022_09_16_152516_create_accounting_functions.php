@@ -14,9 +14,73 @@ return new class extends Migration
      */
     public function up()
     {
-        $sql = "
+        $sql =  '
         DROP FUNCTION IF EXISTS account_statement;
-        CREATE OR REPLACE FUNCTION account_statement(a_id BIGINT, date_from DATE , date_to DATE,_active_only BOOLEAN)
+        CREATE OR REPLACE FUNCTION public.account_statement(
+            a_id bigint,
+            date_from date,
+            date_to date,
+            _active_only boolean)
+            RETURNS TABLE(
+                transaction_id bigint,
+                 debtor double precision, 
+                 creditor double precision, 
+                 exchange_rate double precision,
+                  ac_debtor double precision, 
+                  ac_creditor double precision, 
+                  entry_id bigint, transaction_type integer, 
+                  date timestamp without time zone, 
+                  document_type integer, 
+                  document_number bigint, 
+                  document_id bigint, 
+                  document_sub_type integer, 
+                  balance double precision, 
+                  r_id bigint, 
+                  account_id bigint, 
+                  inside integer,
+                  acc_balance double precision) 
+            LANGUAGE "plpgsql"
+            COST 100
+            VOLATILE PARALLEL UNSAFE
+            ROWS 1000
+        
+        AS $BODY$
+                BEGIN
+                RETURN QUERY
+                select distinct on(entry_id,transaction_id) *,sum(e.balance) over( order by e.transaction_id) as c_b from (
+                    select
+                        case when entries.date<date_from then null else entry_transactions.id end as transaction_id,
+                        entry_transactions.debtor ,
+                        entry_transactions.creditor ,
+                        entry_transactions.exchange_rate,
+                        entry_transactions.ac_debtor ,
+                        entry_transactions.ac_creditor ,
+                        case when entries.date<date_from then null else entries.id end as entry_id,
+                        entry_transactions.transaction_type,
+                        entries.date,
+                        entries.document_type,
+                        entries.document_number,
+                        entries.document_id,
+                        entries.document_sub_type,
+                    (entry_transactions.debtor - entry_transactions.creditor)  as balance,
+                        ROW_NUMBER() over(order by entry_transactions.id) as r_id,
+                        entry_transactions.account_id,
+                        case when entries.date<date_from then 1 else 0 end as inside
+                    from entry_transactions 
+                    inner join entries ON entries.id = entry_transactions.entry_id
+                    where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1 and entries.date < date_to
+                        )e
+                        order by entry_id,transaction_id, r_id desc;
+                END 
+        $BODY$ ;
+';
+        $sqls = "
+        DROP FUNCTION IF EXISTS account_statement;
+        CREATE OR REPLACE FUNCTION account_statement(
+            a_id BIGINT, 
+            date_from DATE , 
+            date_to DATE,
+            _active_only BOOLEAN)
         RETURNS TABLE(
             transaction_id BIGINT,
             debtor DOUBLE PRECISION,

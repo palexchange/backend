@@ -25,14 +25,14 @@ class StoreReceiptRequest extends FormRequest
     {
         return [
             //
-            'date'=>'required|date',
-            'amount'=>'required|numeric',
-            'main_currency_id'=>'required|exists:currencies,id',
-            'currency_id'=>'required|exists:currencies,id',
-            'factor'=>'sometimes|numeric',
-            'beneficiary_id'=>'required|exists:parties,id',
-            'number'=>'nullable',
-            'type'=>'required|integer',
+            'from_account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'required|exists:accounts,id',
+            'from_amount' => 'nullable|numeric',
+            'to_amount' => 'nullable|numeric',
+            'status' => 'nullable|numeric',
+            'type' => 'required|numeric',
+            'exchange_rate' => 'sometimes|numeric',
+
 
         ];
     }

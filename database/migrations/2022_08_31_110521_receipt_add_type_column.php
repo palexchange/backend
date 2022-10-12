@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('receipts', function($table) {
-            $table->integer('type')->index('type');
+            // $table->integer('type')->index('type');
         });
     }
 
@@ -26,8 +26,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('receipts', function($table) {
-            $table->dropIndex(['type']);
-            $table->dropColumn('type');
+            // $table->dropIndex(['type']);
+            // $table->dropColumn('type');
         });
     }
 };

@@ -15,14 +15,18 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('date');
-            $table->float('amount')->default(0);
-            $table->foreignId('main_currency_id')->references('id')->on('currencies');
-            $table->foreignId('currency_id')->references('id')->on('currencies');
-            $table->float('factor')->default(1);
-            $table->foreignId('beneficiary_id')->references('id')->on('parties');
-            $table->integer('number')->nullable();
+            $table->foreignId('from_account_id')->references('id')->on('accounts');
+            $table->foreignId('to_account_id')->references('id')->on('accounts');
+            $table->float('from_amount')->default(0);
+            $table->float('exchange_rate')->default(1);
+            $table->float('to_amount')->default(0);
+            $table->integer('status')->default(0);
+            // $table->foreignId('currency_id')->references('id')->on('currencies');
+            // $table->float('factor')->default(1);
+            // $table->foreignId('beneficiary_id')->references('id')->on('parties');
+            // $table->integer('number')->nullable();
             $table->foreignId('user_id')->nullable()->references('id')->on('users');
+            $table->integer('type')->index('type'); // 1 مقبوضاتinputs  2 مسحوباتoutputs 3 اتزان حسابbalanceing account
             $table->timestamps();
         });
     }
