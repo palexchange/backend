@@ -15,6 +15,12 @@ class Receipt extends BaseModel implements Document
         if ($this->type == 3) {
             $this->log_fund_adjustment();
         }
+        if ($this->type == 1) {
+            $this->log_receipt();
+        }
+        if ($this->type == 2) {
+            $this->log_receipt();
+        }
     }
     public function dispose()
     {
@@ -53,6 +59,33 @@ class Receipt extends BaseModel implements Document
             'ref_currency_id' => $this->from_account_currency_id,
         ]);
 
+        EntryTransaction::create([
+            'entry_id' => $entry->id,
+            'account_id' => $this->from_account_id,
+            'debtor' => 0,
+            'creditor' => $this->from_amount,
+            'ac_debtor' => 0,
+            'ac_creditor' => $this->from_amount,
+            'exchange_rate' => 1
+        ]);
+        EntryTransaction::create([
+            'entry_id' => $entry->id,
+            'account_id' => $this->to_account_id,
+            'debtor' => $this->to_amount,
+            'creditor' => 0,
+            'ac_debtor' => $this->to_amount / $this->exchange_rate,
+            'ac_creditor' => 0,
+            'exchange_rate' => $this->exchange_rate
+        ]);
+    }
+    public function log_receipt()
+    {
+        $entry =  $this->entry()->create([
+            'date' => Carbon::now(),
+            'status' => 1,
+            'statement' => $this->type == 1 ? 'input' : 'output',
+            'ref_currency_id' => $this->from_account_currency_id,
+        ]);
         EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' => $this->from_account_id,

@@ -106,19 +106,20 @@ class AccountingReportGenerator
     public  static function currencyCredit(Request $request)
     {
         // App::setlocale('ar');
-        $from = $request->from ?? Carbon::now()->subDay()->toDateString();
-        $to = $request->to ?? Carbon::now()->addDay()->toDateString();
+        // $from = $request->from ?? Carbon::now()->subDay()->toDateString();
+        // $to = $request->to ?? Carbon::now()->addDay()->toDateString();
         $currencies = $request->currencies;
         $currencies_text = join(',', $currencies);
         $sql = "
         select currencies.name,currencies.id,currencies.account_id,sum(debtor-creditor) as balance
         from currencies inner join entry_transactions on entry_transactions.account_id = currencies.account_id
         inner join entries on entries.id=entry_transactions.entry_id
-        where entries.status=1 and entries.date between '$from' and '$to'
+        where entries.status=1 
         
         and currencies.id in ($currencies_text)
         group by currencies.id
         ";
+        // and entries.date between '$from' and '$to'
 
         $headers = [
             [

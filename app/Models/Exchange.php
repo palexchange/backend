@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use App\Casts\Rounded;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Exchange extends BaseModel implements Document
 {
-    // protected $with = ["ben"];
+
     protected $appends = ["party_name", "currency_name"];
-    // protected $hidden =["ben"];
     protected $casts = [
         'amount' => Rounded::class,
 
@@ -66,6 +67,7 @@ class Exchange extends BaseModel implements Document
             'exchange_rate' => $this->exchange_rate
         ]);
 
+        // profit transactin from currency account 
         EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' => $this->reference_currency->account_id,
@@ -75,6 +77,7 @@ class Exchange extends BaseModel implements Document
             'ac_creditor' => 0,
             'exchange_rate' => 1
         ]);
+        // profit transactin to currency exchange_profit_account  
         EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' => $exchange_profit_account_id,
