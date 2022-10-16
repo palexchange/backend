@@ -32,6 +32,8 @@ class PermissionSeeder extends Seeder
             'stock',
             'user_account',
             'user',
+            'entry',
+            'entry_transaction',
             'transfer'
         ];
 
