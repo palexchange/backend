@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
-class AccountingReportGenerator
+class AccountingReportGenerator extends BaseReportGenerator
 {
-    public static function accountStatementReport(Request $request)
+    public static function  accountStatementReport(Request $request)
     {
         $prev_balance = null;
         $after_balance = null;
@@ -98,9 +98,28 @@ class AccountingReportGenerator
         if ($request->to)
             $to = $request->to;
         $last_before = Carbon::parse($from)->subDay()->toDateString();
-        $sql = "select *,case when t.document_id is null then null else r_id end as r_id ,case when t.document_id is null then '$last_before' else date end as date from account_statement($account,'$from','$to',false)t order by t.r_id ";
-        // dd($sql);
+        $sql = "select * ,
+        case when t.document_id is null then null else r_id end as r_id,
+        case when t.document_id is null then '$last_before' else date end as date 
+        from account_statement($account,'$from','$to',false)t order by t.r_id ";
+
         $entry_accounts = DB::select($sql);
+        // dd($entry_accounts);
+        $report_headers = [
+            __('journal_no'),
+            __('public.date'),
+            __('public.transaction_type'),
+            __('public.debtor'),
+            __('public.creditor'),
+            __('type_name'),
+            __('exchange rate'),
+            __('debtor_in_group_curr'),
+            __('creditor_in_group_curr'),
+            __('public.accumulated_balance'),
+        ];
+        if ($request->download == true) {
+            return parent::returnFile($entry_accounts, $report_headers);
+        }
         return response()->json(['items' => $entry_accounts, 'headers' => $headers]);
     }
     public  static function currencyCredit(Request $request)

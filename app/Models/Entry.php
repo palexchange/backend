@@ -19,5 +19,10 @@ class Entry extends BaseModel
     public function scopeSort($query, $request)
     {
     }
-
+    public function scopeSearch($query, $request)
+    {
+        $query->when($request->statement, function ($q, $statemant) {
+            $q->where('statement', '=', $statemant);
+        });
+    }
 }

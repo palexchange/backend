@@ -52,16 +52,32 @@ class User extends Authenticatable
     public function scopeSearch($query, $request)
     {
         $query->when($request->currency_id &&  $request->type_id, function ($q) use ($request) {
-            $q
-                ->join('user_accounts', 'user_accounts.user_id', 'users.id')
-                ->join('accounts', 'user_accounts.account_id', 'accounts.id')
-                ->leftJoin('currencies', 'currencies.id', 'accounts.currency_id')
-                ->leftJoin('entry_transactions', 'entry_transactions.account_id', 'accounts.id')
-                ->where('user_accounts.status', 1)
-                ->where('accounts.currency_id', $request->currency_id)
-                ->where('accounts.type_id', $request->type_id)->select('users.name AS user_name', 'accounts.name AS account_name', 'accounts.id AS on_account_id', 'currencies.name AS currency_name', DB::raw('case when (entry_transactions.debtor >= 0 ) then sum(entry_transactions.debtor -  entry_transactions.creditor) else  0 end  as balance '))
-                ->groupBy('user_name', 'account_name', 'accounts.id', 'currencies.name', 'entry_transactions.debtor');
+            $q->select('agg_tabel.balance',  'agg_tabel.account_name', 'agg_tabel.on_account_id', 'user_name', 'currency_name')
+                ->fromSub(function ($qq) use ($request) {
+                    $qq->from('users')->join('user_accounts', 'user_accounts.user_id', 'users.id')
+                        ->join('accounts', 'user_accounts.account_id', 'accounts.id')
+                        ->leftJoin('currencies', 'currencies.id', 'accounts.currency_id')
+                        ->leftJoin('entry_transactions', 'entry_transactions.account_id', 'accounts.id')
+                        ->where('user_accounts.status', 1)
+                        ->where('accounts.currency_id', $request->currency_id)
+                        ->where('accounts.type_id', $request->type_id)
+                        ->select('users.name AS user_name', 'accounts.name AS account_name', 'accounts.id AS on_account_id', 'currencies.name AS currency_name', DB::raw('sum(entry_transactions.debtor -  entry_transactions.creditor)  as balance'))
+                        ->groupBy('users.id', 'accounts.id', 'currencies.id', 'on_account_id');
+                }, 'agg_tabel');
         });
+
+        //     select     agg_tabel.balance ,  agg_tabel.account_name , agg_tabel.on_account_id , user_name
+        // from (
+        // 	select "users"."name" as "user_name", "accounts"."name" as "account_name", "accounts"."id" 
+        // 	as "on_account_id", "currencies"."name" as "currency_name",
+        // 	sum(entry_transactions.debtor -  entry_transactions.creditor) as balance from "users" 
+        // 	inner join "user_accounts" on "user_accounts"."user_id" = "users"."id" 
+        // 		inner join "accounts" on "user_accounts"."account_id" = "accounts"."id" 
+        // 			left join "currencies" on "currencies"."id" = "accounts"."currency_id" 
+        // 				left join "entry_transactions" on "entry_transactions"."account_id" = "accounts"."id"
+        // where "user_accounts"."status" = 1 and "accounts"."currency_id" = 2 and "accounts"."type_id" = 3  
+        // 	group by users.id ,accounts.id , currencies.id , on_account_id) as agg_tabel
+
     }
     public function accounts()
     {
