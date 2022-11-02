@@ -34,6 +34,7 @@ class StoreExchangeRequest extends FormRequest
             'reference_currency_id' => 'required|exists:currencies,id',
             'status' => 'nullable|numeric',
             'exchange_rate' => 'nullable|numeric',
+            'user_id' => 'required|exists:users,id',
             'amount_after' => 'nullable|numeric',
         ];
     }

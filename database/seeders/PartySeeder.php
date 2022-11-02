@@ -2,8 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Account;
+use App\Models\Party;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
+use function PHPSTORM_META\type;
 
 class PartySeeder extends Seeder
 {
@@ -14,6 +18,7 @@ class PartySeeder extends Seeder
      */
     public function run()
     {
-        //
+        $account = Account::create(['name' => 'زبون عام', 'type_id' => 1]);
+        Party::create(['name' => 'زبون عام', 'account_id' => $account->id]);
     }
 }

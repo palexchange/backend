@@ -21,6 +21,7 @@ return new class extends Migration
             $table->bigInteger('type_id')->unsigned()->index();
             $table->string('code')->nullable();
             $table->text('notes')->nullable();
+            $table->float('actual_balance')->default(0);
             $table->boolean('is_transaction')->default(1)->index();
             $table->timestamps();
         });

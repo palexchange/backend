@@ -20,7 +20,8 @@ return new class extends Migration
             a_id bigint,
             date_from date,
             date_to date,
-            _active_only boolean)
+            _active_only boolean ,
+		curr_id bigint)
             RETURNS TABLE(
                 transaction_id bigint,
                  debtor double precision, 
@@ -31,12 +32,14 @@ return new class extends Migration
                   entry_id bigint, transaction_type integer, 
                   date timestamp without time zone, 
                   document_type integer, 
+                  statement character varying(255),
                   document_number bigint, 
                   document_id bigint, 
                   document_sub_type integer, 
                   balance double precision, 
                   r_id bigint, 
                   account_id bigint, 
+				currency_name character varying(255),
                   inside integer,
                   acc_balance double precision) 
             LANGUAGE "plpgsql"
@@ -59,16 +62,21 @@ return new class extends Migration
                         entry_transactions.transaction_type,
                         entries.date,
                         entries.document_type,
+                        entries.statement,
                         entries.document_number,
                         entries.document_id,
                         entries.document_sub_type,
-                    (entry_transactions.debtor - entry_transactions.creditor)  as balance,
+                       	case when  curr_id > 0 then (entry_transactions.debtor - entry_transactions.creditor) else (entry_transactions.ac_debtor - entry_transactions.ac_creditor) end as balance,
                         ROW_NUMBER() over(order by entry_transactions.id) as r_id,
                         entry_transactions.account_id,
+					currencies.name,
                         case when entries.date<date_from then 1 else 0 end as inside
                     from entry_transactions 
                     inner join entries ON entries.id = entry_transactions.entry_id
-                    where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1 and entries.date < date_to
+					inner join currencies ON currencies.id = entry_transactions.currency_id
+                    where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1
+					and entries.date < date_to
+					and case  WHEN curr_id > 0  THEN entry_transactions.currency_id = curr_id ELSE entry_transactions.currency_id IS NOT NULL END 
                         )e
                         order by entry_id,transaction_id, r_id desc;
                 END 

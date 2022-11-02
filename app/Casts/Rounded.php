@@ -22,8 +22,8 @@ class Rounded implements CastsAttributes
         // $digits=2;
         // $tenant_id = request('tenant_id');
         $digits = Setting::find('digits_number');
-        $digits = $digits?$digits->value:2;
-        return round($value,$digits);
+        $digits = $digits ? $digits->value : 2;
+        return round($value, 4);
     }
 
     /**
@@ -38,7 +38,7 @@ class Rounded implements CastsAttributes
     public function set($model, $key, $value, $attributes)
     {
         $digits = Setting::find('digits_number');
-        $digits = $digits?$digits->value:2;
-        return round($value,$digits);
+        $digits = $digits ? $digits->value : 2;
+        return round($value, 4);
     }
 }

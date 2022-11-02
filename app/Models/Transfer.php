@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class Transfer extends BaseModel implements Document
 {
     use HasFactory;
+    public static $export_options = ['type' => [0 => "حوالة صادرة", 1 => "حوالة واردة"], 'status' => [1 => "معتمدة"], 'commission_side' => [1 => 'المرسل', 2 => 'المستقبل']];
     protected $appends = ['profit'];
+    protected $with = ['sender_party'];
     protected $casts = [
         'transfer_commission' => Rounded::class,
         'received_amount' => Rounded::class,
@@ -30,14 +32,6 @@ class Transfer extends BaseModel implements Document
             'statement' => "حركة حوالة",
             'ref_currency_id' => $this->reference_currency_id
         ]);
-        // dd($entry);
-        // // $entry =  Entry::create([
-        // //     'date' => $this->issued_at ?? Carbon::now(),
-        // //     'status' => 1,
-        // //     'ref_currency_id' => $this->reference_currency_id
-        // // ]);
-        // // $entry->document()->associate($this)->save();
-        // // $this->entry()->associate($entry);
         $this->logAmount()->handleCommision();
     }
     public function dispose()
@@ -46,6 +40,9 @@ class Transfer extends BaseModel implements Document
 
     public  function logAmount()
     {
+
+        $user_account_id = $this->user_account_id;
+        logger($user_account_id);
         $entry = $this->entry;
         $transfer_profit_account_id = Account::find(2)->id;
         // $commission_account_id = Setting::find('commission_account_id')?->value;
@@ -64,7 +61,7 @@ class Transfer extends BaseModel implements Document
         }
 
         $transactions[] = [
-            'account_id' => $account_id,
+            'account_id' => $this->user_account_id, // $this->user_account_id
             'amount' => $sender_amount,
             'transaction_type' => 1,
             'type' => 0,
@@ -82,87 +79,7 @@ class Transfer extends BaseModel implements Document
             'type' => 1,
         ];
 
-        // $transactions[] = [
-        //     'account_id' => $account_id,
-        //     'amount' => $sender_amount,
-        //     'transaction_type' => 1,
-        //     'type' => 0,
-        // ];
-        // $transactions[] = [
-        //     'account_id' => $account_id,
-        //     'amount' => $reciever_amount - $exchange_difference,
-        //     'transaction_type' => 1,
-        //     'subject_type' => 2,
-        //     'subject_id' => $this->office->id,
-        //     'type' => 1
-        // ];
-        // $transactions[] = [
-        //     'account_id' => $account_id,
-        //     'amount' => $this->transfer_commission,
-        //     'transaction_type' => 2,
-        //     'type' => 1,
-        // ];
-        // if ($this->exchange_rate_to_office_currency != $this->exchange_rate_to_delivery_currency) {
-        //     $transactions[] = [
-        //         'account_id' => $account_id,
-        //         'amount' => $exchange_difference,
-        //         'transaction_type' => 3,
-        //         'type' => 1,
-        //     ];
-        // }
-        // // if ($this->returned_commission) {
-        // //     $transactions[] = [
-        // //         'account_id' => $returned_commission_account_id,
-        // //         'creditor' => $this->returned_commission,
-        // //     ];
-        // // }
-        // if ($this->other_amounts_on_sender) {
-        //     $transactions[] = [
-        //         'account_id' => $account_id,
-        //         'amount' => $this->other_amounts_on_sender,
-        //         'transaction_type' => 4,
-        //         'type' => 1,
-        //     ];
-        // }
 
-
-        // // office entry 
-        // $transactions[] = [
-        //     'account_id' => $account_id,
-        //     'amount' => $this->a_received_amount - $exchange_difference,
-        //     'type' => 0,
-        //     'transaction_type' => 1,
-        //     'subject_type' => 1,
-        //     'subject_id' => $this->office->id,
-        // ];
-        // if ($this->returned_commission) {
-        //     $transactions[] = [
-        //         'account_id' => $account_id,
-        //         'amount' => $this->returned_commission,
-        //         'type' => 1,
-        //         'transaction_type' => 5,
-
-        //     ];
-        // }
-        // if ($this->office_commission)
-        //     $transactions[] = [
-        //         'account_id' => $account_id,
-        //         'amount' => $this->office_commission,
-        //         'type' => 0,
-        //         'transaction_type' => 2,
-        //         'subject_type' => 1,
-        //         'subject_id' => $this->office->id,
-
-        //     ];
-        // $amount = $this->office_amount - $this->returned_commission;
-        // $transactions[] = [
-        //     'account_id' => $account_id,
-        //     'amount' => $amount,
-        //     'type' => 1,
-        //     'transaction_type' => 1,
-        //     // 'creditor' => $this->a_received_amount - $exchange_difference - $this->office_commission - $this->other_amounts_on_sender - $this->returned_commission,
-        // ];
-        // dd($transactions);
         foreach ($transactions as $transaction) {
             if (!$transaction['account_id']) {
                 // dd($transfer_commission_account_id);
@@ -174,10 +91,10 @@ class Transfer extends BaseModel implements Document
                 'creditor' => $transaction['type'] ? $transaction['amount'] : 0,
                 'account_id' => $transaction['account_id'],
                 'exchange_rate' => 1,
+                'currency_id' => 1, //,$this->received_currency_id,
                 'ac_debtor' => !$transaction['type'] ? $transaction['amount'] : 0,
                 'ac_creditor' => $transaction['type'] ? $transaction['amount'] : 0,
                 'transaction_type' => $transaction['transaction_type'],
-
             ]);
         }
         return $this;
@@ -227,8 +144,77 @@ class Transfer extends BaseModel implements Document
     }
     public function getUserAccountIdAttribute()
     {
-        $user = User::find(auth()->user()->id);
-        $account_id =  $user?->accounts()->where('status', 1)->where('currency_id', 1)?->first(['accounts.id'])?->id;
-        return $account_id ?? $this->entry->ref_currency->account_id;
+        $user = auth()->user();
+        $id =  $user->accounts()
+            ->where('status', 1)
+            ->where('main', true)
+            ->where('accounts.currency_id', 1)->first(['accounts.id'])->id;
+        return $id;
     }
+    public static function exportData()
+    {
+        return  Transfer::join('parties as sender', 'sender.id', 'transfers.sender_party_id')
+            ->leftJoin('parties as office', 'office.id', 'transfers.office_id')
+            ->leftJoin('currencies as d_c', 'd_c.id', 'transfers.delivery_currency_id')
+            ->leftJoin('currencies as r_c', 'r_c.id', 'transfers.received_currency_id')
+            ->leftJoin('currencies as of_c', 'of_c.id', 'transfers.office_currency_id')
+            ->select(
+                '*',
+                'transfers.id as id',
+                'transfers.status',
+                'office.name as office_name',
+                'sender.name as sender_name',
+                'd_c.name as delivery_currency',
+                'r_c.name as received_currency',
+                'of_c.name as office_currency'
+            )->orderBy('transfers.id', 'asc')->get()->toArray();
+    }
+    public static  $exportHeaders =
+    [
+        "id",
+        "issued_at",
+        "type",
+        "status",
+        "commission_side",
+        "received_amount",
+        "to_send_amount",
+        "exchange_rate_to_reference_currency",
+        "exchange_rate_to_delivery_currency",
+        "exchange_rate_to_office_currency",
+        "office_amount_in_office_currency",
+        "office_name",
+        "sender_name",
+        "delivery_currency",
+        "received_currency",
+        "office_currency",
+        "profit",
+    ];
+    public static   function exportheaders()
+    {
+        return [
+            __("id"),
+            __("issued_at"),
+            __("type"),
+            __("status"),
+            __("commission_side"),
+            __("received_amount"),
+            __("to_send_amount"),
+            __("exchange_rate_to_reference_currency"),
+            __("exchange_rate_to_delivery_currency"),
+            __("exchange_rate_to_office_currency"),
+            __("office_amount_in_office_currency"),
+            __("office_name"),
+            __("sender_name"),
+            __("delivery_currency"),
+            __("received_currency"),
+            __("office_currency"),
+            __("profit")
+        ];
+    }
+
+    // public static function hasAbilityToCreateModelInCurrency($currency_id)
+    // {
+    //     $accounts_count = auth()->user()->accounts()->where('status', 1)->where('currency_id', $currency_id)->count();
+    //     return $accounts_count > 0;
+    // }
 }

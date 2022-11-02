@@ -18,5 +18,8 @@ class UserAccount extends BaseModel
         $query->when($request->user_id, function ($query, $user_id) {
             $query->where('user_id', $user_id);
         });
+        $query->when($request->user_id && $request->account_id, function ($query) use ($request) {
+            $query->where('user_id', $request->user_id)->where('account_id', $request->account_id);
+        });
     }
 }

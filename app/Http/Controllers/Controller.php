@@ -11,12 +11,14 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    public $except,$pagination;
+    public $except, $pagination;
     public $bulk_store_mode;
+    public $user;
     public function __construct(Request $request)
     {
-        $this->middleware('auth:api',['except'=>$this->except]);
+        $this->user = auth()->user();
+        $this->middleware('auth:api', ['except' => $this->except]);
         $this->pagination = (request('itemsPerPage') ?? request('per_page')) ?? 500;
-        $this->bulk_store_mode = $request->bulk?'insert':'create';
+        $this->bulk_store_mode = $request->bulk ? 'insert' : 'create';
     }
 }

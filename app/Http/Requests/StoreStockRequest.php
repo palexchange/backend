@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 class StoreStockRequest extends FormRequest
 {
@@ -21,19 +22,20 @@ class StoreStockRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
+
         return [
             //
-            '*.date' => 'required|date',
+            '*.date' => 'sometimes|date',
             '*.opened_at' => 'nullable|date_format:Y-m-d H:i:s',
             '*.closed_at' => 'nullable|date_format:Y-m-d H:i:s',
             '*.start_selling_price' => 'sometimes|numeric',
             '*.final_selling_price' => 'sometimes|numeric',
             '*.start_purchasing_price' => 'sometimes|numeric',
             '*.final_purchasing_price' => 'sometimes|numeric',
-            '*.ref_currency_id' => 'required|exists:currencies,id',
-            '*.currency_id' => 'required|exists:currencies,id',
+            '*.ref_currency_id' => 'sometimes|exists:currencies,id',
+            '*.currency_id' => 'sometimes|exists:currencies,id',
         ];
     }
 }

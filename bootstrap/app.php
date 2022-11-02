@@ -59,8 +59,8 @@ $app->singleton(
 */
 Relation::morphMap([
     1 => Transfer::class,
-    2 => Party::class,
-    3 => Exchange::class,
-    4 => Receipt::class
+    2 => Exchange::class,
+    3 => Receipt::class,
+    4 => Party::class,
 ]);
 return $app;

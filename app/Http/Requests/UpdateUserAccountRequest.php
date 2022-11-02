@@ -26,7 +26,9 @@ class UpdateUserAccountRequest extends FormRequest
         return [
             'user_id' => 'sometimes|exists:users,id',
             'account_id' => 'sometimes|exists:accounts,id',
+            'currency_id' => 'nullable|exists:currencies,id',
             'status' => 'sometimes|numeric',
+            'main' => 'sometimes|boolean',
         ];
     }
 }

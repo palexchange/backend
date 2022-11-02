@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DocumentDeletedEvent;
 use App\Events\DocumentStoredEvent;
+use App\Events\DocumentUpdatedEvent;
 use App\Http\Requests\StoreReceiptRequest;
 use App\Http\Requests\UpdateReceiptRequest;
 use App\Http\Resources\ReceiptResource;
@@ -49,11 +51,13 @@ class ReceiptController extends Controller
             foreach ($request->translations as $translation)
                 $receipt->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
+        DocumentUpdatedEvent::dispatch($receipt);
         return new ReceiptResource($receipt);
     }
     public function destroy(Request $request, Receipt $receipt)
     {
         $receipt->delete();
+        DocumentDeletedEvent::dispatch($receipt);
         return new ReceiptResource($receipt);
     }
 }

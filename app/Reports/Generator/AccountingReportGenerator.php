@@ -36,7 +36,7 @@ class AccountingReportGenerator extends BaseReportGenerator
             // ],
             [
                 'text' => __('public.transaction_type'), // نوع الحوالة
-                'value' => 'statement'
+                'value' => 'transaction_type'
             ],
             // [
             //     'text' => __('public.transaction_no'),
@@ -59,9 +59,18 @@ class AccountingReportGenerator extends BaseReportGenerator
             //     'value' => 'balance'
             // ],
             [
-                'text' => __('type_name'),
-                'value' => 'type_name'
+                'text' => __('document_type'), // اسم الحركة
+                'value' => 'document_type'
             ],
+
+            [
+                'text' => __('currency_name'),
+                'value' => 'currency_name'
+            ],
+            // [
+            //     'text' => __('balance'),
+            //     'value' => 'balance'
+            // ],
             [
                 'text' => __('exchange rate'),
                 'value' => 'exchange_rate'
@@ -78,32 +87,48 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'text' => __('public.accumulated_balance'), //دائن بعملة المجموهة
                 'value' => 'acc_balance'
             ],
-
+            [
+                'text' => __('statement'), // اسم الحركة
+                'value' => 'statement'
+            ],
 
             // [
             //     'text' => __('public.accumulated_balance'), //الرصيد التراكمي 
             //     'value' => 'a_balance'
             // ]
         ];
-        // if ($account == null)
-        //     return response()->json(['items' => [], 'headers' => $headers]);
-
-        $from = request('from');
-        $to = request('to');
-        $to = Carbon::now()->addDay()->toDateString();
+        if ($account == null)
+            return response()->json(['items' => [], 'headers' => $headers]);
         // $year_end = year_end();
         // $from = Carbon::parse(Carbon::parse($year_end->end_at)->subYear()->toDateString())->toDateString();
-        if ($request->from)
-            $from = $request->from;
-        if ($request->to)
-            $to = $request->to;
+        // if ($request->from)
+        //     $from = $request->from;
+        // if ($request->to)
+        //     $to = $request->to;
+        $from = request('from');
+        $tto = request('to');
+        $currency_id = request('currency_id') > 0 ? request('currency_id') : 0;
+        $to = Carbon::parse($tto)->addDay()->toDateString();
         $last_before = Carbon::parse($from)->subDay()->toDateString();
-        $sql = "select * ,
+        $sql = "select
         case when t.document_id is null then null else r_id end as r_id,
-        case when t.document_id is null then '$last_before' else date end as date 
-        from account_statement($account,'$from','$to',false)t order by t.r_id ";
+        case when t.document_id is null then '$last_before' else date end as date,
+        transaction_type,
+        debtor,
+        creditor,
+        document_type,
+        currency_name,
+      
+        balance,
+        exchange_rate,
+        ac_debtor,
+        ac_creditor,
+        acc_balance,
+        statement
 
+        from account_statement($account,'$from','$to',false , '$currency_id')t order by t.r_id ";
         $entry_accounts = DB::select($sql);
+        // dd($entry_accounts);
         // dd($entry_accounts);
         $report_headers = [
             __('journal_no'),
@@ -112,13 +137,18 @@ class AccountingReportGenerator extends BaseReportGenerator
             __('public.debtor'),
             __('public.creditor'),
             __('type_name'),
+            __('currency_name'),
+
             __('exchange rate'),
             __('debtor_in_group_curr'),
             __('creditor_in_group_curr'),
             __('public.accumulated_balance'),
+            __('statement'),
         ];
+
         if ($request->download == true) {
-            return parent::returnFile($entry_accounts, $report_headers);
+            $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
+            return parent::returnFile($entry_accounts, $report_headers, $options);
         }
         return response()->json(['items' => $entry_accounts, 'headers' => $headers]);
     }
@@ -127,16 +157,18 @@ class AccountingReportGenerator extends BaseReportGenerator
         // App::setlocale('ar');
         // $from = $request->from ?? Carbon::now()->subDay()->toDateString();
         // $to = $request->to ?? Carbon::now()->addDay()->toDateString();
-        $currencies = $request->currencies;
-        $currencies_text = join(',', $currencies);
+        $ids = $request->accounts_ids;
+
+
+        $ids_text = join(',', $ids);
         $sql = "
-        select currencies.name,currencies.id,currencies.account_id,sum(debtor-creditor) as balance
-        from currencies inner join entry_transactions on entry_transactions.account_id = currencies.account_id
+        select accounts.name,accounts.id,sum(debtor-creditor) as balance
+        from accounts inner join entry_transactions on entry_transactions.account_id = accounts.id
         inner join entries on entries.id=entry_transactions.entry_id
-        where entries.status=1 
+        where entries.status=1
         
-        and currencies.id in ($currencies_text)
-        group by currencies.id
+        and accounts.id in ($ids_text)
+        group by accounts.id
         ";
         // and entries.date between '$from' and '$to'
 

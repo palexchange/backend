@@ -24,13 +24,13 @@ class UpdateAccountRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>'nullable',
-            'parent_id'=>'sometimes|exists:accounts,id',
-            'type_id'=>'required|exists:account_types,id',
-            'code'=>'nullable',
-            'description'=>'nullable',
-            'notes'=>'nullable',
-            'is_transaction'=>'sometimes|boolean'
+            'name' => 'nullable',
+            'parent_id' => 'sometimes|exists:accounts,id',
+            'type_id' => 'sometimes|exists:account_types,id',
+            'code' => 'nullable',
+            'description' => 'nullable',
+            'notes' => 'nullable',
+            'is_transaction' => 'sometimes|boolean'
         ];
     }
 }

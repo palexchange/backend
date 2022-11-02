@@ -33,9 +33,11 @@ class ExchangeDetail extends BaseModel
     {
         return EntryTransaction::create([
             'entry_id' => $entry->id,
-            'account_id' =>  $this->currency->account_id,
+            'account_id' =>  $this->user_account_id,
+            'currency_id' =>  $this->currency_id,
             'creditor' => $this->amount,
             'debtor' => 0,
+            'transaction_type' => 0,
             'ac_creditor' => $this->amount_after,
             'ac_debtor' => 0,
             'exchange_rate' => $this->factor
@@ -43,7 +45,11 @@ class ExchangeDetail extends BaseModel
     }
     public function getUserAccountIdAttribute()
     {
-        $user = User::find(2);
-        return $user->accounts()->where('status', 1)->where('currency_id', $this->currency()->first("id")->id)->first(['accounts.id'])->id;
+        $user = auth()->user();
+        return $user->accounts()
+            ->where('status', 1)
+            ->where('main', true)
+            ->where('accounts.currency_id', $this->currency()->first("id")->id)
+            ->first(['accounts.id'])->id;
     }
 }

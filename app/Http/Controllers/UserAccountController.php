@@ -43,7 +43,20 @@ class UserAccountController extends Controller
     }
     public function update(UpdateUserAccountRequest $request, UserAccount $userAccount)
     {
-        $userAccount->update($request->validated());
+
+        $validation = $request->validated();
+        if ($validation['main']) {
+
+            $old_main = UserAccount::where('currency_id', $userAccount->currency_id)
+                ->where('main', true)
+                ->where('id', '!=',  $userAccount->id)->first();
+
+            if ($old_main) {
+                $old_main->main = false;
+                $old_main->save();
+            }
+        }
+        $userAccount->update($validation);
         if ($request->translations) {
             foreach ($request->translations as $translation)
                 $userAccount->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();

@@ -16,20 +16,18 @@ class AccountSeeder extends Seeder
     public function run()
     {
 
-        Account::create(['name' => 'حساب الخزينة المركزي', 'type_id' => 4, 'currency_id' => 1]);
+        Account::create(['name' => 'حساب الخزينة المركزي', 'type_id' => 4, 'currency_id' => 1]); // 1
 
-        Account::create(['name' => 'ربحية الحوالات', 'type_id' => 5, 'currency_id' => 1]);
-        Account::create(['name' => 'ربحية الصرافة', 'type_id' => 5, 'currency_id' => 1]);
+        Account::create(['name' => 'ربحية الحوالات', 'type_id' => 5, 'currency_id' => 1]); // 2
+        Account::create(['name' => 'ربحية الصرافة', 'type_id' => 5, 'currency_id' => 1]); // 3
 
-        Account::create(['name' => 'خزينة دولار', 'type_id' => 4,  'currency_id' => 1]);
-        Account::create(['name' => 'خزينة شيكل', 'type_id' => 4,  'currency_id' => 2]);
-        Account::create(['name' => 'خزينة دينار', 'type_id' => 4,  'currency_id' => 3]);
+        Account::create(['name' => 'خزينة دولار', 'type_id' => 4,  'currency_id' => 1]); // 4
+        Account::create(['name' => 'خزينة شيكل', 'type_id' => 4,  'currency_id' => 2]); // 5
+        Account::create(['name' => 'خزينة دينار', 'type_id' => 4,  'currency_id' => 3]); // 6
         Account::create(['name' => 'خزينة يورو', 'type_id' => 4,  'currency_id' => 4]);
         Account::create(['name' => 'خزينة درهم', 'type_id' => 4,  'currency_id' => 5]);
         Account::create(['name' => 'خزينة ريال سعودي', 'type_id' => 4,  'currency_id' => 6]);
         Account::create(['name' => 'خزينة جنيه', 'type_id' => 4,  'currency_id' => 7]);
-
-
 
         Account::create(['name' => 'صندوق دولار كاظم', 'type_id' => 3, 'currency_id' => 1]);
         Account::create(['name' => 'صندوق شيكل كاظم', 'type_id' => 3, 'currency_id' => 2]);

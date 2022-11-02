@@ -25,9 +25,10 @@ class DatabaseSeeder extends Seeder
             CurrencySeeder::class,
             CountrySeeder::class,
             StockSeeder::class,
+            PartySeeder::class,
             SettingSeeder::class,
-            TransferSeeder::class,
-            ExchangeSeeder::class
+            // TransferSeeder::class,
+            // ExchangeSeeder::class
         ]);
     }
 }

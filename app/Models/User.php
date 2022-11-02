@@ -20,7 +20,7 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit'];
+    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit'];
     /**
      * The attributes that are mass assignable.
      *
@@ -52,7 +52,7 @@ class User extends Authenticatable
     public function scopeSearch($query, $request)
     {
         $query->when($request->currency_id &&  $request->type_id, function ($q) use ($request) {
-            $q->select('agg_tabel.balance',  'agg_tabel.account_name', 'agg_tabel.on_account_id', 'user_name', 'currency_name')
+            $q->select('agg_tabel.balance',  'agg_tabel.account_name', 'agg_tabel.on_account_id', 'user_name', 'currency_name', 'actual_balance')
                 ->fromSub(function ($qq) use ($request) {
                     $qq->from('users')->join('user_accounts', 'user_accounts.user_id', 'users.id')
                         ->join('accounts', 'user_accounts.account_id', 'accounts.id')
@@ -61,7 +61,7 @@ class User extends Authenticatable
                         ->where('user_accounts.status', 1)
                         ->where('accounts.currency_id', $request->currency_id)
                         ->where('accounts.type_id', $request->type_id)
-                        ->select('users.name AS user_name', 'accounts.name AS account_name', 'accounts.id AS on_account_id', 'currencies.name AS currency_name', DB::raw('sum(entry_transactions.debtor -  entry_transactions.creditor)  as balance'))
+                        ->select('users.name AS user_name', 'accounts.name AS account_name', 'accounts.id AS on_account_id', 'currencies.name AS currency_name', 'accounts.actual_balance', DB::raw('sum(entry_transactions.debtor -  entry_transactions.creditor)  as balance'))
                         ->groupBy('users.id', 'accounts.id', 'currencies.id', 'on_account_id');
                 }, 'agg_tabel');
         });
@@ -92,11 +92,28 @@ class User extends Authenticatable
     }
     public function getActiveAccountsAttribute()
     {
-        return $this->accounts()->where('status', 1)->get()->toArray();
+        // return  auth()->user()->role == 1 ? Account::where('type_id', 3)->get()->toArray() : $this->accounts()->where('status', 1)->get()->toArray();
+        return  $this->accounts()->where('status', 1)
+            ->get()->toArray();
     }
-    public function getDailyExchangeTransactionsAttribute()
+    public function getMainActiveAccountsAttribute()
     {
 
+        return  $this->accounts()->where('status', 1)->where('main', true)
+            ->get()->toArray();
+    }
+    // public function getUserCurrenceisAttribute()
+    // {
+    //     if (auth()->user()->role == 1) {
+    //         return [1, 2, 3, 4, 5, 6];
+    //     }
+    //     $arr = array_map(function ($v) {
+    //         return $v['currency_id'];
+    //     }, $this->active_accounts);
+    //     return $arr;
+    // }
+    public function getDailyExchangeTransactionsAttribute()
+    {
         $count = Exchange::whereDate('created_at', Carbon::today())->count();
         return  $count;
     }

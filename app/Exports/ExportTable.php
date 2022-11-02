@@ -10,41 +10,44 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class ExcelExport implements FromArray, WithHeadings, WithEvents, WithMapping
+class ExportTable implements WithHeadings, WithEvents, FromArray, WithMapping
 {
-    public $data, $headers, $options;
+    public $model;
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function __construct($data, $headers, $options)
+    public function __construct($model)
     {
-        $this->headers = $headers;
-        $this->data = $data;
-        $this->options = $options;
+        $this->model = $model;
+    }
+    public function array(): array
+    {
+        // \DB::enableQueryLog(); // Enable query log
+        $data = $this->model::exportData();
+        $index = 0;
+        foreach ($data as   $value) {
+            $data[$index] = array_intersect_key($value, array_flip($this->model::$exportHeaders));
+            $index++;
+        }
+
+        return  $data;
     }
     public function map($row): array
     {
+
         $arr = [];
         foreach ($row as $key => $value) {
-            if (isset($this->options[$key])) {
-                $arr[] = $this->options[$key][$value];
+            if (isset($this->model::$export_options[$key])) {
+                $arr[] = $this->model::$export_options[$key][$value];
             } else {
                 $arr[] = $value;
             }
         }
         return   $arr;
     }
-    public function array(): array
-    {
-        return $this->data;
-    }
-    // public function collection()
-    // {
-    //     return $this->data;
-    // }
     public function headings(): array
     {
-        return $this->headers;
+        return $this->model::exportHeaders();
     }
     public function registerEvents(): array
     {

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DocumentDeletedEvent;
 use App\Events\DocumentStoredEvent;
+use App\Events\DocumentUpdatedEvent;
 use App\Http\Requests\StoreTransferRequest;
 use App\Http\Requests\UpdateTransferRequest;
 use App\Http\Resources\TransferResource;
@@ -30,6 +32,10 @@ class TransferController extends Controller
     }
     public function store(StoreTransferRequest $request)
     {
+        if (!hasAbilityToCreateModelInCurrency([$request->validated()['reference_currency_id']]))
+            return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
+
+
         $transfer = Transfer::create($request->validated());
         if ($request->translations) {
             foreach ($request->translations as $translation)
@@ -49,10 +55,12 @@ class TransferController extends Controller
             foreach ($request->translations as $translation)
                 $transfer->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
+        DocumentUpdatedEvent::dispatch($transfer);
         return new TransferResource($transfer);
     }
     public function destroy(Request $request, Transfer $transfer)
     {
+        DocumentDeletedEvent::dispatch($transfer);
         $transfer->delete();
         return new TransferResource($transfer);
     }

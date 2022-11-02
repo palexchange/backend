@@ -18,6 +18,7 @@ return new class extends Migration
         Schema::create('entry_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('entry_id')->references('id')->on('entries');
+            $table->foreignId('currency_id')->references('id')->on('currencies');
             $table->float('debtor')->default(0);
             $table->float('creditor')->default(0);
             $table->float('exchange_rate')->default(1);

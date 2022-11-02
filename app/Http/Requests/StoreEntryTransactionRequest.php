@@ -26,6 +26,7 @@ class StoreEntryTransactionRequest extends FormRequest
         return [
             //
             'entry_id' => 'required|exists:entries,id',
+            'currency_id' => 'required|exists:currencies,id',
             'debtor' => 'required|numeric',
             'ac_debtor' => 'sometimes|numeric',
             'creditor' => 'required|numeric',

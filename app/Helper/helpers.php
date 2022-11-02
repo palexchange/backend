@@ -4,17 +4,17 @@ use App\Models\Setting;
 use App\Models\FiscalYear;
 use Carbon\Carbon;
 
-function ilog($data,$clear=false)
+function ilog($data, $clear = false)
 {
     $file = storage_path() . '/logs/debug.log';
     $fileHandle = null;
-    $fileHandle = fopen($file, $clear?'w':'a');
-    if(is_array($data)){
-        $data=json_encode($data);
+    $fileHandle = fopen($file, $clear ? 'w' : 'a');
+    if (is_array($data)) {
+        $data = json_encode($data);
     }
     $date = Carbon::now();
     $data = "[$date] app.logger: $data";
-    fwrite($fileHandle,$data.PHP_EOL);
+    fwrite($fileHandle, $data . PHP_EOL);
     fclose($fileHandle);
 }
 function year_end()
@@ -31,4 +31,9 @@ function year_end()
         $new_financial_year->save();
         return $new_financial_year;
     }
+}
+function hasAbilityToCreateModelInCurrency($currencies_id)
+{
+    $accounts_count = auth()->user()->accounts()->where('status', 1)->whereIn('accounts.currency_id', $currencies_id)->count();
+    return $accounts_count > 0;
 }

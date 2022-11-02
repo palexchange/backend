@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DocumentDeletedEvent;
 use App\Events\DocumentStoredEvent;
+use App\Events\DocumentUpdatedEvent;
 use App\Http\Requests\StoreExchangeRequest;
 use App\Http\Requests\UpdateExchangeRequest;
 use App\Http\Resources\ExchangeResource;
@@ -30,6 +32,9 @@ class ExchangeController extends Controller
     }
     public function store(StoreExchangeRequest $request)
     {
+        if (!hasAbilityToCreateModelInCurrency([$request->validated()['currency_id']]))
+            return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
+
         $exchange = Exchange::create($request->validated());
         if ($request->translations) {
             foreach ($request->translations as $translation)
@@ -50,11 +55,12 @@ class ExchangeController extends Controller
             foreach ($request->translations as $translation)
                 $exchange->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
-        DocumentStoredEvent::dispatch($exchange);
+        DocumentUpdatedEvent::dispatch($exchange);
         return new ExchangeResource($exchange);
     }
     public function destroy(Request $request, Exchange $exchange)
     {
+        DocumentDeletedEvent::dispatch($exchange);
         $exchange->delete();
         return new ExchangeResource($exchange);
     }

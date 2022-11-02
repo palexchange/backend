@@ -22,7 +22,6 @@ class Exchange extends BaseModel implements Document
     {
         return $this->hasOne(Party::class, "id", "beneficiary_id");
     }
-
     public function currency()
     {
         return $this->belongsTo(Currency::class);
@@ -59,34 +58,43 @@ class Exchange extends BaseModel implements Document
         $exchange_profit_account_id = Account::find(3)->id;
         EntryTransaction::create([
             'entry_id' => $entry->id,
-            'account_id' => $this->currency->account_id,
+            'account_id' => $this->user_account_id, //   $this->currency->account_id
+            'currency_id' => $this->currency_id,
             'debtor' => $this->amount,
             'creditor' => 0,
+            'transaction_type' => 1,
             'ac_debtor' => $this->amount_after,
             'ac_creditor' => 0,
             'exchange_rate' => $this->exchange_rate
         ]);
 
-        // profit transactin from currency account 
+
+        // profit transactoin from currency account 
         EntryTransaction::create([
             'entry_id' => $entry->id,
-            'account_id' => $this->reference_currency->account_id,
-            'debtor' => $this->profit,
+            'account_id' => $this->user_account_id,
+            'currency_id' => $this->currency_id,
+            'debtor' => $this->profit * $this->exchange_rate,
             'creditor' => 0,
+            'transaction_type' => 1,
             'ac_debtor' => $this->profit,
             'ac_creditor' => 0,
-            'exchange_rate' => 1
+            'exchange_rate' => $this->exchange_rate
         ]);
+
         // profit transactin to currency exchange_profit_account  
         EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' => $exchange_profit_account_id,
+            'currency_id' => 1,
             'debtor' => 0,
+            'transaction_type' => 0,
             'creditor' => $this->profit,
             'ac_debtor' => 0,
             'ac_creditor' => $this->profit,
             'exchange_rate' => 1
         ]);
+
         $this->details()->each(function ($detail) use ($entry) {
             $detail->log($entry);
         });
@@ -100,7 +108,57 @@ class Exchange extends BaseModel implements Document
     }
     public function getUserAccountIdAttribute()
     {
-        $user = User::find(auth()->user()->id);
-        return $user->accounts()->where('status', 1)->where('currency_id', $this->currency()->first("id")->id)->first(['accounts.id'])->id;
+        $user = auth()->user();
+        return $user->accounts()
+            ->where('status', 1)
+            ->where('main', true)
+            ->where('accounts.currency_id', $this->currency()->first("id")->id)
+            ->first(['accounts.id'])->id;
+    }
+    public  static function exportData()
+    {
+        Exchange::all();
+    }
+    public static  $exportHeaders =
+    [
+        "id",
+        "issued_at",
+        "type",
+        "status",
+        "commission_side",
+        "received_amount",
+        "to_send_amount",
+        "exchange_rate_to_reference_currency",
+        "exchange_rate_to_delivery_currency",
+        "exchange_rate_to_office_currency",
+        "office_amount_in_office_currency",
+        "office_name",
+        "sender_name",
+        "delivery_currency",
+        "received_currency",
+        "office_currency",
+        "profit",
+    ];
+    public static   function exportheaders()
+    {
+        return [
+            __("id"),
+            __("issued_at"),
+            __("type"),
+            __("status"),
+            __("commission_side"),
+            __("received_amount"),
+            __("to_send_amount"),
+            __("exchange_rate_to_reference_currency"),
+            __("exchange_rate_to_delivery_currency"),
+            __("exchange_rate_to_office_currency"),
+            __("office_amount_in_office_currency"),
+            __("office_name"),
+            __("sender_name"),
+            __("delivery_currency"),
+            __("received_currency"),
+            __("office_currency"),
+            __("profit")
+        ];
     }
 }
