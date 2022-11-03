@@ -31,7 +31,7 @@ class ExchangeDetail extends BaseModel
     }
     public function log(Entry $entry)
     {
-        return EntryTransaction::create([
+        $t  = EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' =>  $this->user_account_id,
             'currency_id' =>  $this->currency_id,

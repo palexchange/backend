@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('exchange_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('exchange_id')->references('id')->on('exchanges');
+            $table->foreignId('exchange_id')->references('id')->on('exchanges')->onDelete('cascade');
             $table->float('amount')->default(0);
             $table->foreignId('currency_id')->references('id')->on('currencies');
             $table->float('factor')->default(1);

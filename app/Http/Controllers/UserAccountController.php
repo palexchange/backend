@@ -49,6 +49,7 @@ class UserAccountController extends Controller
 
             $old_main = UserAccount::where('currency_id', $userAccount->currency_id)
                 ->where('main', true)
+                ->where('user_id', auth()->user()->id)
                 ->where('id', '!=',  $userAccount->id)->first();
 
             if ($old_main) {

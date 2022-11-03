@@ -55,7 +55,7 @@ class TransferController extends Controller
             foreach ($request->translations as $translation)
                 $transfer->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
-        DocumentUpdatedEvent::dispatch($transfer);
+        // DocumentUpdatedEvent::dispatch($transfer);
         return new TransferResource($transfer);
     }
     public function destroy(Request $request, Transfer $transfer)

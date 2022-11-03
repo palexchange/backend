@@ -118,8 +118,6 @@ class AccountingReportGenerator extends BaseReportGenerator
         creditor,
         document_type,
         currency_name,
-      
-        balance,
         exchange_rate,
         ac_debtor,
         ac_creditor,

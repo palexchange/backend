@@ -51,7 +51,7 @@ class ReceiptController extends Controller
             foreach ($request->translations as $translation)
                 $receipt->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
-        DocumentUpdatedEvent::dispatch($receipt);
+        // DocumentUpdatedEvent::dispatch($receipt);
         return new ReceiptResource($receipt);
     }
     public function destroy(Request $request, Receipt $receipt)

@@ -20,11 +20,10 @@ class DocumentUpdatedEvent
      *
      * @return void
      */
-    public function __construct(Document $document, Document  $old_document)
+    public function __construct(Document $document)
     {
         //
         $this->document = $document;
-        $this->old_document = $old_document;
     }
 
     /**
