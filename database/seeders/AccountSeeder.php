@@ -55,6 +55,6 @@ class AccountSeeder extends Seeder
 
 
 
-        Account::create(['name' => 'حساب رأس المال', 'type_id' => 3, 'currency_id' => 1]);
+        Account::create(['name' => 'حساب رأس المال', 'type_id' => 4, 'currency_id' => 1]);
     }
 }

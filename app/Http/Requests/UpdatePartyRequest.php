@@ -24,15 +24,15 @@ class UpdatePartyRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>'nullable',
-            'id_no'=>'nullable',
-            'phone'=>'nullable',
-            'address'=>'nullable',
-            'country_id'=>'sometimes|exists:countries,id',
-            'city_id'=>'sometimes|exists:cities,id',
-            'type'=>'sometimes|in:0,1',
-            'currency_id'=>'sometimes|exists:currencies,id',
-            'account_id'=>'sometimes|exists:accounts,id',
+            'name' => 'nullable',
+            'id_no' => 'nullable',
+            'phone' => 'nullable',
+            'address' => 'nullable',
+            'country_id' => 'nullable|exists:countries,id',
+            'city_id' => 'nullable|exists:cities,id',
+            'type' => 'sometimes|in:0,1',
+            'currency_id' => 'nullable|exists:currencies,id',
+            'account_id' => 'nullable|exists:accounts,id',
         ];
     }
 }

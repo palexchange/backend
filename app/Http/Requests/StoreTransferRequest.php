@@ -49,7 +49,7 @@ class StoreTransferRequest extends FormRequest
             'received_amount' => 'required|numeric',
             'to_send_amount' => 'required|numeric',
             'received_currency_id' => 'required|exists:currencies,id',
-            'delivery_currency_id' => 'required|exists:currencies,id',
+            'delivery_currency_id' => 'sometimes|exists:currencies,id',
             'reference_currency_id' => 'required|exists:currencies,id',
             'exchange_rate_to_reference_currency' => 'required|numeric',
             'exchange_rate_to_delivery_currency' => 'required|numeric',

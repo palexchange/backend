@@ -29,6 +29,7 @@ class FileController extends Controller
     }
     public function store(StoreFileRequest $request)
     {
+
         // $file = File::create($request->validated());
         $file = $request->file('file');
         $name = $file->getClientOriginalName();
@@ -46,6 +47,7 @@ class FileController extends Controller
             'mimetype' => $mimetype,
 
         ];
+
         $file = File::create($arr);
         return new FileResource($file);
     }

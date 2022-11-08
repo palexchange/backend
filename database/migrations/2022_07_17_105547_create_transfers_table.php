@@ -33,10 +33,13 @@ return new class extends Migration
             $table->string('receiver_notes')->nullable();
             $table->foreignId('receiver_country_id')->nullable()->references('id')->on('countries');
             $table->foreignId('receiver_city_id')->nullable()->references('id')->on('cities');
+
             $table->integer('commission_side')->default(1); // 1 sender ,  2 receiver
             $table->float('transfer_commission')->default(0);
             $table->boolean('is_commission_percentage')->default(0);
+            
             $table->float('received_amount');
+            
             $table->float('final_received_amount');
             $table->float('a_received_amount')->default(0);
             $table->float('to_send_amount');
@@ -44,7 +47,7 @@ return new class extends Migration
             $table->foreignId('delivery_currency_id')->nullable()->references('id')->on('currencies');
             $table->foreignId('reference_currency_id')->nullable()->references('id')->on('currencies');
             $table->float('exchange_rate_to_reference_currency');
-            $table->float('exchange_rate_to_delivery_currency');
+            $table->float('exchange_rate_to_delivery_currency')->nullable();
             $table->float('other_amounts_on_receiver')->default(0);
             $table->float('other_amounts_on_sender')->default(0);
             $table->foreignId('office_id')->nullable()->references('id')->on('parties');
