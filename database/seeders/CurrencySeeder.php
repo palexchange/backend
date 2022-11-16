@@ -16,7 +16,7 @@ class CurrencySeeder extends Seeder
      */
     public function run()
     {
-        $currencies = ['دولار', 'شيكل', 'دينار', 'يورو', 'درهم', 'ريال سعودي', 'جنيه'];
+        $currencies = ['دولار', 'شيكل', 'دينار', 'يورو', 'درهم', 'ر.س', 'جنيه'];
         // $currencies= ['USD','JOD','EGP'];
         foreach ($currencies as $currency) {
             // $c_account = Account::create([
@@ -25,7 +25,6 @@ class CurrencySeeder extends Seeder
             // ]);
             $c = Currency::create([
                 'name' => $currency,
-
             ]);
         }
     }

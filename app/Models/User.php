@@ -59,7 +59,7 @@ class User extends Authenticatable
                         ->leftJoin('currencies', 'currencies.id', 'accounts.currency_id')
                         ->leftJoin('entry_transactions', 'entry_transactions.account_id', 'accounts.id')
                         ->where('user_accounts.status', 1)
-                        ->where('users.role', '!=', 1)
+                        // ->where('users.role', '!=', 1)
                         ->where('accounts.currency_id', $request->currency_id)
                         ->where('accounts.type_id', $request->type_id)
                         ->select('users.name AS user_name', 'accounts.name AS account_name', 'accounts.id AS on_account_id', 'currencies.name AS currency_name', 'accounts.actual_balance', DB::raw('sum(entry_transactions.debtor -  entry_transactions.creditor)  as balance'))

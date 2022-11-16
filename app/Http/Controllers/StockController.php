@@ -6,6 +6,7 @@ use App\Http\Requests\StoreStockRequest;
 use App\Http\Requests\UpdateStockRequest;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
+use App\Models\StockTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -31,7 +32,8 @@ class StockController extends Controller
     {
         $stocks = $request->validated();
         foreach ($stocks as $stock) {
-            Stock::updateOrCreate(['ref_currency_id' => $stock['ref_currency_id'], 'currency_id' => $stock['currency_id']], $stock);
+            $stock = Stock::updateOrCreate(['ref_currency_id' => $stock['ref_currency_id'], 'currency_id' => $stock['currency_id']], $stock);
+            StockTransaction::create(['stock_id' => $stock->id, 'selling_price' => $stock->final_selling_price, 'purchasing_price' => $stock->final_purchasing_price, 'time' => $stock->closed_at ?? $stock->created_at]);
         }
         if ($request->translations) {
             foreach ($request->translations as $translation)

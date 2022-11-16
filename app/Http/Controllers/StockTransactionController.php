@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\StoreStockTransactionRequest;
 use App\Http\Requests\UpdateStockTransactionRequest;
 use App\Http\Resources\StockTransactionResource;
@@ -13,12 +14,14 @@ use Illuminate\Support\Facades\Validator;
 class StockTransactionController extends Controller
 {
 
-    public static function routeName(){
+    public static function routeName()
+    {
         return Str::snake("StockTransaction");
     }
-    public function __construct(Request $request){
+    public function __construct(Request $request)
+    {
         parent::__construct($request);
-        $this->authorizeResource(StockTransaction::class,Str::snake("StockTransaction"));
+        $this->authorizeResource(StockTransaction::class, Str::snake("StockTransaction"));
     }
     public function index(Request $request)
     {
@@ -33,20 +36,20 @@ class StockTransactionController extends Controller
         }
         return new StockTransactionResource($stockTransaction);
     }
-    public function show(Request $request,StockTransaction $stockTransaction)
+    public function show(Request $request, StockTransaction $stockTransaction)
     {
         return new StockTransactionResource($stockTransaction);
     }
     public function update(UpdateStockTransactionRequest $request, StockTransaction $stockTransaction)
     {
         $stockTransaction->update($request->validated());
-          if ($request->translations) {
+        if ($request->translations) {
             foreach ($request->translations as $translation)
                 $stockTransaction->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
         return new StockTransactionResource($stockTransaction);
     }
-    public function destroy(Request $request,StockTransaction $stockTransaction)
+    public function destroy(Request $request, StockTransaction $stockTransaction)
     {
         $stockTransaction->delete();
         return new StockTransactionResource($stockTransaction);

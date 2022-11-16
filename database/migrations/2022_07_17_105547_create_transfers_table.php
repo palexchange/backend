@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->dateTime('issued_at')->default(DB::raw('NOW()'));
-            $table->integer('type')->default(0);
+            $table->integer('type')->default(0); // 0 OUT COMING , 1 INCOMING
             $table->integer('status')->default(0); // 
             $table->integer('number')->nullable(); // 
             $table->integer('delivering_type')->default(1); // 1=> hand / 2=> money gram / 3=> on account 
@@ -37,9 +37,9 @@ return new class extends Migration
             $table->integer('commission_side')->default(1); // 1 sender ,  2 receiver
             $table->float('transfer_commission')->default(0);
             $table->boolean('is_commission_percentage')->default(0);
-            
+
             $table->float('received_amount');
-            
+
             $table->float('final_received_amount');
             $table->float('a_received_amount')->default(0);
             $table->float('to_send_amount');

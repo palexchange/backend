@@ -20,5 +20,7 @@ class PartySeeder extends Seeder
     {
         $account = Account::create(['name' => 'زبون عام', 'type_id' => 1]);
         Party::create(['name' => 'زبون عام', 'account_id' => $account->id]);
+        $account = Account::create(['name' => 'موني غرام', 'type_id' => 2]);
+        Party::create(['name' => 'موني غرام', 'account_id' => $account->id]);
     }
 }

@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class StockTransaction extends BaseModel
 {
     use HasFactory;
+    public  $appends  = ['mid'];
+    public  $with  = ['stock'];
+    public function scopeSort($query, $request)
+    {
+    }
+    public function scopeSearch($query, $request)
+    {
+        $query->where('purchasing_price', '>', 0)->orderBy('time',  'DESC');
+    }
+    public function getMidAttribute()
+    {
+        return ($this->purchasing_price + $this->selling_price) / 2;
+    }
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class);
+    }
 }
