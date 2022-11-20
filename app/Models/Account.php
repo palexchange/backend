@@ -47,5 +47,8 @@ class Account extends BaseModel
         $query->when($request->currency_id, function ($query, $currency_id) {
             $query->where("currency_id", $currency_id);
         });
+        $query->when($request->is_transaction, function ($query, $is_transaction) {
+            $query->where("is_transaction", $is_transaction);
+        });
     }
 }

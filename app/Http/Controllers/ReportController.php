@@ -15,7 +15,7 @@ class ReportController extends Controller
      */
     public function __construct(Request $request)
     {
-        parent::__construct($request);        
+        parent::__construct($request);
     }
     public static function routeName()
     {

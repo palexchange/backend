@@ -15,7 +15,7 @@ class StockTransaction extends BaseModel
     }
     public function scopeSearch($query, $request)
     {
-        $query->where('purchasing_price', '>', 0)->orderBy('time',  'DESC');
+        $query->where('closing', true)->orderBy('time',  'DESC');
     }
     public function getMidAttribute()
     {

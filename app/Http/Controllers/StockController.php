@@ -26,6 +26,7 @@ class StockController extends Controller
     }
     public function index(Request $request)
     {
+        // $this->pagination = Currency::count();
         return StockResource::collection(Stock::search($request)->sort($request)->paginate($this->pagination));
     }
     public function store(StoreStockRequest $request)
@@ -33,7 +34,12 @@ class StockController extends Controller
         $stocks = $request->validated();
         foreach ($stocks as $stock) {
             $stock = Stock::updateOrCreate(['ref_currency_id' => $stock['ref_currency_id'], 'currency_id' => $stock['currency_id']], $stock);
-            StockTransaction::create(['stock_id' => $stock->id, 'selling_price' => $stock->final_selling_price, 'purchasing_price' => $stock->final_purchasing_price, 'time' => $stock->closed_at ?? $stock->created_at]);
+            $stock_trans = ['stock_id' => $stock->id, 'selling_price' => $stock->final_selling_price, 'purchasing_price' => $stock->final_purchasing_price];
+            if ($stock->closed_at) {
+                $stock_trans += ['time' => $stock->closed_at];
+                $stock_trans += ['closing' => true];
+            }
+            StockTransaction::create($stock_trans);
         }
         if ($request->translations) {
             foreach ($request->translations as $translation)

@@ -16,7 +16,7 @@ class AccountSeeder extends Seeder
     public function run()
     {
 
-        Account::create(['name' => 'حساب الخزينة المركزي', 'type_id' => 4, 'currency_id' => 1]); // 1
+        Account::create(['name' => 'حساب الخزينة المركزي', 'type_id' => 4, 'currency_id' => 1, 'is_transaction' => false]); // 1
 
         Account::create(['name' => 'ربحية الحوالات', 'type_id' => 5, 'currency_id' => 1]); // 2
         Account::create(['name' => 'ربحية الصرافة', 'type_id' => 5, 'currency_id' => 1]); // 3
@@ -55,6 +55,8 @@ class AccountSeeder extends Seeder
 
 
 
-        Account::create(['name' => 'حساب رأس المال', 'type_id' => 4, 'currency_id' => 1]);
+        Account::create(['name' => 'حساب رأس المال', 'type_id' => 4, 'currency_id' => 1, 'is_transaction' => false]);
+        Account::create(['name' => 'ريحية العجز و الزيادة', 'type_id' => 5, 'currency_id' => 1]); // 2
+        // Account::create(['name' => 'ربحية الصرافة', 'type_id' => 5, 'currency_id' => 1]); // 3
     }
 }
