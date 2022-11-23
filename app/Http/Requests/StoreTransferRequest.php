@@ -31,6 +31,7 @@ class StoreTransferRequest extends FormRequest
             'number' => 'sometimes',
             'final_received_amount' => 'required',
             'delivering_type' => 'required|integer',
+
             'sender_party_id' => 'nullable|exists:parties,id',
             'sender_id_no' => 'nullable',
             'sender_phone' => 'nullable',
