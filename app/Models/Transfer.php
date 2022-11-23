@@ -151,7 +151,7 @@ class Transfer extends BaseModel implements Document
         }
 
         $transactions[] = [
-            'account_id' => $this->office->account_id, // $this->user_account_id
+            'account_id' => $this->office->account_id, // $this->user_account_id moew moew moew moew moew
             'amount' => $this->office_amount_in_office_currency ?? $this->office_amount,
             'ac_amount' => ($this->office_amount_in_office_currency ?? $this->office_amount) * $this->exchange_rate_to_office_currency,
             'transaction_type' => 1,
