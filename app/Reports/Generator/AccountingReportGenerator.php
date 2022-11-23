@@ -108,8 +108,8 @@ class AccountingReportGenerator extends BaseReportGenerator
         $from = request('from');
         $tto = request('to');
         $currency_id = request('currency_id') > 0 ? request('currency_id') : 0;
-        $to = Carbon::parse($tto)->addDay()->toDateString();
-        $last_before = Carbon::parse($from)->subDay()->toDateString();
+        $to = Carbon::parse($tto)->toDateString();
+        $last_before = Carbon::parse($from)->toDateString();
         $sql = "select
         case when t.document_id is null then null else r_id end as r_id,
         case when t.document_id is null then '$last_before' else date end as date,
@@ -124,7 +124,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         acc_balance,
         statement
 
-        from account_statement($account,'$from','$to',false , '$currency_id')t order by t.r_id ";
+        from account_statement($account,'$from','$tto',false , '$currency_id')t order by t.r_id ";
         $entry_accounts = DB::select($sql);
         // dd($entry_accounts);
         // dd($entry_accounts);

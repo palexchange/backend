@@ -89,9 +89,11 @@ class Transfer extends BaseModel implements Document
 
         $transactions[] = [
             'account_id' => $this->office->account_id,
-            'amount' => $this->office_amount,
+            'amount' => $this->office_amount_in_office_currency,
+            'ac_amount' => $this->office_amount,
             'transaction_type' => 1,
-            'exchange_rate' => 1,
+            'currency_id' => $this->office_currency_id,
+            'exchange_rate' => 1 / Stock::find($this->office_currency_id)->start_selling_price,
             'type' => 1,
         ];
         $transactions[] = [
@@ -125,8 +127,8 @@ class Transfer extends BaseModel implements Document
                 'account_id' => $transaction['account_id'],
                 'exchange_rate' =>  $transaction['exchange_rate'],
                 'currency_id' =>  $transaction['currency_id'] ?? 1, //,$this->received_currency_id,
-                'ac_debtor' => !$transaction['type'] ? $transaction['amount'] : 0,
-                'ac_creditor' => $transaction['type'] ? $transaction['amount'] : 0,
+                'ac_debtor' => !$transaction['type'] ? ($transaction['ac_amount'] ?? $transaction['amount']) : 0,
+                'ac_creditor' => $transaction['type'] ? ($transaction['ac_amount'] ?? $transaction['amount']) : 0,
                 'transaction_type' => $transaction['transaction_type'],
             ]);
         }
@@ -150,8 +152,8 @@ class Transfer extends BaseModel implements Document
 
         $transactions[] = [
             'account_id' => $this->office->account_id, // $this->user_account_id
-            'amount' => $this->office_amount,
-            'ac_amount' => $this->office_amount * $this->exchange_rate_to_office_currency,
+            'amount' => $this->office_amount_in_office_currency ?? $this->office_amount,
+            'ac_amount' => ($this->office_amount_in_office_currency ?? $this->office_amount) * $this->exchange_rate_to_office_currency,
             'transaction_type' => 1,
             'currency_id' =>  $this->office_currency_id,
             'exchange_rate' => $this->exchange_rate_to_office_currency,
@@ -319,7 +321,6 @@ class Transfer extends BaseModel implements Document
     public function getProfitAttribute()
     {
         if ($this->type == 0) {
-            # code...
             if ($this->delivering_type == 2) {
                 return  number_format($this->transfer_commission, 3, '.', "");
             }
