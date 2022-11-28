@@ -25,6 +25,7 @@ return new class extends Migration
             $table->float('final_selling_price', 12, 5)->default(0);
             $table->float('start_purchasing_price', 12, 5)->default(0);
             $table->float('final_purchasing_price', 12, 5)->default(0);
+            $table->boolean('preferd')->default(false);
             $table->timestamps();
         });
     }

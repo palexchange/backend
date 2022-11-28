@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('account_id')->nullable()->references('id')->on('accounts');
             $table->timestamps();
+            $table->float('weight')->default(0);
         });
     }
 
