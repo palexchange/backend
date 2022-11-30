@@ -68,11 +68,11 @@ class Exchange extends BaseModel implements Document
             'exchange_rate' => $this->exchange_rate
         ]);
 
-
+        $profit_and_lose_account_id = Setting::find('losses_and_profits')?->value;
         // profit transactoin from currency account 
         EntryTransaction::create([
             'entry_id' => $entry->id,
-            'account_id' => $this->user_account_id,
+            'account_id' => $profit_and_lose_account_id ?? 3,
             'currency_id' => $this->currency_id,
             'debtor' => $this->profit * $this->exchange_rate,
             'creditor' => 0,
@@ -101,6 +101,34 @@ class Exchange extends BaseModel implements Document
     }
     public function dispose()
     {
+        $old_entry = $this->entry;
+        try {
+            DB::beginTransaction();
+            $entry = $this->entry()->create([
+                'date' => Carbon::now()->toDateString(),
+                'status' => 1,
+                'statement' => $old_entry->statement,
+                'ref_currency_id' => $this->reference_currency_id,
+                'inverse_entry_id' =>  $old_entry->id
+            ]);
+            foreach ($old_entry->transactions as $transaction) {
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => $transaction->creditor,
+                    'creditor' => $transaction->debtor,
+                    'account_id' => $transaction->account_id,
+                    'exchange_rate' => $transaction->exchange_rate,
+                    'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
+                    'ac_debtor' => $transaction->ac_creditor,
+                    'ac_creditor' => $transaction->ac_debtor,
+                    'transaction_type' => !$transaction->transaction_type,
+                ]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
     }
     public function entry()
     {

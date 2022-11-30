@@ -60,8 +60,10 @@ class TransferController extends Controller
     }
     public function destroy(Request $request, Transfer $transfer)
     {
+        $transfer->status = 255;
         DocumentDeletedEvent::dispatch($transfer);
-        $transfer->delete();
+        $transfer->save();
+        // $transfer->delete();
         return new TransferResource($transfer);
     }
 }

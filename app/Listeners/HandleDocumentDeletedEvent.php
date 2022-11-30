@@ -27,8 +27,6 @@ class HandleDocumentDeletedEvent
     public function handle(DocumentDeletedEvent $event)
     {
         $document = $event->document;
-        if ($document->status == 1) {
-            $document->dispose();
-        }
+        $document->dispose();
     }
 }

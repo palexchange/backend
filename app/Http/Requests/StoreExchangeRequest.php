@@ -29,7 +29,7 @@ class StoreExchangeRequest extends FormRequest
             'amount' => 'required|numeric',
             'profit' => 'required|numeric',
             'currency_id' => 'required|exists:currencies,id',
-            'beneficiary_id' => 'required|exists:parties,id',
+            'beneficiary_id' => 'nullable|exists:parties,id',
             'number' => 'nullable|numeric',
             'reference_currency_id' => 'required|exists:currencies,id',
             'status' => 'nullable|numeric',

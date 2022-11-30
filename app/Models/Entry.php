@@ -16,6 +16,10 @@ class Entry extends BaseModel
     {
         return $this->belongsTo(Currency::class);
     }
+    public function transactions()
+    {
+        return $this->hasMany(EntryTransaction::class);
+    }
     public function scopeSort($query, $request)
     {
     }

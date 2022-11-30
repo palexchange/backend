@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('date');
             $table->float('amount')->default(0);
             $table->foreignId('currency_id')->references('id')->on('currencies');
-            $table->foreignId('beneficiary_id')->references('id')->on('parties');
+            $table->foreignId('beneficiary_id')->nullable()->references('id')->on('parties');
             $table->integer('number')->nullable();
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('entry_id')->nullable()->references('id')->on('entries');

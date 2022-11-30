@@ -20,5 +20,6 @@ class AccountTypeSeeder extends Seeder
         AccountType::create(['name' => 'صندوق']);
         AccountType::create(['name' => 'خزينة']);
         AccountType::create(['name' => 'ايرادات']);
+        AccountType::create(['name' => 'وسيط']);
     }
 }

@@ -57,6 +57,7 @@ class AccountSeeder extends Seeder
 
         Account::create(['name' => 'حساب رأس المال', 'type_id' => 4, 'currency_id' => 1, 'is_transaction' => false]);
         Account::create(['name' => 'ريحية العجز و الزيادة', 'type_id' => 5, 'currency_id' => 1]); // 2
+        Account::create(['name' => 'أرباح وخسائر', 'type_id' => 5, 'currency_id' => 1]); // 2
         // Account::create(['name' => 'ربحية الصرافة', 'type_id' => 5, 'currency_id' => 1]); // 3
     }
 }
