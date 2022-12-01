@@ -115,12 +115,33 @@ class User extends Authenticatable
     // }
     public function getDailyExchangeTransactionsAttribute()
     {
-        $count = Exchange::whereDate('created_at', Carbon::today())->count();
+        $count = 0;
+        if ($this->role != 1) {
+            $count = Entry::where('user_id', $this->id)
+                ->where('document_type', 2)
+                ->whereDate('created_at', Carbon::today())->count();
+        } else {
+            $count = Entry::where('document_type', 2)
+                ->whereDate('created_at', Carbon::today())->count();
+        }
         return  $count;
     }
     public function getDailyExchangeProfitAttribute()
     {
-        $sum = EntryTransaction::where('account_id', 3)->whereDate('created_at', Carbon::today())->sum('creditor');
+
+        if ($this->role != 1) {
+            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+                ->where('entries.user_id', $this->id)
+                ->where('account_id', 3)
+                ->whereDate('entry_transactions.created_at', Carbon::today())
+                ->sum(DB::raw('creditor -debtor '));
+        } else {
+            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+                ->where('account_id', 3)
+                ->whereDate('entry_transactions.created_at', Carbon::today())
+                ->sum(DB::raw('creditor -debtor '));
+        }
+
         return  $sum;
     }
 }

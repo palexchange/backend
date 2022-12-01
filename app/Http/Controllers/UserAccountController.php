@@ -45,7 +45,7 @@ class UserAccountController extends Controller
     {
 
         $validation = $request->validated();
-        if ($validation['main']) {
+        if (isset($validation['main'])) {
 
             $old_main = UserAccount::where('currency_id', $userAccount->currency_id)
                 ->where('main', true)

@@ -13,7 +13,7 @@ class Transfer extends BaseModel implements Document
     use HasFactory;
     public static $export_options = ['type' => [0 => "حوالة صادرة", 1 => "حوالة واردة"], 'status' => [0 => "مسودة", 1 => "معتمدة"], 'commission_side' => [1 => 'المرسل', 2 => 'المستقبل']];
     protected $appends = ['profit'];
-    protected $with = ['sender_party', 'image', 'office'];
+    protected $with = ['sender_party', 'image', 'office', 'user'];
     protected $casts = [
         'transfer_commission' => Rounded::class,
         'received_amount' => Rounded::class,
@@ -30,6 +30,7 @@ class Transfer extends BaseModel implements Document
         try {
             DB::beginTransaction();
             $entry = $this->entry()->create([
+                'user_id' => request('user_id'),
                 'date' => $this->issued_at ?? Carbon::now(),
                 'status' => 1,
                 'statement' => $this->getTypeStatement(),
@@ -67,6 +68,7 @@ class Transfer extends BaseModel implements Document
         try {
             DB::beginTransaction();
             $entry = $this->entry()->create([
+                'user_id' => request('user_id'),
                 'date' => Carbon::now()->toDateString(),
                 'status' => 1,
                 'statement' => $old_entry->statement,
@@ -361,6 +363,10 @@ class Transfer extends BaseModel implements Document
     {
         return $this->belongsTo(Party::class, 'office_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function getProfitAttribute()
     {
         if ($this->type == 0) {
@@ -480,6 +486,11 @@ class Transfer extends BaseModel implements Document
     {
         $query->when($request->delivering_type, function ($query, $delivering_type) {
             $query->whereIn('delivering_type', $delivering_type);
+        });
+        $query->when($request->user_id, function ($q, $user_id) {
+            if (auth()->user()['role'] != 1) {
+                $q->where('user_id',   $user_id);
+            }
         });
     }
     public function get_user_account_id($currency_id)

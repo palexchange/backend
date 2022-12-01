@@ -64,6 +64,10 @@ class AccountingReportGenerator extends BaseReportGenerator
             ],
 
             [
+                'text' => __('user_name'),
+                'value' => 'user_name'
+            ],
+            [
                 'text' => __('currency_name'),
                 'value' => 'currency_name'
             ],
@@ -107,8 +111,16 @@ class AccountingReportGenerator extends BaseReportGenerator
         //     $to = $request->to;
         $from = request('from');
         $tto = request('to');
+        $tto = Carbon::parse($tto)->addDay()->toDateString();
+        $from = Carbon::parse($from)->subDay()->toDateString();
+        $user_id = request('user_id');
+        if (auth()->user()['role'] == 1) {
+            $user_id =  request('for_user_id') ?? 0;
+        }
+        // dd($user_id);
+        // // $user_id = 0;
         $currency_id = request('currency_id') > 0 ? request('currency_id') : 0;
-        $to = Carbon::parse($tto)->toDateString();
+
         $last_before = Carbon::parse($from)->toDateString();
         $sql = "select
         case when t.document_id is null then null else r_id end as r_id,
@@ -117,6 +129,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         debtor,
         creditor,
         document_type,
+        user_name,
         currency_name,
         exchange_rate,
         ac_debtor,
@@ -124,7 +137,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         acc_balance,
         statement
 
-        from account_statement($account,'$from','$tto',false , '$currency_id')t order by t.r_id ";
+        from account_statement($account,'$from','$tto',false , '$currency_id' , '$user_id')t order by t.r_id ";
         $entry_accounts = DB::select($sql);
         // dd($entry_accounts);
         // dd($entry_accounts);
@@ -135,6 +148,7 @@ class AccountingReportGenerator extends BaseReportGenerator
             __('public.debtor'),
             __('public.creditor'),
             __('type_name'),
+            __('user_name'),
             __('currency_name'),
 
             __('exchange rate'),

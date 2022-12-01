@@ -51,7 +51,8 @@ class Receipt extends BaseModel implements Document
     public function log_fund_adjustment()
     {
         $entry =  $this->entry()->create([
-            'date' => Carbon::now(),
+            'user_id' => request('user_id'),
+            'date' => Carbon::now()->toDateString(),
             'status' => 1,
             'document_sub_type' => 3,
             'statement' => 'fund_adjustment',
@@ -82,7 +83,8 @@ class Receipt extends BaseModel implements Document
     public function log_receipt()
     {
         $entry =  $this->entry()->create([
-            'date' => Carbon::now(),
+            'user_id' => request('user_id'),
+            'date' => Carbon::now()->toDateString(),
             'status' => 1,
             'document_sub_type' => $this->type == 1 ? 4 : 5,
             'statement' => $this->statement,

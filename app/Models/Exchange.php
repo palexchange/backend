@@ -11,17 +11,18 @@ use Illuminate\Support\Facades\DB;
 class Exchange extends BaseModel implements Document
 {
 
-    protected $appends = ["party_name", "currency_name"];
+    protected $appends = ["currency_name"];
+    protected $with = ["user"];
     protected $casts = [
         'amount' => Rounded::class,
 
     ];
     use HasFactory;
 
-    public function party()
-    {
-        return $this->hasOne(Party::class, "id", "beneficiary_id");
-    }
+    // public function party()
+    // {
+    //     return $this->hasOne(Party::class, "id", "beneficiary_id");
+    // }
     public function currency()
     {
         return $this->belongsTo(Currency::class);
@@ -31,10 +32,10 @@ class Exchange extends BaseModel implements Document
         return $this->belongsTo(Currency::class);
     }
 
-    public function getPartyNameAttribute()
-    {
-        return $this->party()->first("name")->name;
-    }
+    // public function getPartyNameAttribute()
+    // {
+    //     return $this->party()->first("name")->name;
+    // }
 
     public function getCurrencyNameAttribute()
     {
@@ -47,6 +48,7 @@ class Exchange extends BaseModel implements Document
     public function confirm()
     {
         $entry = $this->entry()->create([
+            'user_id' => request('user_id'),
             'date' => $this->date,
             'status' => 1,
             'statement' => "حركة صرافة",
@@ -105,6 +107,7 @@ class Exchange extends BaseModel implements Document
         try {
             DB::beginTransaction();
             $entry = $this->entry()->create([
+                'user_id' => request('user_id'),
                 'date' => Carbon::now()->toDateString(),
                 'status' => 1,
                 'statement' => $old_entry->statement,
@@ -133,6 +136,10 @@ class Exchange extends BaseModel implements Document
     public function entry()
     {
         return $this->morphOne(Entry::class, 'document');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
     public function getUserAccountIdAttribute()
     {
@@ -188,5 +195,16 @@ class Exchange extends BaseModel implements Document
             __("office_currency"),
             __("profit")
         ];
+    }
+    public function scopeSort($query, $request)
+    {
+    }
+    public function scopeSearch($query, $request)
+    {
+        $query->when($request->user_id, function ($q, $user_id) {
+            if (auth()->user()['role'] != 1) {
+                $q->where('user_id',   $user_id);
+            }
+        });
     }
 }

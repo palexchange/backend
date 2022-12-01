@@ -19,12 +19,13 @@ return new class extends Migration
             $table->bigInteger('number')->default(0);
             $table->string('statement')->nullable();
             $table->integer('status')->default(0);
-            $table->integer('document_type')->nullable(); 
-            $table->integer('document_sub_type')->nullable();// 1=>transfer , 2 => exchange ,3 => fund_adjusment , 4=>inputs , 5 =,outputs
+            $table->integer('document_type')->nullable();
+            $table->integer('document_sub_type')->nullable(); // 1=>transfer , 2 => exchange ,3 => fund_adjusment , 4=>inputs , 5 =,outputs
             $table->unsignedBigInteger('document_id')->nullable();
             $table->bigInteger('document_number')->nullable();
             $table->foreignId('ref_currency_id')->nullable()->references('id')->on('currencies');
             $table->foreignId('inverse_entry_id')->nullable()->references('id')->on('entries');
+            $table->foreignId('user_id')->nullable()->references('id')->on('users');
             $table->timestamps();
         });
     }

@@ -46,7 +46,7 @@ class PermissionSeeder extends Seeder
         $role1 = Role::create(['guard_name' => 'api', 'name' => 'super_admin']);
         $role2 = Role::create(['guard_name' => 'api', 'name' => 'admin']);
         $role3 = Role::create(['guard_name' => 'api', 'name' => 'user']);
-        $role1->syncPermissions($permissions);
+        $role2->syncPermissions($permissions);
         $role3->syncPermissions([
             'create_country', 'update_country', 'delete_country', 'create_city', 'update_city', 'delete_city',
 

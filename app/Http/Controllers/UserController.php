@@ -33,6 +33,9 @@ class UserController extends Controller
             foreach ($request->translations as $translation)
                 $user->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
+        $user->assignRole('user');
+        // $role = Role::where(['name' => 'user']);
+        // $user->assignRole($role);
         return new UserResource($user);
     }
     public function show(Request $request, User $user)
