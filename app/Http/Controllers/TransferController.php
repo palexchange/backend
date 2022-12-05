@@ -32,7 +32,7 @@ class TransferController extends Controller
     }
     public function store(StoreTransferRequest $request)
     {
-        if (!hasAbilityToCreateModelInCurrency([$request->validated()['reference_currency_id']]))
+        if (!hasAbilityToCreateModelInCurrency($request->validated()['reference_currency_id']))
             return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
 
 

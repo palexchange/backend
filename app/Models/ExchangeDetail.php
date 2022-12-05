@@ -29,6 +29,7 @@ class ExchangeDetail extends BaseModel
     {
         return $this->belongsTo(Currency::class);
     }
+
     public function log(Entry $entry)
     {
         $t  = EntryTransaction::create([

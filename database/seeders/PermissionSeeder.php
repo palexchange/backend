@@ -47,10 +47,7 @@ class PermissionSeeder extends Seeder
         $role2 = Role::create(['guard_name' => 'api', 'name' => 'admin']);
         $role3 = Role::create(['guard_name' => 'api', 'name' => 'user']);
         $role2->syncPermissions($permissions);
-        $role3->syncPermissions([
-            'create_country', 'update_country', 'delete_country', 'create_city', 'update_city', 'delete_city',
-
-        ]);
+        $role3->syncPermissions($permissions);
 
         $user = User::create([
             'name' => 'super admin',
@@ -60,7 +57,11 @@ class PermissionSeeder extends Seeder
             'role' => 1,
         ]);
         $user->assignRole($role1);
-        $user2 = User::create(['email' => 'test@test.com', 'password' => 'a123', 'name' => 'test', 'role' => 2]);
+        $user2 = User::create(['email' => 'k@k.com', 'password' => 123456, 'name' => 'test', 'role' => 2]);
+        $user3 = User::create(['email' => 'ah@ah.com', 'password' => 123456, 'name' => 'test', 'role' => 2]);
+        $user4 = User::create(['email' => 'm@m.com', 'password' => 123456, 'name' => 'test', 'role' => 2]);
         $user2->assignRole($role3);
+        $user3->assignRole($role3);
+        $user4->assignRole($role3);
     }
 }

@@ -45,6 +45,10 @@ class Exchange extends BaseModel implements Document
     {
         return $this->hasMany(ExchangeDetail::class);
     }
+    public function getDetailsAfterAmountAttribute()
+    {
+        return $this->details()->sum('amount_after');
+    }
     public function confirm()
     {
         $entry = $this->entry()->create([
@@ -54,9 +58,7 @@ class Exchange extends BaseModel implements Document
             'statement' => "حركة صرافة",
             'ref_currency_id' => $this->reference_currency_id
         ]);
-        // $entry->document()->associate($this)->save();
-        // $this->entry()->associate($entry);
-        // $this->logAmount()->handleCommision();
+
         $exchange_profit_account_id = Account::find(3)->id;
         EntryTransaction::create([
             'entry_id' => $entry->id,
@@ -70,19 +72,19 @@ class Exchange extends BaseModel implements Document
             'exchange_rate' => $this->exchange_rate
         ]);
 
-        $profit_and_lose_account_id = Setting::find('losses_and_profits')?->value;
+        // $profit_and_lose_account_id = Setting::find('losses_and_profits')?->value;
         // profit transactoin from currency account 
-        EntryTransaction::create([
-            'entry_id' => $entry->id,
-            'account_id' => $profit_and_lose_account_id ?? 3,
-            'currency_id' => $this->currency_id,
-            'debtor' => $this->profit * $this->exchange_rate,
-            'creditor' => 0,
-            'transaction_type' => 1,
-            'ac_debtor' => $this->profit,
-            'ac_creditor' => 0,
-            'exchange_rate' => $this->exchange_rate
-        ]);
+        // EntryTransaction::create([
+        //     'entry_id' => $entry->id,
+        //     'account_id' => $profit_and_lose_account_id ?? 3,
+        //     'currency_id' => 1,
+        //     'debtor' => $this->profit - (($this->amount - $this->details_after_amount) * $this->exchange_rate),
+        //     'creditor' => 0,
+        //     'transaction_type' => 1,
+        //     'ac_debtor' => $this->profit - (($this->amount - $this->details_after_amount) * $this->exchange_rate),
+        //     'ac_creditor' => 0,
+        //     'exchange_rate' => 1
+        // ]);
 
         // profit transactin to currency exchange_profit_account  
         EntryTransaction::create([

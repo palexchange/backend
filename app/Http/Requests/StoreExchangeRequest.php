@@ -36,6 +36,13 @@ class StoreExchangeRequest extends FormRequest
             'exchange_rate' => 'nullable|numeric',
             'user_id' => 'required|exists:users,id',
             'amount_after' => 'nullable|numeric',
+
+
+            'items.*.amount' => 'required|numeric',
+            'items.*.currency_id' => 'required|exists:currencies,id',
+            'items.*.factor' => 'sometimes|numeric',
+            'items.*.amount_after' => 'sometimes|numeric'
+
         ];
     }
 }

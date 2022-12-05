@@ -9,7 +9,9 @@ use App\Http\Requests\StoreExchangeRequest;
 use App\Http\Requests\UpdateExchangeRequest;
 use App\Http\Resources\ExchangeResource;
 use App\Models\Exchange;
+use App\Models\ExchangeDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Validator;
@@ -32,16 +34,29 @@ class ExchangeController extends Controller
     }
     public function store(StoreExchangeRequest $request)
     {
-        if (!hasAbilityToCreateModelInCurrency([$request->validated()['currency_id']]))
-            return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
+        $validated = $request->validated();
+        $items = $validated['items'];
+        unset($validated['items']);
 
-        $exchange = Exchange::create($request->validated());
+        if (!hasAbilityToCreateModelInCurrency($validated['currency_id']))
+            return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
+        foreach ($items as $item) {
+            if (!hasAbilityToCreateModelInCurrency($item['currency_id']))
+                return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
+        }
+        $exchange = Exchange::create($validated);
+        foreach ($items as $item) {
+            $exchange->details()->save(
+                ExchangeDetail::create($item + ['exchange_id' => $exchange->id])
+            );
+        }
+        DocumentStoredEvent::dispatch($exchange);
         if ($request->translations) {
             foreach ($request->translations as $translation)
                 $exchange->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
         // return $exchange;
-        DocumentStoredEvent::dispatch($exchange);
+
         return new ExchangeResource($exchange);
     }
     public function show(Request $request, Exchange $exchange)
@@ -55,7 +70,6 @@ class ExchangeController extends Controller
             foreach ($request->translations as $translation)
                 $exchange->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
-        DocumentStoredEvent::dispatch($exchange);
         return new ExchangeResource($exchange);
     }
     public function destroy(Request $request, Exchange $exchange)

@@ -32,8 +32,10 @@ function year_end()
         return $new_financial_year;
     }
 }
-function hasAbilityToCreateModelInCurrency($currencies_id)
+function hasAbilityToCreateModelInCurrency($currency_id)
 {
-    $accounts_count = auth()->user()->accounts()->where('status', 1)->whereIn('accounts.currency_id', $currencies_id)->count();
-    return $accounts_count > 0;
+
+    return in_array($currency_id, array_column(auth()->user()->main_active_accounts, 'currency_id'));
+    // $accounts_count = auth()->user()->accounts()->where('status', 1)->whereIn('accounts.currency_id', $currency_id)->count();
+    // return $accounts_count > 0;
 }

@@ -20,7 +20,7 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit'];
+    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'exchnages_profit', 'transfers_profit'];
     /**
      * The attributes that are mass assignable.
      *
@@ -59,7 +59,7 @@ class User extends Authenticatable
                         ->leftJoin('currencies', 'currencies.id', 'accounts.currency_id')
                         ->leftJoin('entry_transactions', 'entry_transactions.account_id', 'accounts.id')
                         ->where('user_accounts.status', 1)
-                        // ->where('users.role', '!=', 1)
+                        ->where('users.id', '!=', auth()->user()->id)
                         ->where('accounts.currency_id', $request->currency_id)
                         ->where('accounts.type_id', $request->type_id)
                         ->select('users.name AS user_name', 'accounts.name AS account_name', 'accounts.id AS on_account_id', 'currencies.name AS currency_name', 'accounts.actual_balance', DB::raw('sum(entry_transactions.debtor -  entry_transactions.creditor)  as balance'))
@@ -90,6 +90,10 @@ class User extends Authenticatable
             'id', // 0
             'account_id' // 2
         );
+    }
+    public function entries()
+    {
+        return $this->hasMany(Entry::class);
     }
     public function getActiveAccountsAttribute()
     {
@@ -143,5 +147,24 @@ class User extends Authenticatable
         }
 
         return  $sum;
+    }
+
+
+    public function getExchnagesProfitAttribute()
+    {
+        $sum = $this->entries()
+            ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+            ->where('account_id', 3)
+            ->sum(DB::raw('creditor -debtor '));
+
+        return $sum;
+    }
+    public function getTransfersProfitAttribute()
+    {
+        $sum = $this->entries()
+            ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+            ->where('account_id', 2)
+            ->sum(DB::raw('creditor -debtor '));
+        return $sum;
     }
 }

@@ -45,13 +45,13 @@ class AccountSeeder extends Seeder
         Account::create(['name' => 'صندوق ريال سعودي محمد', 'type_id' => 3, 'currency_id' => 6]);
         Account::create(['name' => 'صندوق جنيه محمد', 'type_id' => 3, 'currency_id' => 7]);
 
-        Account::create(['name' => 'صندوق تيلر 3 دولار', 'type_id' => 3, 'currency_id' => 1]);
-        Account::create(['name' => 'صندوق تيلر 3 شيكل', 'type_id' => 3, 'currency_id' => 2]);
-        Account::create(['name' => 'صندوق تيلر 3 دينار', 'type_id' => 3, 'currency_id' => 3]);
-        Account::create(['name' => 'صندوق تيلر 3 يورو', 'type_id' => 3, 'currency_id' => 4]);
-        Account::create(['name' => 'صندوق تيلر 3 درهم', 'type_id' => 3, 'currency_id' => 5]);
-        Account::create(['name' => 'صندوق تيلر 3 ريال سعودي', 'type_id' => 3, 'currency_id' => 6]);
-        Account::create(['name' => 'صندوق تيلر 3 جنيه', 'type_id' => 3, 'currency_id' => 7]);
+        Account::create(['name' => 'صندوق أحمد دولار', 'type_id' => 3, 'currency_id' => 1]);
+        Account::create(['name' => 'صندوق أحمد شيكل', 'type_id' => 3, 'currency_id' => 2]);
+        Account::create(['name' => 'صندوق أحمد دينار', 'type_id' => 3, 'currency_id' => 3]);
+        Account::create(['name' => 'صندوق أحمد يورو', 'type_id' => 3, 'currency_id' => 4]);
+        Account::create(['name' => 'صندوق أحمد درهم', 'type_id' => 3, 'currency_id' => 5]);
+        Account::create(['name' => 'صندوق أحمد ريال سعودي', 'type_id' => 3, 'currency_id' => 6]);
+        Account::create(['name' => 'صندوق أحمد جنيه', 'type_id' => 3, 'currency_id' => 7]);
 
 
 

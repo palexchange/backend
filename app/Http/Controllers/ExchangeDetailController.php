@@ -29,7 +29,7 @@ class ExchangeDetailController extends Controller
     }
     public function store(StoreExchangeDetailRequest $request)
     {
-        if (!hasAbilityToCreateModelInCurrency([$request->validated()['currency_id']]))
+        if (!hasAbilityToCreateModelInCurrency($request->validated()['currency_id']))
             return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
 
         $exchangeDetail = ExchangeDetail::create($request->validated());
