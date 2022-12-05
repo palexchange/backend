@@ -165,6 +165,8 @@ class User extends Authenticatable
         $sum = $this->entries()
             ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
             ->where('account_id', 2)
+
+
             ->sum(DB::raw('creditor -debtor '));
         return $sum;
     }
