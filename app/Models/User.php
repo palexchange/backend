@@ -161,6 +161,7 @@ class User extends Authenticatable
     }
     public function getTransfersProfitAttribute()
     {
+
         $sum = $this->entries()
             ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
             ->where('account_id', 2)
