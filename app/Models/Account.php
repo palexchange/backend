@@ -10,7 +10,7 @@ class Account extends BaseModel
 {
     use HasFactory;
     protected $with = ['currency'];
-    protected $appends = ['balance', 'user_account_id'];
+    protected $appends = ['inputs_balance',   'balance', 'user_account_id'];
     protected $hidden = ['entry_transactions', 'user_accounts'];
 
     public function currency()
@@ -27,8 +27,62 @@ class Account extends BaseModel
     }
     public function getBalanceAttribute()
     {
-        return $this->entry_transactions()->sum(DB::raw('debtor - creditor'));
+        $amount = $this->entry_transactions()->sum(DB::raw('debtor - creditor'));
+        if (gettype($amount) == 'string') {
+            $amount =  substr($amount, 0, 8);
+        }
+        return  $amount;
     }
+    public function getInputsBalanceAttribute()
+    {
+        if (in_array($this->id, [35, 36, 37, 38, 39, 40, 41])) {
+            # code...
+            return $this->entry_transactions()
+                ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+                ->where('entries.user_id', auth()->user()->id)
+                ->sum(DB::raw('debtor - creditor'));
+        } else {
+            return 0;
+        }
+    }
+    // public function getReciptsBalanceAttribute()
+    // {
+    //     return $this->entry_transactions()
+    //         ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+    //         ->where('entries.document_type', 3)
+    //         ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
+    // }
+    // public function getNetBalanceAttribute()
+    // {
+    //     return $this->balance - $this->recipts_balance;
+    // }
+
+    // public function getOutputsAttribute()
+    // {
+    //     return $this->entry_transactions()
+    //         ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+    //         ->where('entries.document_type', 3)
+    //         ->where('entry_transactions.debtor', 0)
+    //         ->sum('entry_transactions.creditor');
+    // }
+    // public function getInputesAttribute()
+    // {
+    //     return $this->entry_transactions()
+    //         ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+    //         ->where('entries.document_type', 3)
+    //         ->where('entry_transactions.creditor', 0)
+    //         ->sum('entry_transactions.debtor');
+    // }
+    // public function getNetMainInventoryAttribute()
+    // {
+    //     if ($this->type_id != 4) return 0;
+    //     return //$this->currency_id;
+    //         $this->entry_transactions()
+    //         ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+    //         ->where('entries.document_type', 3)
+    //         ->where('entry_transactions.currency_id', $this->currency_id);
+    //     // ->sum('entry_transactions.creditor');
+    // }
     public function getUserAccountIdAttribute()
     {
         if ($this->user_accounts()) {

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\This;
 
 class Transfer extends BaseModel implements Document
 {
@@ -108,10 +109,11 @@ class Transfer extends BaseModel implements Document
         $exchange_difference_account_id = Setting::find('exchange_difference_account_id')?->value;
         $transactions = [];
 
-        $sender_amount = $this->final_received_amount;
+        $sender_amount =    $this->delivering_type == 2 ? $this->final_received_amount : $this->to_send_amount; // $this->final_received_amount;
         $reciever_amount = $this->a_received_amount;
         $exchange_difference = 0;
         $account_id = $this->delivering_type == 3 ? $this->sender_party->account_id : $this->user_account_id; // $entry->ref_currency->account_id;
+        $usd_commission_account_id = $this->delivering_type == 3 ? $this->sender_party->account_id : $this->get_user_account_id(1); // $entry->ref_currency->account_id;
         if ($this->exchange_rate_to_office_currency != $this->exchange_rate_to_delivery_currency) {
             $exchange_difference = $this->a_received_amount - $this->office_amount;
         }
@@ -119,11 +121,24 @@ class Transfer extends BaseModel implements Document
         $transactions[] = [
             'account_id' => $account_id, // $this->user_account_id
             'amount' => $sender_amount,
+            'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
             'transaction_type' => 1,
-            'exchange_rate' => 1,
+            'exchange_rate' => $this->exchange_rate_to_delivery_currency,
+            'currency_id' => $this->delivery_currency_id,
             'type' => 0,
         ];
 
+
+        if ($this->transfer_commission > 0) {
+            $transactions[] = [
+                'account_id' => $usd_commission_account_id, // $this->user_account_id
+                'amount' => $this->transfer_commission,
+                'transaction_type' => 2,
+                'exchange_rate' => 1,
+                'currency_id' => 1,
+                'type' => 0,
+            ];
+        }
         // $transactions[] = [
         //     'account_id' => $exchange_difference_account_id,
         //     'amount' => $this->ExchangeDiffernce(),
@@ -148,6 +163,10 @@ class Transfer extends BaseModel implements Document
             'exchange_rate' => 1,
             'type' => $this->profit > 0 ?  1 : 0,
         ];
+
+
+
+
         if ($this->delivering_type == 2) {
             $transactions[] = [
                 'account_id' => $account_id,
@@ -194,7 +213,8 @@ class Transfer extends BaseModel implements Document
         if ($this->exchange_rate_to_office_currency != $this->exchange_rate_to_delivery_currency) {
             $exchange_difference = $this->a_received_amount - $this->office_amount;
         }
-        $amount = $this->delivering_type == 2  ? ($this->office_amount_in_office_currency ?? $this->office_amount) : $this->office_amount;
+        // $amount = $this->delivering_type == 2  ? ($this->office_amount_in_office_currency ?? $this->office_amount) : $this->office_amount;
+        $amount =  $this->office_amount_in_office_currency == 0 ?  $this->office_amount : $this->office_amount_in_office_currency;
         $transactions[] = [
             'account_id' => $this->office->account_id, // $this->user_account_id moew moew moew moew moew
             'amount' => $amount,
@@ -220,7 +240,7 @@ class Transfer extends BaseModel implements Document
             'amount' => abs($this->profit),
             'transaction_type' => 1,
             'exchange_rate' => 1,
-            'type' => 1,
+            'type' =>  $this->profit > 0 ?  1 : 0,
         ];
         if ($this->delivering_type == 2 && $this->office_commission > 0) {
             $transactions[] = [
@@ -261,16 +281,16 @@ class Transfer extends BaseModel implements Document
                 'currency_id' => $this->delivery_currency_id,
                 'debtor' =>  0,
                 'ac_debtor' => 0,
-                'creditor' =>  $this->final_received_amount / $this->exchange_rate_to_delivery_currency,
-                'ac_creditor' => $this->final_received_amount,
+                'creditor' => $this->to_send_amount,
+                'ac_creditor' =>  $this->to_send_amount / $this->exchange_rate_to_delivery_currency,
                 'transaction_type' => 0,
             ];
             $trans[] = [
                 'account_id' => $this->sender_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_delivery_currency,
                 'currency_id' => $this->delivery_currency_id,
-                'debtor' => $this->final_received_amount / $this->exchange_rate_to_delivery_currency,
-                'ac_debtor' =>  $this->final_received_amount,
+                'debtor' => $this->to_send_amount,
+                'ac_debtor' =>  $this->to_send_amount / $this->exchange_rate_to_delivery_currency,
                 'creditor' => 0,
                 'ac_creditor' => 0,
                 'transaction_type' => 1,
@@ -404,7 +424,7 @@ class Transfer extends BaseModel implements Document
         $id =  $user->accounts()
             ->where('status', 1)
             ->where('main', true)
-            ->where('accounts.currency_id', $this->type == 0 ?  1 : $this->received_currency_id)->first(['accounts.id'])->id;
+            ->where('accounts.currency_id', $this->type == 0 ?  $this->delivery_currency_id : $this->received_currency_id)->first(['accounts.id'])->id;
         return $id;
     }
     public static function exportData()

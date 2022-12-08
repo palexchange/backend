@@ -27,7 +27,7 @@ class SettingSeeder extends Seeder
         // $transfer_commission_account = Account::create(['name' => 'Transfer Commission Account', 'type_id' => 1]);
         // $returned_commission_account = Account::create(['name' => 'Returned Commission Account', 'type_id' => 1]);
         // $transfer_expense_account = Account::create(['name' => 'Transfer Expense Account', 'type_id' => 1]);
-        $exchange_difference_account = Account::create(['name' => 'Exchange Difference Account', 'type_id' => 1]);
+        $exchange_difference_account = Account::create(['name' => 'Exchange Difference Account', 'type_id' => 6]);
         $settings = [
             // ['key' => 'commission_account_id', 'value' => $commssion_account->id, 'description' => 'transfer commission account'],
             // ['key' => 'transfer_commission_account_id', 'value' => $transfer_commission_account->id,  'description' => 'transfer commission account'],

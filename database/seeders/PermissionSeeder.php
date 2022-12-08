@@ -57,9 +57,9 @@ class PermissionSeeder extends Seeder
             'role' => 1,
         ]);
         $user->assignRole($role1);
-        $user2 = User::create(['email' => 'k@k.com', 'password' => 123456, 'name' => 'test', 'role' => 2]);
-        $user3 = User::create(['email' => 'ah@ah.com', 'password' => 123456, 'name' => 'test', 'role' => 2]);
-        $user4 = User::create(['email' => 'm@m.com', 'password' => 123456, 'name' => 'test', 'role' => 2]);
+        $user2 = User::create(['email' => 'k@k.com', 'password' => 123456, 'name' => 'كاظم', 'role' => 2]);
+        $user3 = User::create(['email' => 'ah@ah.com', 'password' => 123456, 'name' => 'احمد', 'role' => 2]);
+        $user4 = User::create(['email' => 'm@m.com', 'password' => 123456, 'name' => 'محمد', 'role' => 2]);
         $user2->assignRole($role3);
         $user3->assignRole($role3);
         $user4->assignRole($role3);

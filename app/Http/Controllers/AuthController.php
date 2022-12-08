@@ -26,10 +26,10 @@ class AuthController extends Controller
      */
     public function login()
     {
-       
+
         $credentials = request(['email', 'password']);
         $token = auth()->attempt($credentials);
-        
+
         if ($token) {
             ilog($credentials);
             $user = User::where('email', '=', $credentials['email'])->first();
@@ -61,7 +61,9 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
+        // auth()->logout();
+        $user = Auth::user()->token();
+        $user->revoke();
         return response()->json(['message' => 'Successfully logged out']);
     }
 

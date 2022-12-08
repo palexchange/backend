@@ -20,7 +20,7 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'exchnages_profit', 'transfers_profit'];
+    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'exchnages_profit', 'transfers_profit', 'inputs_accounts'];
     /**
      * The attributes that are mass assignable.
      *
@@ -167,7 +167,17 @@ class User extends Authenticatable
             ->where('account_id', 2)
 
 
-            ->sum(DB::raw('creditor -debtor '));
+            ->sum(DB::raw('creditor -debtor'));
         return $sum;
+    }
+
+    public function getInputsAccountsAttribute()
+    {
+
+        $accounts = $this->entries()
+            ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+            ->join('accounts', 'entry_transactions.account_id', 'entry_transactions.account_id')
+            ->whereIn('entry_transactions.account_id', [35, 36, 37, 38, 39, 40, 41])->get();
+        return $accounts;
     }
 }
