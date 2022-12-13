@@ -60,13 +60,13 @@ class AccountSeeder extends Seeder
         Account::create(['name' => 'أرباح وخسائر', 'type_id' => 5, 'currency_id' => 1]); // 2
 
 
-        Account::create(['name' => 'محفظة دولار', 'type_id' => 7,  'currency_id' => 1]); // 7
-        Account::create(['name' => 'محفظة شيكل', 'type_id' => 7,  'currency_id' => 2]); // 5
-        Account::create(['name' => 'محفظة دينار', 'type_id' => 7,  'currency_id' => 3]); // 6
-        Account::create(['name' => 'محفظة يورو', 'type_id' => 7,  'currency_id' => 4]);
-        Account::create(['name' => 'محفظة درهم', 'type_id' => 7,  'currency_id' => 5]);
-        Account::create(['name' => 'محفظة ر.س', 'type_id' => 7,  'currency_id' => 6]);
-        Account::create(['name' => 'محفظة جنيه', 'type_id' => 7,  'currency_id' => 7]);
+        // Account::create(['name' => 'محفظة دولار', 'type_id' => 7,  'currency_id' => 1]); // 7
+        // Account::create(['name' => 'محفظة شيكل', 'type_id' => 7,  'currency_id' => 2]); // 5
+        // Account::create(['name' => 'محفظة دينار', 'type_id' => 7,  'currency_id' => 3]); // 6
+        // Account::create(['name' => 'محفظة يورو', 'type_id' => 7,  'currency_id' => 4]);
+        // Account::create(['name' => 'محفظة درهم', 'type_id' => 7,  'currency_id' => 5]);
+        // Account::create(['name' => 'محفظة ر.س', 'type_id' => 7,  'currency_id' => 6]);
+        // Account::create(['name' => 'محفظة جنيه', 'type_id' => 7,  'currency_id' => 7]);
 
         // Account::create(['name' => 'ربحية الصرافة', 'type_id' => 5, 'currency_id' => 1]); // 3
     }

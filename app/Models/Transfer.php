@@ -34,6 +34,7 @@ class Transfer extends BaseModel implements Document
                 'user_id' => request('user_id'),
                 'date' => $this->issued_at ?? Carbon::now(),
                 'status' => 1,
+                'document_sub_type' => 1,
                 'statement' => $this->getTypeStatement(),
                 'ref_currency_id' => $this->reference_currency_id
             ]);
@@ -72,6 +73,7 @@ class Transfer extends BaseModel implements Document
                 'user_id' => request('user_id'),
                 'date' => Carbon::now()->toDateString(),
                 'status' => 1,
+                'document_sub_type' => 1,
                 'statement' => $old_entry->statement,
                 'ref_currency_id' => $this->reference_currency_id,
                 'inverse_entry_id' =>  $old_entry->id
@@ -139,6 +141,16 @@ class Transfer extends BaseModel implements Document
                 'type' => 0,
             ];
         }
+        // if ($this->delivering_type == 2) {
+        //     $transactions[] = [
+        //         'account_id' => $account_id,
+        //         'amount' => abs($this->profit),
+        //         'transaction_type' => 1,
+        //         'exchange_rate' => 1,
+        //         'type' => 0,
+        //     ];
+        // }
+
         // $transactions[] = [
         //     'account_id' => $exchange_difference_account_id,
         //     'amount' => $this->ExchangeDiffernce(),
@@ -167,15 +179,6 @@ class Transfer extends BaseModel implements Document
 
 
 
-        if ($this->delivering_type == 2) {
-            $transactions[] = [
-                'account_id' => $account_id,
-                'amount' => abs($this->profit),
-                'transaction_type' => 1,
-                'exchange_rate' => 1,
-                'type' => 0,
-            ];
-        }
 
 
 

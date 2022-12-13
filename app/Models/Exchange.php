@@ -55,6 +55,7 @@ class Exchange extends BaseModel implements Document
             'user_id' => request('user_id'),
             'date' => $this->date,
             'status' => 1,
+            'document_sub_type' => 2,
             'statement' => "حركة صرافة",
             'ref_currency_id' => $this->reference_currency_id
         ]);
@@ -112,6 +113,7 @@ class Exchange extends BaseModel implements Document
                 'user_id' => request('user_id'),
                 'date' => Carbon::now()->toDateString(),
                 'status' => 1,
+                'document_sub_type' => 2,
                 'statement' => $old_entry->statement,
                 'ref_currency_id' => $this->reference_currency_id,
                 'inverse_entry_id' =>  $old_entry->id

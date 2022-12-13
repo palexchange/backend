@@ -29,7 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('source_id')->nullable();
             $table->integer('subject_type')->nullable();
             $table->unsignedBigInteger('subject_id')->nullable();
-            $table->integer('transaction_type')->default(1)->index(); // inputs _ outputs _  
+            $table->integer('transaction_type')->default(1)->index(); // 0=>inputs _ 1=>outputs _2=> commision  
             $table->timestamps();
         });
     }
