@@ -10,7 +10,7 @@ class Account extends BaseModel
 {
     use HasFactory;
     protected $with = ['currency'];
-    protected $appends = ['inputs_balance',   'balance', 'user_account_id'];
+    protected $appends = ['inputs_balance',   'balance', 'user_account_id', 'net_balance'];
     protected $hidden = ['entry_transactions', 'user_accounts'];
 
     public function currency()
@@ -26,6 +26,18 @@ class Account extends BaseModel
         return $this->hasMany(UserAccount::class, 'account_id', 'id');
     }
     public function getBalanceAttribute()
+    {
+        $amount = $this->entry_transactions()->sum(DB::raw('debtor - creditor'));
+        // dd($amount);
+        // $amount = $this->entry_transactions()
+        //     ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+        //     ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
+        if (gettype($amount) == 'string') {
+            $amount =  substr($amount, 0, 8);
+        }
+        return  $amount;
+    }
+    public function getNetBalanceAttribute()
     {
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')

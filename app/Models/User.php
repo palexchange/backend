@@ -20,7 +20,7 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'exchnages_profit', 'transfers_profit', 'inputs_accounts'];
+    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance'];
     /**
      * The attributes that are mass assignable.
      *
@@ -165,19 +165,47 @@ class User extends Authenticatable
         $sum = $this->entries()
             ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
             ->where('account_id', 2)
-
-
             ->sum(DB::raw('creditor -debtor'));
         return $sum;
     }
 
-    public function getInputsAccountsAttribute()
-    {
+    // public function getInputsAccountsAttribute()
+    // {
 
-        $accounts = $this->entries()
-            ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-            ->join('accounts', 'entry_transactions.account_id', 'entry_transactions.account_id')
-            ->whereIn('entry_transactions.account_id', [35, 36, 37, 38, 39, 40, 41])->get();
-        return $accounts;
+    //     $accounts = $this->entries()
+    //         ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+    //         ->join('accounts', 'entry_transactions.account_id', 'entry_transactions.account_id')
+    //         ->whereIn('entry_transactions.account_id', [35, 36, 37, 38, 39, 40, 41])->get();
+    //     return $accounts;
+    // }
+
+    public function getFundsAccountsBalanceAttribute()
+    {
+        $sql = 'select
+        round(sum(et.debtor- et.creditor)::numeric , 3) as balance , et.currency_id , crr.name  as name    from
+        entry_transactions et
+        join accounts ac on ac.id = et.account_id 
+        join entries en on en.id = et.entry_id 
+            join currencies crr on crr.id = ac.currency_id 
+         where ac.is_transaction = true and ac.type_id in (4 ,3 )  
+        group by et.currency_id ,crr.name ';
+        $data = DB::select($sql);
+        return $data;
+
+
+
+        // $sql = 'select round(sum(sub_table.balance)::numeric , 3) as balance , sub_table.acc_currency_id as currency_id ,sub_table.name from  (
+        // select
+        // case when 
+        // sum(et.debtor- et.creditor) < 0 then 0  else 
+        // sum(et.debtor- et.creditor)end 
+        // as balance ,
+        // et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  from
+        // entry_transactions et
+        // join accounts ac on ac.id = et.account_id 
+        // join entries en on en.id = et.entry_id 
+        // join currencies crr on crr.id = ac.currency_id 
+        //  where ac.is_transaction = true and ac.type_id in (4 ,3 )  
+        // group by et.currency_id ,crr.name ,ac.name,ac.currency_id  ) as sub_table group by sub_table.name , sub_table.acc_currency_id';
     }
 }
