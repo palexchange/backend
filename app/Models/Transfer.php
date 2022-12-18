@@ -351,7 +351,7 @@ class Transfer extends BaseModel implements Document
                 'debtor' =>  0,
                 'ac_debtor' => 0,
                 'creditor' => $this->to_send_amount,
-                'ac_creditor' =>  $this->to_send_amount / $this->exchange_rate_to_delivery_currency,
+                'ac_creditor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
                 'transaction_type' => 0,
             ];
             $trans[] = [
@@ -359,7 +359,7 @@ class Transfer extends BaseModel implements Document
                 'exchange_rate' => $this->exchange_rate_to_delivery_currency,
                 'currency_id' => $this->delivery_currency_id,
                 'debtor' => $this->to_send_amount,
-                'ac_debtor' =>  $this->to_send_amount / $this->exchange_rate_to_delivery_currency,
+                'ac_debtor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
                 'creditor' => 0,
                 'ac_creditor' => 0,
                 'transaction_type' => 1,
@@ -395,16 +395,16 @@ class Transfer extends BaseModel implements Document
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>  0,
                 'ac_debtor' => 0,
-                'creditor' =>   $this->to_send_amount * $this->exchange_rate_to_reference_currency,
-                'ac_creditor' => $this->to_send_amount,
+                'creditor' =>   $this->received_amount,
+                'ac_creditor' => $this->a_received_amount,
                 'transaction_type' => 0,
             ];
             $trans[] = [
                 'account_id' => $this->reciever_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
-                'debtor' =>   $this->to_send_amount * $this->exchange_rate_to_reference_currency,
-                'ac_debtor' => $this->to_send_amount,
+                'debtor' =>   $this->received_amount,
+                'ac_debtor' => $this->a_received_amount,
                 'creditor' => 0,
                 'ac_creditor' => 0,
                 'transaction_type' => 1,

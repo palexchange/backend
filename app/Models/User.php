@@ -181,31 +181,32 @@ class User extends Authenticatable
 
     public function getFundsAccountsBalanceAttribute()
     {
-        $sql = 'select
-        round(sum(et.debtor- et.creditor)::numeric , 3) as balance , et.currency_id , crr.name  as name    from
-        entry_transactions et
-        join accounts ac on ac.id = et.account_id 
-        join entries en on en.id = et.entry_id 
-            join currencies crr on crr.id = ac.currency_id 
-         where ac.is_transaction = true and ac.type_id in (4 ,3 )  
-        group by et.currency_id ,crr.name ';
+        $sql = '
+        select  round( case when 
+        sum(sub_table.balance)::numeric < 0 then 0  else 
+        sum(sub_table.balance)::numeric end , 3)  as balance , sub_table.acc_currency_id as currency_id ,sub_table.name 
+		from  (
+			select sum(et.debtor- et.creditor)  as balance , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
+			from
+        		entry_transactions et
+        		join accounts ac on ac.id = et.account_id 
+        		join entries en on en.id = et.entry_id 
+        		join currencies crr on crr.id = ac.currency_id 
+         where ac.is_transaction = true and ac.type_id in (4 ,3 )  and en.document_sub_type not in (4,5)
+        group by et.currency_id ,crr.name ,ac.name,ac.currency_id  ) as sub_table group by sub_table.name , sub_table.acc_currency_id';
         $data = DB::select($sql);
         return $data;
 
 
 
-        // $sql = 'select round(sum(sub_table.balance)::numeric , 3) as balance , sub_table.acc_currency_id as currency_id ,sub_table.name from  (
-        // select
-        // case when 
-        // sum(et.debtor- et.creditor) < 0 then 0  else 
-        // sum(et.debtor- et.creditor)end 
-        // as balance ,
-        // et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  from
-        // entry_transactions et
-        // join accounts ac on ac.id = et.account_id 
-        // join entries en on en.id = et.entry_id 
-        // join currencies crr on crr.id = ac.currency_id 
-        //  where ac.is_transaction = true and ac.type_id in (4 ,3 )  
-        // group by et.currency_id ,crr.name ,ac.name,ac.currency_id  ) as sub_table group by sub_table.name , sub_table.acc_currency_id';
+        $sql = 'select
+        round(sum(et.debtor- et.creditor)::numeric , 3) as balance , et.currency_id , crr.name  as name    from
+        entry_transactions et
+        join accounts ac on ac.id = et.account_id 
+        join entries en on en.id = et.entry_id 
+        join currencies crr on crr.id = ac.currency_id 
+        where en.document_sub_type not in (4,5)
+         and ac.is_transaction = true and ac.type_id in (4 ,3 )  
+        group by et.currency_id ,crr.name';
     }
 }
