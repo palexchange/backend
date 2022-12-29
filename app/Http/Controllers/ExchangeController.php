@@ -38,8 +38,8 @@ class ExchangeController extends Controller
         $items = $validated['items'];
         unset($validated['items']);
 
-        if (!hasAbilityToCreateModelInCurrency($validated['currency_id']))
-            return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
+        // if (!hasAbilityToCreateModelInCurrency($validated['currency_id']))
+        //     return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);
         foreach ($items as $item) {
             if (!hasAbilityToCreateModelInCurrency($item['currency_id']))
                 return response()->json(['message' => [__('u dont have an account to complete the proceess')]], 422);

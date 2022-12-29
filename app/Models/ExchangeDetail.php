@@ -32,18 +32,21 @@ class ExchangeDetail extends BaseModel
 
     public function log(Entry $entry)
     {
-        $t  = EntryTransaction::create([
+        $out = $this->type ==  2;
+        $usd_amount = $this->amount / $this->usd_factor;
+        EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' =>  $this->user_account_id,
             'currency_id' =>  $this->currency_id,
-            'creditor' => $this->amount,
-            'debtor' => 0,
-            'transaction_type' => 0,
-            'ac_creditor' => $this->amount_after,
-            'ac_debtor' => 0,
-            'exchange_rate' => $this->factor
+            'creditor' => $out ?  $this->amount : 0,
+            'debtor' => !$out ?  $this->amount : 0,
+            'transaction_type' => $out ?   0 : 1,
+            'ac_creditor' => $out ?   $usd_amount : 0,
+            'ac_debtor' => !$out ?   $usd_amount : 0,
+            'exchange_rate' => $this->usd_factor
         ]);
     }
+
     public function getUserAccountIdAttribute()
     {
         $user = auth()->user();

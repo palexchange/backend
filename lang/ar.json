@@ -35,5 +35,8 @@
     "debtor_in_group_curr": "مدين بعملة المجموعة",
     "statement": "البيان",
     "user_name": "اسم المستخدم",
+    "debtor": "مدين",
+    "name": "الاسم",
+    "creditor": "دائن",
     "creditor_in_group_curr": "دائن بعملة المجموعة"
 }

@@ -26,22 +26,23 @@ class StoreExchangeRequest extends FormRequest
         return [
             //
             'date' => 'required|date',
-            'amount' => 'required|numeric',
+            // 'amount' => 'required|numeric',
             'profit' => 'required|numeric',
-            'currency_id' => 'required|exists:currencies,id',
+            // 'currency_id' => 'required|exists:currencies,id',
             'beneficiary_id' => 'nullable|exists:parties,id',
-            'number' => 'nullable|numeric',
-            'reference_currency_id' => 'required|exists:currencies,id',
+            // 'number' => 'nullable|numeric',
+            // 'reference_currency_id' => 'required|exists:currencies,id',
             'status' => 'nullable|numeric',
-            'exchange_rate' => 'nullable|numeric',
+            // 'exchange_rate' => 'nullable|numeric',
             'user_id' => 'required|exists:users,id',
-            'amount_after' => 'nullable|numeric',
+            // 'amount_after' => 'nullable|numeric',
 
 
             'items.*.amount' => 'required|numeric',
             'items.*.currency_id' => 'required|exists:currencies,id',
-            'items.*.factor' => 'sometimes|numeric',
-            'items.*.amount_after' => 'sometimes|numeric'
+            'items.*.exchange_rate' => 'sometimes|numeric',
+            'items.*.type' => 'sometimes|numeric',
+            'items.*.usd_factor' => 'sometimes|numeric'
 
         ];
     }

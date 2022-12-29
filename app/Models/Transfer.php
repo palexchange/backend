@@ -259,15 +259,16 @@ class Transfer extends BaseModel implements Document
             'exchange_rate' => 1,
             'type' =>  $this->profit > 0 ?  1 : 0,
         ];
-        if ($this->delivering_type == 2 && $this->office_commission > 0) {
-            $transactions[] = [
-                'account_id' => $this->get_user_account_id(1),
-                'amount' => abs($this->profit),
-                'transaction_type' => 1,
-                'exchange_rate' => 1,
-                'type' => 0,
-            ];
-        }
+        // if ($this->delivering_type == 2 && $this->office_commission > 0) {
+
+        //     $transactions[] = [
+        //         'account_id' => $this->get_user_account_id(1),
+        //         'amount' => abs($this->profit),
+        //         'transaction_type' => 1,
+        //         'exchange_rate' => 1,
+        //         'type' => 0,
+        //     ];
+        // }
         foreach ($transactions as $transaction) {
             if (!$transaction['account_id']) {
                 // dd($transfer_commission_account_id);
@@ -299,16 +300,16 @@ class Transfer extends BaseModel implements Document
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>  0,
                 'ac_debtor' => 0,
-                'creditor' =>   $this->final_received_amount * $this->exchange_rate_to_reference_currency,
-                'ac_creditor' => $this->final_received_amount,
+                'creditor' =>   $this->received_amount,
+                'ac_creditor' => $this->received_amount / $this->exchange_rate_to_reference_currency,
                 'transaction_type' => 0,
             ];
             $trans[] = [
                 'account_id' => $this->reciever_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
-                'debtor' =>   $this->final_received_amount * $this->exchange_rate_to_reference_currency,
-                'ac_debtor' => $this->final_received_amount,
+                'debtor' =>   $this->received_amount,
+                'ac_debtor' => $this->received_amount / $this->exchange_rate_to_reference_currency,
                 'creditor' => 0,
                 'ac_creditor' => 0,
                 'transaction_type' => 1,
@@ -464,7 +465,8 @@ class Transfer extends BaseModel implements Document
             return $this->final_received_amount - $this->other_amounts_on_receiver - $this->office_amount;
         } else {
             if ($this->delivering_type == 2) {
-                return  number_format($this->office_amount - $this->a_received_amount + $this->office_commission, 3, '.', "");
+                return
+                    number_format($this->office_amount - $this->a_received_amount, 3, '.', "");
             }
             return $this->office_amount - $this->a_received_amount   - $this->returned_commision + $this->office_commission;
         }
