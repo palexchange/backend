@@ -38,6 +38,7 @@ class PartyImport implements ToModel, WithStartRow
             $account = Account::create(['name' => "$name", 'type_id' => 1]);
             Party::create(['name' => "$name", 'account_id' => $account->id, "type" => $row[1] ?? 1]);
             if ($row[0]) {
+
                 $entry = Entry::create([
                     'user_id' => request('user_id'),
                     'date' => Carbon::now()->toDateString(),
