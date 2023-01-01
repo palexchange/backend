@@ -72,16 +72,16 @@ class Exchange extends BaseModel implements Document
         // ]);
         $exchange_profit_account_id = Account::find(3)->id;
         $profit = abs($this->profit);
-        $positive = $this->profit > 0;
+        $minus = $this->profit < 0;
         EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' => $exchange_profit_account_id,
             'currency_id' => 1,
-            'debtor' => $positive ? $profit : 0,
-            'transaction_type' => $positive ? 1 : 0,
-            'creditor' => !$positive ? $profit : 0,
-            'ac_debtor' => $positive ? $profit : 0,
-            'ac_creditor' => !$positive ? $profit : 0,
+            'debtor' => $minus ? $profit : 0,
+            'transaction_type' => $minus ? 1 : 0,
+            'creditor' => !$minus ? $profit : 0,
+            'ac_debtor' => $minus ? $profit : 0,
+            'ac_creditor' => !$minus ? $profit : 0,
             'exchange_rate' => 1
         ]);
 

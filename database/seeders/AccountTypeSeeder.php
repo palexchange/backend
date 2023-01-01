@@ -16,11 +16,12 @@ class AccountTypeSeeder extends Seeder
     public function run()
     {
         AccountType::create(['name' => 'زبون']); //1
-        AccountType::create(['name' => 'مكتب']); // 2
+        AccountType::create(['name' => 'مورد']); // 2
         AccountType::create(['name' => 'صندوق']); // 3
         AccountType::create(['name' => 'خزينة']); // 4
         AccountType::create(['name' => 'ايرادات']); // 5
         AccountType::create(['name' => 'وسيط']); // 6
+        AccountType::create(['name' => 'مصروفات']); // 7
         // AccountType::create(['name' => 'محفظة']); // 7
     }
 }

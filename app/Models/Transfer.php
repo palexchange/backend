@@ -14,7 +14,7 @@ class Transfer extends BaseModel implements Document
     use HasFactory;
     public static $export_options = ['type' => [0 => "حوالة صادرة", 1 => "حوالة واردة"], 'status' => [0 => "مسودة", 1 => "معتمدة"], 'commission_side' => [1 => 'المرسل', 2 => 'المستقبل']];
     protected $appends = ['profit'];
-    protected $with = ['sender_party', 'image', 'office', 'user'];
+    protected $with = ['receiver_party', 'sender_party', 'image', 'office', 'user'];
     protected $casts = [
         'transfer_commission' => Rounded::class,
         'received_amount' => Rounded::class,
@@ -295,7 +295,7 @@ class Transfer extends BaseModel implements Document
         /////   receiver  transactions
         if ($this->delivering_type == 2) {
             $trans[] = [
-                'account_id' => $this->reciever_party->account_id,
+                'account_id' => $this->receiver_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>  0,
@@ -305,7 +305,7 @@ class Transfer extends BaseModel implements Document
                 'transaction_type' => 0,
             ];
             $trans[] = [
-                'account_id' => $this->reciever_party->account_id,
+                'account_id' => $this->receiver_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>   $this->received_amount,
@@ -317,7 +317,7 @@ class Transfer extends BaseModel implements Document
         } else {
 
             $trans[] = [
-                'account_id' => $this->reciever_party->account_id,
+                'account_id' => $this->receiver_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>  0,
@@ -327,7 +327,7 @@ class Transfer extends BaseModel implements Document
                 'transaction_type' => 0,
             ];
             $trans[] = [
-                'account_id' => $this->reciever_party->account_id,
+                'account_id' => $this->receiver_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>   $this->to_send_amount * $this->exchange_rate_to_reference_currency,
@@ -391,7 +391,7 @@ class Transfer extends BaseModel implements Document
             ];
         } else {
             $trans[] = [
-                'account_id' => $this->reciever_party->account_id,
+                'account_id' => $this->receiver_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>  0,
@@ -401,7 +401,7 @@ class Transfer extends BaseModel implements Document
                 'transaction_type' => 0,
             ];
             $trans[] = [
-                'account_id' => $this->reciever_party->account_id,
+                'account_id' => $this->receiver_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_reference_currency,
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>   $this->received_amount,
@@ -444,7 +444,7 @@ class Transfer extends BaseModel implements Document
     {
         return $this->belongsTo(Party::class, 'sender_party_id');
     }
-    public function reciever_party()
+    public function receiver_party()
     {
         return $this->belongsTo(Party::class, 'receiver_party_id');
     }

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exchange_id')->references('id')->on('exchanges')->onDelete('cascade');
             $table->foreignId('currency_id')->references('id')->on('currencies');
-            $table->float('amount')->default(0);
-            $table->decimal('exchange_rate', 18, 5)->default(1);
-            $table->decimal('usd_factor', 18, 5)->default(1);
+            $table->float('amount', 18, 5)->default(0);
+            $table->float('exchange_rate')->default(1);
+            $table->float('usd_factor')->default(1);
             $table->integer('type'); // 1 from ,, 2 to
             $table->timestamps();
         });

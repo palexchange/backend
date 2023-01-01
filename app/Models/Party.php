@@ -17,6 +17,15 @@ class Party extends BaseModel
         $query->when($request->party_ids, function ($q, $party_ids) {
             $q->whereIn('id', $party_ids);
         });
+        $query->when($request->name, function ($q, $name) {
+            $q->where('name', 'LIKE', "%{$name}%");
+        });
+        $query->when($request->id_no, function ($q, $id_no) {
+            $q->where('id_no', 'LIKE', "%{$id_no}%");
+        });
+        $query->when($request->phone, function ($q, $phone) {
+            $q->where('phone', 'LIKE', "%{$phone}%");
+        });
     }
     public function image()
     {

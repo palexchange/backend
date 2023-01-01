@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Imports\PartyImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,4 +48,9 @@ Route::group([
         Route::post("/" . $auth_route, [AuthController::class, $auth_route])->name($auth_route);
     }
     Route::get("user", [AuthController::class, 'user']);
+});
+
+Route::get('/import', function () {
+    Excel::import(new PartyImport, base_path() . '/excel/parties.xlsx');
+    return response()->json(['data' => 'success', 'All good!']);
 });
