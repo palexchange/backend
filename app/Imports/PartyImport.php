@@ -137,7 +137,6 @@ class PartyImport implements ToModel, WithStartRow
                     'transaction_type' => !($row[4] > 0) ? 1 : 0,
                 ]);
             }
-
             if ($row[5] != 0) {
                 $entry = Entry::create([
                     'user_id' => $this->who + 1,
