@@ -33,6 +33,7 @@ class PartyImport implements ToModel, WithStartRow
             $kazem_doller_id = $this->who == 1 ?  11 : 25;
             $kazem_shikle_id = $this->who == 1 ? 12 : 26;
             $kazem_denar_id = $this->who == 1 ? 13 : 27;
+            $kazem_pond_id = $this->who == 1 ? 17 : 31;
             $name = $this->who == 1 ? "$row[0]  ' كاظم'" : "$row[0]  ' احمد'";
 
             $account = Account::create(['name' => "$name", 'type_id' => $row[1] ?? 1]);
@@ -134,6 +135,38 @@ class PartyImport implements ToModel, WithStartRow
                     'ac_debtor' => ($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
                     'ac_creditor' => !($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
                     'transaction_type' => !($row[4] > 0) ? 1 : 0,
+                ]);
+            }
+            if ($row[5] != 0) {
+                $entry = Entry::create([
+                    'user_id' => $this->who + 1,
+                    'date' => Carbon::now()->toDateString(),
+                    'status' => 1,
+                    'document_sub_type' => $row[2]  > 0 ? 5 : 4,
+                    'statement' => " $name 'ترصيد'",
+                    // 'ref_currency_id' => $this->reference_currency_id,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => !($row[5] > 0) ? abs($row[5]) : 0,
+                    'creditor' => $row[5] > 0 ? abs($row[5]) : 0,
+                    'account_id' => $account->id,
+                    'exchange_rate' => 21.419753,
+                    'currency_id' => 7,   //,$this->received_currency_id,
+                    'ac_debtor' => !($row[5] > 0) ? abs($row[5]) / 21.419753 : 0,
+                    'ac_creditor' => $row[5] > 0 ? abs($row[5]) / 21.419753 : 0,
+                    'transaction_type' => $row[5] > 0 ? 1 : 0,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => ($row[5] > 0) ? abs($row[5]) : 0,
+                    'creditor' => !($row[5] > 0) ? abs($row[5]) : 0,
+                    'account_id' =>  $kazem_pond_id,
+                    'exchange_rate' => 21.419753,
+                    'currency_id' => 7,   //,$this->received_currency_id,
+                    'ac_debtor' => ($row[5] > 0) ? abs($row[5]) / 21.419753 : 0,
+                    'ac_creditor' => !($row[5] > 0) ? abs($row[5]) / 21.419753 : 0,
+                    'transaction_type' => !($row[5] > 0) ? 1 : 0,
                 ]);
             }
         }

@@ -11,6 +11,10 @@ class File extends BaseModel
 {
     use HasFactory;
     protected $appends = ['url'];
+    public function image()
+    {
+        return $this->morphTo(null, 'attachable_type', 'attachable_id');
+    }
     public function getUrlAttribute()
     {
         return Config::get('app.url') . Storage::url($this->path);
