@@ -59,7 +59,7 @@ class StoreTransferRequest extends FormRequest
             'other_amounts_on_sender' => 'sometimes|numeric',
             'office_id' => 'required|exists:parties,id',
             'office_currency_id' => 'required|exists:currencies,id',
-            'office_commission' => 'sometimes|numeric',
+            'office_commission' => 'nullable|numeric',
             'exchange_rate_to_office_currency' => 'sometimes|numeric',
             'office_commission_type' => 'sometimes|integer',
             'transfer_commission' => 'sometimes|numeric',

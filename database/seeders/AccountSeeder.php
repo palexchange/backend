@@ -60,6 +60,14 @@ class AccountSeeder extends Seeder
         Account::create(['name' => 'أرباح وخسائر', 'type_id' => 5, 'currency_id' => 1]); // 2
 
 
+        $acc = Account::create(['name' => 'حساب المصروفات', 'type_id' => 7, 'currency_id' => 1]);
+        Account::create(['name' => 'مصروف كهرب', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 3, 'parent_id' => $acc->id]);
+        // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 4, 'parent_id' => $acc->id]);
+        // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 5, 'parent_id' => $acc->id]);
+        // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 6, 'parent_id' => $acc->id]);
+        // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 7, 'parent_id' => $acc->id]);
+
         // Account::create(['name' => 'محفظة دولار', 'type_id' => 7,  'currency_id' => 1]); // 7
         // Account::create(['name' => 'محفظة شيكل', 'type_id' => 7,  'currency_id' => 2]); // 5
         // Account::create(['name' => 'محفظة دينار', 'type_id' => 7,  'currency_id' => 3]); // 6

@@ -34,10 +34,7 @@ class AccountingReportGenerator extends BaseReportGenerator
             //     'text' => __('public.beneficiary_name'), // المستفيد
             //     'value' => 'beneficiary_name'
             // ],
-            [
-                'text' => __('public.transaction_type'), // نوع الحوالة
-                'value' => 'transaction_type'
-            ],
+
             // [
             //     'text' => __('public.transaction_no'),
             //     'value' => 'document_number'
@@ -46,6 +43,10 @@ class AccountingReportGenerator extends BaseReportGenerator
             //     'text' => __('public.reference'), // 
             //     'value' => 'reference',
             // ],
+            [
+                'text' => __('document_type'), // اسم الحركة
+                'value' => 'document_type'
+            ],
             [
                 'text' => __('public.debtor'), // مدين
                 'value' => 'debtor'
@@ -59,17 +60,18 @@ class AccountingReportGenerator extends BaseReportGenerator
             //     'value' => 'balance'
             // ],
             [
-                'text' => __('document_type'), // اسم الحركة
-                'value' => 'document_type'
+                'text' => __('public.transaction_type'), // نوع الحوالة
+                'value' => 'transaction_type'
             ],
+
 
             [
                 'text' => __('user_name'),
                 'value' => 'user_name'
             ],
             [
-                'text' => __('currency_name'),
-                'value' => 'currency_name'
+                'text' => __('currency_id'),
+                'value' => 'currency_id'
             ],
             // [
             //     'text' => __('balance'),
@@ -117,6 +119,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         if (auth()->user()['role'] == 1) {
             $user_id =  request('for_user_id') ?? 0;
         }
+        // $user_id = 0;
         // dd($user_id);
         // // $user_id = 0;
         $currency_id = request('currency_id') > 0 ? request('currency_id') : 0;
@@ -131,6 +134,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         document_type,
         user_name,
         currency_name,
+        currency_id,
         exchange_rate,
         ac_debtor,
         ac_creditor,
@@ -139,6 +143,7 @@ class AccountingReportGenerator extends BaseReportGenerator
 
         from account_statement($account,'$from','$tto',false , '$currency_id' , '$user_id')t order by t.r_id ";
         $entry_accounts = DB::select($sql);
+
         // dd($entry_accounts);
         // dd($entry_accounts);
         $report_headers = [

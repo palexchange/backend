@@ -30,6 +30,7 @@
     "delivery_currency": "عملة التحويل",
     "received_currency": "عملة التسليم",
     "office_currency": "عملة المكتب",
+    "currency_id": "العملة",
     "profit": "الربحية",
     "u dont have an account to complete the proceess": "ليس لديك حساب للترحيل عليه",
     "debtor_in_group_curr": "مدين بعملة المجموعة",

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('parent_id')->nullable()->references('id')->on('accounts');
             $table->unsignedBigInteger('currency_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->bigInteger('type_id')->unsigned()->index();
             $table->string('code')->nullable();
             $table->text('notes')->nullable();

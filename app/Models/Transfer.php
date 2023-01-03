@@ -574,6 +574,15 @@ class Transfer extends BaseModel implements Document
     }
     public function scopeSearch($query, $request)
     {
+        $query->when($request->type, function ($query, $type) {
+            $query->where('type', $type);
+        });
+        $query->when($request->status, function ($query, $status) {
+            $query->where('status', $status);
+        });
+        $query->when($request->party_id, function ($query, $party_id) {
+            $query->where('party_id', $party_id);
+        });
         $query->when($request->delivering_type, function ($query, $delivering_type) {
             $query->whereIn('delivering_type', $delivering_type);
         });

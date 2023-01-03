@@ -130,7 +130,7 @@ class Receipt extends BaseModel implements Document
             'creditor' => $this->type == 1 ?  $this->from_amount : 0,
             'ac_debtor' => $this->type == 1 ? 0 : ($this->from_amount / $this->exchange_rate),
             'ac_creditor' => $this->type == 1 ? ($this->from_amount / $this->exchange_rate) : 0,
-            'transaction_type' => $this->type == 1 ? 0 : 1,
+            'transaction_type' => $this->expenses_account_id ? 7 : ($this->type == 1 ? 0 : 1),
             'exchange_rate' => $this->exchange_rate
         ]);
         EntryTransaction::create([
@@ -141,17 +141,36 @@ class Receipt extends BaseModel implements Document
             'creditor' => $this->type == 1 ?    0 : $this->from_amount,
             'ac_debtor' => $this->type == 1 ? ($this->from_amount / $this->exchange_rate) : 0,
             'ac_creditor' => $this->type == 1 ? 0 : ($this->from_amount / $this->exchange_rate),
-            'transaction_type' => $this->type == 1 ? 1 : 0,
+            'transaction_type' => $this->expenses_account_id ? 7 : ($this->type == 1 ? 1 : 0),
             'exchange_rate' => $this->exchange_rate
         ]);
+        if ($this->type == 2 && $this->expenses_account_id) {
+            EntryTransaction::create([
+                'entry_id' => $entry->id,
+                'account_id' => $this->expenses_account_id,
+                'currency_id' => $this->currency_id,
+                'debtor' =>  $this->from_amount,
+                'creditor' =>   0,
+                'ac_debtor' => ($this->from_amount / $this->exchange_rate),
+                'ac_creditor' => 0,
+                'transaction_type' => 7,
+                'exchange_rate' => $this->exchange_rate
+            ]);
+            EntryTransaction::create([
+                'entry_id' => $entry->id,
+                'account_id' => $this->from_account_id,
+                'currency_id' => $this->currency_id,
+                'debtor' =>  0,
+                'creditor' =>     $this->from_amount,
+                'ac_debtor' => 0,
+                'ac_creditor' => ($this->from_amount / $this->exchange_rate),
+                'transaction_type' =>   7,
+                'exchange_rate' => $this->exchange_rate
+            ]);
+        }
     }
 
-    // protected $appends = ["party_name", "currency"];
 
-    // public function party()
-    // {
-    //     return $this->hasOne(Party::class, "id", "beneficiary_id");
-    // }
 
     public function currency()
     {

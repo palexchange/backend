@@ -41,6 +41,7 @@ return new class extends Migration
                   r_id bigint, 
                   account_id bigint, 
 				currency_name character varying(255),
+				currency_id bigint,
 				user_name character varying(255),
                   inside integer,
                   acc_balance double precision) 
@@ -72,12 +73,13 @@ return new class extends Migration
                         ROW_NUMBER() over(order by entry_transactions.id) as r_id,
                         entry_transactions.account_id,
 					currencies.name,
+					currencies.id,
 					users.name,
                         case when entries.date<date_from then 1 else 0 end as inside
                     from entry_transactions 
                     inner join entries ON entries.id = entry_transactions.entry_id
 					inner join currencies ON currencies.id = entry_transactions.currency_id
-                    inner join users ON entries.user_id = users.id
+                    left join users ON entries.user_id = users.id
                     where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1
 					and entries.date < date_to and  case when  logged_in_user_id > 0 THEN  entries.user_id = logged_in_user_id ELSE entries.user_id IS NOT NULL END
 					and case  WHEN curr_id > 0  THEN entry_transactions.currency_id = curr_id ELSE entry_transactions.currency_id IS NOT NULL END 

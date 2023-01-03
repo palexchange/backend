@@ -25,8 +25,8 @@ class StoreReceiptRequest extends FormRequest
     {
         return [
             //
-            'from_account_id' => 'sometimes|exists:accounts,id',
-            'to_account_id' => 'sometimes|exists:accounts,id',
+            'from_account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'required|exists:accounts,id',
             'from_amount' => 'nullable|numeric',
             'to_amount' => 'nullable|numeric',
             'status' => 'nullable|numeric',
@@ -35,6 +35,8 @@ class StoreReceiptRequest extends FormRequest
             'statement' => 'nullable',
             'user_id' => 'required|exists:users,id',
             'exchange_rate' => 'sometimes|numeric',
+            'is_expenses' => 'sometimes|boolean',
+            'expenses_account_id' => 'required_if:is_expenses,true|exists:accounts,id',
         ];
     }
 }

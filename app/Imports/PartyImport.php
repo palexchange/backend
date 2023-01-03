@@ -35,91 +35,106 @@ class PartyImport implements ToModel, WithStartRow
             $kazem_denar_id = $this->who == 1 ? 13 : 27;
             $name = $this->who == 1 ? "$row[0]  ' كاظم'" : "$row[0]  ' احمد'";
 
-            $account = Account::create(['name' => "$name", 'type_id' => 1]);
+            $account = Account::create(['name' => "$name", 'type_id' => $row[1] ?? 1]);
             Party::create(['name' => "$name", 'account_id' => $account->id, "type" => $row[1] ?? 1]);
-            if ($row[0]) {
 
+
+
+            if ($row[2] != 0) {
                 $entry = Entry::create([
-                    'user_id' => request('user_id'),
+                    'user_id' => $this->who + 1,
                     'date' => Carbon::now()->toDateString(),
                     'status' => 1,
-                    'document_sub_type' => 2,
-                    'statement' => " $row[0] 'ترصيد'",
+                    'document_sub_type' => $row[2]  > 0 ? 5 : 4,
+                    'statement' => " $name 'ترصيد'",
                     // 'ref_currency_id' => $this->reference_currency_id,
                 ]);
-
-                if ($row[2] != 0) {
-                    EntryTransaction::create([
-                        'entry_id' => $entry->id,
-                        'debtor' => !($row[2] > 0) ? abs($row[2]) : 0,
-                        'creditor' => $row[2] > 0 ? abs($row[2]) : 0,
-                        'account_id' => $account->id,
-                        'exchange_rate' => 3.47,
-                        'currency_id' => 2,   //,$this->received_currency_id,
-                        'ac_debtor' => !($row[2] > 0) ? abs($row[2]) / 3.47 : 0,
-                        'ac_creditor' => $row[2] > 0 ? abs($row[2]) / 3.47 : 0,
-                        'transaction_type' => $row[2] > 0 ? 1 : 0,
-                    ]);
-                    EntryTransaction::create([
-                        'entry_id' => $entry->id,
-                        'debtor' => ($row[2] > 0) ? abs($row[2]) : 0,
-                        'creditor' => !($row[2] > 0) ? abs($row[2]) : 0,
-                        'account_id' =>  $kazem_shikle_id,
-                        'exchange_rate' => 3.47,
-                        'currency_id' => 2,   //,$this->received_currency_id,
-                        'ac_debtor' => ($row[2] > 0) ? abs($row[2]) / 3.47 : 0,
-                        'ac_creditor' => !($row[2] > 0) ? abs($row[2]) / 3.47 : 0,
-                        'transaction_type' => !($row[2] > 0) ? 1 : 0,
-                    ]);
-                }
-                if ($row[3] != 0) {
-                    EntryTransaction::create([
-                        'entry_id' => $entry->id,
-                        'debtor' => !($row[3] > 0) ? abs($row[3]) : 0,
-                        'creditor' => $row[3] > 0 ? abs($row[3]) : 0,
-                        'account_id' => $account->id,
-                        'exchange_rate' => 1,
-                        'currency_id' => 1,   //,$this->received_currency_id,
-                        'ac_debtor' => !($row[3] > 0) ? abs($row[3]) : 0,
-                        'ac_creditor' => $row[3] > 0 ? abs($row[3]) : 0,
-                        'transaction_type' => $row[3] > 0 ? 1 : 0,
-                    ]);
-                    EntryTransaction::create([
-                        'entry_id' => $entry->id,
-                        'debtor' => ($row[3] > 0) ? abs($row[3]) : 0,
-                        'creditor' => !($row[3] > 0) ? abs($row[3]) : 0,
-                        'account_id' =>  $kazem_doller_id,
-                        'exchange_rate' => 1,
-                        'currency_id' => 1,   //,$this->received_currency_id,
-                        'ac_debtor' => ($row[3] > 0) ? abs($row[3]) : 0,
-                        'ac_creditor' => !($row[3] > 0) ? abs($row[3]) : 0,
-                        'transaction_type' => !($row[3] > 0) ? 1 : 0,
-                    ]);
-                }
-                if ($row[4] != 0) {
-                    EntryTransaction::create([
-                        'entry_id' => $entry->id,
-                        'debtor' => !($row[4] > 0) ? abs($row[4]) : 0,
-                        'creditor' => $row[4] > 0 ? abs($row[4]) : 0,
-                        'account_id' => $account->id,
-                        'exchange_rate' => 0.71,
-                        'currency_id' => 3,   //,$this->received_currency_id,
-                        'ac_debtor' => !($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
-                        'ac_creditor' => $row[4] > 0 ? abs($row[4]) / 0.71 : 0,
-                        'transaction_type' => $row[4] > 0 ? 1 : 0,
-                    ]);
-                    EntryTransaction::create([
-                        'entry_id' => $entry->id,
-                        'debtor' => ($row[4] > 0) ? abs($row[4]) : 0,
-                        'creditor' => !($row[4] > 0) ? abs($row[4]) : 0,
-                        'account_id' =>  $kazem_denar_id,
-                        'exchange_rate' => 0.71,
-                        'currency_id' => 3,   //,$this->received_currency_id,
-                        'ac_debtor' => ($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
-                        'ac_creditor' => !($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
-                        'transaction_type' => !($row[4] > 0) ? 1 : 0,
-                    ]);
-                }
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => !($row[2] > 0) ? abs($row[2]) : 0,
+                    'creditor' => $row[2] > 0 ? abs($row[2]) : 0,
+                    'account_id' => $account->id,
+                    'exchange_rate' => 3.47,
+                    'currency_id' => 2,   //,$this->received_currency_id,
+                    'ac_debtor' => !($row[2] > 0) ? abs($row[2]) / 3.47 : 0,
+                    'ac_creditor' => $row[2] > 0 ? abs($row[2]) / 3.47 : 0,
+                    'transaction_type' => $row[2] > 0 ? 1 : 0,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => ($row[2] > 0) ? abs($row[2]) : 0,
+                    'creditor' => !($row[2] > 0) ? abs($row[2]) : 0,
+                    'account_id' =>  $kazem_shikle_id,
+                    'exchange_rate' => 3.47,
+                    'currency_id' => 2,   //,$this->received_currency_id,
+                    'ac_debtor' => ($row[2] > 0) ? abs($row[2]) / 3.47 : 0,
+                    'ac_creditor' => !($row[2] > 0) ? abs($row[2]) / 3.47 : 0,
+                    'transaction_type' => !($row[2] > 0) ? 1 : 0,
+                ]);
+            }
+            if ($row[3] != 0) {
+                $entry = Entry::create([
+                    'user_id' => $this->who + 1,
+                    'date' => Carbon::now()->toDateString(),
+                    'status' => 1,
+                    'document_sub_type' => $row[2]  > 0 ? 5 : 4,
+                    'statement' => " $name 'ترصيد'",
+                    // 'ref_currency_id' => $this->reference_currency_id,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => !($row[3] > 0) ? abs($row[3]) : 0,
+                    'creditor' => $row[3] > 0 ? abs($row[3]) : 0,
+                    'account_id' => $account->id,
+                    'exchange_rate' => 1,
+                    'currency_id' => 1,   //,$this->received_currency_id,
+                    'ac_debtor' => !($row[3] > 0) ? abs($row[3]) : 0,
+                    'ac_creditor' => $row[3] > 0 ? abs($row[3]) : 0,
+                    'transaction_type' => $row[3] > 0 ? 1 : 0,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => ($row[3] > 0) ? abs($row[3]) : 0,
+                    'creditor' => !($row[3] > 0) ? abs($row[3]) : 0,
+                    'account_id' =>  $kazem_doller_id,
+                    'exchange_rate' => 1,
+                    'currency_id' => 1,   //,$this->received_currency_id,
+                    'ac_debtor' => ($row[3] > 0) ? abs($row[3]) : 0,
+                    'ac_creditor' => !($row[3] > 0) ? abs($row[3]) : 0,
+                    'transaction_type' => !($row[3] > 0) ? 1 : 0,
+                ]);
+            }
+            if ($row[4] != 0) {
+                $entry = Entry::create([
+                    'user_id' => $this->who + 1,
+                    'date' => Carbon::now()->toDateString(),
+                    'status' => 1,
+                    'document_sub_type' => $row[2]  > 0 ? 5 : 4,
+                    'statement' => " $name 'ترصيد'",
+                    // 'ref_currency_id' => $this->reference_currency_id,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => !($row[4] > 0) ? abs($row[4]) : 0,
+                    'creditor' => $row[4] > 0 ? abs($row[4]) : 0,
+                    'account_id' => $account->id,
+                    'exchange_rate' => 0.71,
+                    'currency_id' => 3,   //,$this->received_currency_id,
+                    'ac_debtor' => !($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
+                    'ac_creditor' => $row[4] > 0 ? abs($row[4]) / 0.71 : 0,
+                    'transaction_type' => $row[4] > 0 ? 1 : 0,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => ($row[4] > 0) ? abs($row[4]) : 0,
+                    'creditor' => !($row[4] > 0) ? abs($row[4]) : 0,
+                    'account_id' =>  $kazem_denar_id,
+                    'exchange_rate' => 0.71,
+                    'currency_id' => 3,   //,$this->received_currency_id,
+                    'ac_debtor' => ($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
+                    'ac_creditor' => !($row[4] > 0) ? abs($row[4]) / 0.71 : 0,
+                    'transaction_type' => !($row[4] > 0) ? 1 : 0,
+                ]);
             }
         }
     }
