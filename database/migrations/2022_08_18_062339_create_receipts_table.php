@@ -28,7 +28,7 @@ return new class extends Migration
             // $table->integer('number')->nullable();
             $table->foreignId('user_id')->references('id')->on('users');
             $table->boolean('is_expenses')->default(false);
-            $table->foreignId('expenses_account_id')->references('id')->on('accounts');
+            $table->foreignId('expenses_account_id')->nullable()->references('id')->on('accounts');
             $table->integer('type')->index('type'); // 1 مقبوضاتinputs  2 مسحوباتoutputs 3 اتزان حسابbalanceing account
             $table->timestamps();
         });
