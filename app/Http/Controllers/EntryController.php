@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Events\DocumentDeletedEvent;
 use App\Http\Requests\StoreEntryRequest;
 use App\Http\Requests\UpdateEntryRequest;
 use App\Http\Resources\EntryResource;
@@ -13,12 +15,14 @@ use Illuminate\Support\Facades\Validator;
 class EntryController extends Controller
 {
 
-    public static function routeName(){
+    public static function routeName()
+    {
         return Str::snake("Entry");
     }
-    public function __construct(Request $request){
+    public function __construct(Request $request)
+    {
         parent::__construct($request);
-        $this->authorizeResource(Entry::class,Str::snake("Entry"));
+        $this->authorizeResource(Entry::class, Str::snake("Entry"));
     }
     public function index(Request $request)
     {
@@ -33,22 +37,24 @@ class EntryController extends Controller
         }
         return new EntryResource($entry);
     }
-    public function show(Request $request,Entry $entry)
+    public function show(Request $request, Entry $entry)
     {
         return new EntryResource($entry);
     }
     public function update(UpdateEntryRequest $request, Entry $entry)
     {
         $entry->update($request->validated());
-          if ($request->translations) {
+        if ($request->translations) {
             foreach ($request->translations as $translation)
                 $entry->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
         return new EntryResource($entry);
     }
-    public function destroy(Request $request,Entry $entry)
+    public function destroy(Request $request, Entry $entry)
     {
-        $entry->delete();
+
+        $entry->dispose();
+        // $entry->save();
         return new EntryResource($entry);
     }
 }

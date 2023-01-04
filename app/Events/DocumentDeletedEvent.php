@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 class DocumentDeletedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public Document $document;
     /**
      * Create a new event instance.
      *
