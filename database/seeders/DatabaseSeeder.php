@@ -36,5 +36,6 @@ class DatabaseSeeder extends Seeder
         ]);
         Excel::import(new PartyImport(1), base_path() . '/excel/k_parties.xlsx');
         Excel::import(new PartyImport(2), base_path() . '/excel/ah_parties.xlsx');
+        Excel::import(new TransfersPartyImport(), base_path() . '/excel/boxes.xlsx');
     }
 }
