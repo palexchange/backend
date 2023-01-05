@@ -115,11 +115,11 @@ class AccountingReportGenerator extends BaseReportGenerator
         $tto = request('to');
         $tto = Carbon::parse($tto)->addDay()->toDateString();
         $from = Carbon::parse($from)->subDay()->toDateString();
-        $user_id = request('user_id');
-        if (auth()->user()['role'] == 1) {
-            $user_id =  request('for_user_id') ?? 0;
-        }
-        // $user_id = 0;
+        // $user_id = request('user_id');
+        // if (auth()->user()['role'] == 1) {
+        //     $user_id =  request('for_user_id') ?? 0;
+        // }
+        $user_id = 0;
         // dd($user_id);
         // // $user_id = 0;
         $currency_id = request('currency_id') > 0 ? request('currency_id') : 0;

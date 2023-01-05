@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Imports\PartyImport;
+use App\Imports\TransfersPartyImport;
 use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -54,5 +55,11 @@ Route::group([
 Route::get('/import', function () {
     // Excel::import(new PartyImport(1), base_path() . '/excel/k_parties.xlsx');
     // Excel::import(new PartyImport(2), base_path() . '/excel/ah_parties.xlsx');
+    return response()->json(['data' => 'success', 'All good!']);
+});
+Route::get('/import_boxs', function () {
+    // Excel::import(new PartyImport(1), base_path() . '/excel/k_parties.xlsx');
+    // Excel::import(new PartyImport(2), base_path() . '/excel/ah_parties.xlsx');
+    Excel::import(new TransfersPartyImport(), base_path() . '/excel/boxes.xlsx');
     return response()->json(['data' => 'success', 'All good!']);
 });
