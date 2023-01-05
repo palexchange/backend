@@ -32,7 +32,7 @@ class Transfer extends BaseModel implements Document
             DB::beginTransaction();
             $entry = $this->entry()->create([
                 'user_id' => request('user_id'),
-                'date' => $this->issued_at ?? Carbon::now(),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 1,
                 'statement' => $this->getTypeStatement(),
@@ -85,7 +85,7 @@ class Transfer extends BaseModel implements Document
             DB::beginTransaction();
             $entry = $this->entry()->create([
                 'user_id' => request('user_id'),
-                'date' => Carbon::now()->toDateString(),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 1,
                 'statement' => $old_entry->statement,

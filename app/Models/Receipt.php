@@ -28,7 +28,7 @@ class Receipt extends BaseModel implements Document
             DB::beginTransaction();
             $entry = $this->entry()->create([
                 'user_id' => request('user_id'),
-                'date' => Carbon::now()->toDateString(),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => $this->type == 1 ? 4 : 5,
                 'statement' => $old_entry->statement,
@@ -84,7 +84,7 @@ class Receipt extends BaseModel implements Document
     {
         $entry =  $this->entry()->create([
             'user_id' => request('user_id'),
-            'date' => Carbon::now()->toDateString(),
+            'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
             'status' => 1,
             'document_sub_type' => 3,
             'statement' => 'fund_adjustment',
@@ -116,7 +116,7 @@ class Receipt extends BaseModel implements Document
     {
         $entry =  $this->entry()->create([
             'user_id' => request('user_id'),
-            'date' => Carbon::now()->toDateString(),
+            'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
             'status' => 1,
             'document_sub_type' => $this->type == 1 ? 4 : 5,
             'statement' => $this->statement,
@@ -191,6 +191,11 @@ class Receipt extends BaseModel implements Document
     {
         $query->when($request->type, function ($query, $type) {
             $query->where("type", $type);
+        });
+        $query->when($request->user_id, function ($query, $user_id) {
+            if (auth()->user()['role'] != 1) {
+                $query->where("user_id", $user_id);
+            }
         });
     }
     public function getUserAccountIdAttribute()

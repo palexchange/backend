@@ -30,6 +30,15 @@ class Entry extends BaseModel
         $query->when($request->statement, function ($q, $statemant) {
             $q->where('statement', '=', $statemant);
         });
+        $query->when($request->like_statement, function ($q, $statemant) {
+            $q->where('statement', 'LIKE', "%{$statemant}%");
+        });
+        $query->when($request->id, function ($q, $id) {
+            $q->where('id', $id);
+        });
+        $query->when($request->status, function ($q, $status) {
+            $q->where('status', $status);
+        });
     }
     public function dispose()
     {
@@ -38,7 +47,7 @@ class Entry extends BaseModel
             DB::beginTransaction();
             $entry = $this->create([
                 'user_id' => request('user_id'),
-                'date' => Carbon::now()->toDateString(),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 1,
                 'statement' => $this->statement,
@@ -58,10 +67,17 @@ class Entry extends BaseModel
                     'transaction_type' => !$transaction->transaction_type,
                 ]);
             }
+            if ($this->document) {
+                $this->document->status = 255;
+                $this->document->save();
+            }
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
         }
+        $this->status = 255;
+        $this->save();
     }
 }

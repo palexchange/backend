@@ -14,7 +14,7 @@ class StatisticsReportGenerator
         $from = request('from');
         $to = request('to');
         $account = request('account');
-        $to = Carbon::now()->addDay()->toDateString();
+        $to = Carbon::now('UTC')->addDay()->toDateString();
         $last_before = Carbon::parse($from)->subDay()->toDateString();
         $sql = "select *,case when t.document_id is null then null else r_id end as r_id ,case when t.document_id is null then '$last_before' else date end as date from account_statement($account,'$from','$to',false)t order by case when r_id is null then '$last_before'::date else t.date end,t.r_id";
         // dd($sql);

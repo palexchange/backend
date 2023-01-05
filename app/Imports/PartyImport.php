@@ -47,7 +47,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
         // if () {
         //     $entry = Entry::create([
         //         'user_id' => $this->who + 1,
-        //         'date' => Carbon::now()->toDateString(),
+        //         'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
         //         'status' => 1,
         //         'document_sub_type' => $row[2]  > 0 ? 5 : 4,
         //         'statement' => " موني غرام 'ترصيد'",
@@ -88,7 +88,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
             if ($row[2] != 0) {
                 $entry = Entry::create([
                     'user_id' => $this->who + 1,
-                    'date' => Carbon::now()->toDateString(),
+                    'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                     'status' => 1,
                     'document_sub_type' => $row[2]  > 0 ? 5 : 4,
                     'statement' => " $name 'ترصيد'",
@@ -120,7 +120,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
             if ($row[3] != 0) {
                 $entry = Entry::create([
                     'user_id' => $this->who + 1,
-                    'date' => Carbon::now()->toDateString(),
+                    'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                     'status' => 1,
                     'document_sub_type' => $row[2]  > 0 ? 5 : 4,
                     'statement' => " $name 'ترصيد'",
@@ -152,7 +152,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
             if ($row[4] != 0) {
                 $entry = Entry::create([
                     'user_id' => $this->who + 1,
-                    'date' => Carbon::now()->toDateString(),
+                    'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                     'status' => 1,
                     'document_sub_type' => $row[2]  > 0 ? 5 : 4,
                     'statement' => " $name 'ترصيد'",
@@ -187,7 +187,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
 
                 $entry = Entry::create([
                     'user_id' => $this->who + 1,
-                    'date' => Carbon::now()->toDateString(),
+                    'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                     'status' => 1,
                     'document_sub_type' => $row[2]  > 0 ? 5 : 4,
                     'statement' => " $name 'ترصيد'",

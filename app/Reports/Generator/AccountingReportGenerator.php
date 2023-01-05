@@ -172,8 +172,8 @@ class AccountingReportGenerator extends BaseReportGenerator
     public  static function currencyCredit(Request $request)
     {
         // App::setlocale('ar');
-        // $from = $request->from ?? Carbon::now()->subDay()->toDateString();
-        // $to = $request->to ?? Carbon::now()->addDay()->toDateString();
+        // $from = $request->from ?? Carbon::now('UTC')->subDay()->toDateString();
+        // $to = $request->to ?? Carbon::now('UTC')->addDay()->toDateString();
         $ids = $request->accounts_ids;
 
 

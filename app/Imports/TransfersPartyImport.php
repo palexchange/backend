@@ -36,7 +36,7 @@ class TransfersPartyImport implements ToModel, WithStartRow, WithLimit
 
             $entry_1 = Entry::create([
                 'user_id' => 2,
-                'date' => Carbon::now()->toDateString(),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 3,
                 'statement' => "ترصيد صناديق",
@@ -56,7 +56,7 @@ class TransfersPartyImport implements ToModel, WithStartRow, WithLimit
 
             $entry_2 = Entry::create([
                 'user_id' => 3,
-                'date' => Carbon::now()->toDateString(),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 3,
                 'statement' => "ترصيد صناديق",

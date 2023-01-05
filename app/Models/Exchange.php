@@ -145,7 +145,7 @@ class Exchange extends BaseModel implements Document
             DB::beginTransaction();
             $entry = $this->entry()->create([
                 'user_id' => request('user_id'),
-                'date' => Carbon::now()->toDateString(),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 2,
                 'statement' => $old_entry->statement,
