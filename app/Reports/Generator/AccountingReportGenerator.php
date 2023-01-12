@@ -140,9 +140,14 @@ class AccountingReportGenerator extends BaseReportGenerator
         ac_creditor,
         acc_balance,
         statement
-
         from account_statement($account,'$from','$tto',false , '$currency_id' , '$user_id')t order by t.r_id ";
+        // from account_statement($account,'$from','$tto',false)t order by t.r_id ";
+        // $entry_accounts = DB::select($sql);
+
+        // $sql = "select *,case when t.document_id is null then null else r_id end as r_id ,case when t.document_id is null then '$from' else date end as date from account_statement($account,'$from','$tto',false)t order by case when r_id is null then '$last_before'::date else t.date end,t.r_id";
+
         $entry_accounts = DB::select($sql);
+        // account_statement(a_id BIGINT, date_from DATE , date_to DATE,_active_only BOOLEAN)
 
         // dd($entry_accounts);
         // dd($entry_accounts);

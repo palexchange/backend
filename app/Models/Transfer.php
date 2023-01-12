@@ -571,6 +571,21 @@ class Transfer extends BaseModel implements Document
 
     public function scopeSort($query, $request)
     {
+        $sortBy = $request->sortBy;
+        $sortDesc = $request->sortDesc;
+        $custom_fields = [];
+        if (!$sortBy && !$sortDesc)
+            $query->orderby('id', 'desc');
+        if ($sortBy && $sortDesc) {
+            foreach ($sortBy as $index => $field) {
+                $desc = $sortDesc[$index] == 'true' ? "desc" : "asc";
+                if (!isset($custom_fields[$field])) {
+                    $query->orderBy($field, $desc);
+                } else {
+                    $custom_fields[$field]($query, $desc);
+                }
+            }
+        }
     }
     public function scopeSearch($query, $request)
     {
@@ -581,7 +596,10 @@ class Transfer extends BaseModel implements Document
             $query->where('status', $status);
         });
         $query->when($request->party_id, function ($query, $party_id) {
-            $query->where('party_id', $party_id);
+            $query
+                ->where('sender_party_id', $party_id)
+                ->orWhere('receiver_party_id', $party_id)
+                ->orWhere('office_id', $party_id);
         });
         $query->when($request->delivering_type, function ($query, $delivering_type) {
             $query->whereIn('delivering_type', $delivering_type);

@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\Else_;
 
 class PartiesReportGenerator extends BaseReportGenerator
 {
@@ -19,9 +20,9 @@ class PartiesReportGenerator extends BaseReportGenerator
     {
         $from_date = request('from_date');
         $to_date = request('to_date');
-        
-        if($from_date == null) $from_date = '0001-01-01';
-        if($to_date == null) $to_date = '9999-12-31';
+
+        if ($from_date == null) $from_date = '0001-01-01';
+        if ($to_date == null) $to_date = '9999-12-31';
 
         $headers = [
             [
@@ -33,27 +34,52 @@ class PartiesReportGenerator extends BaseReportGenerator
                 'value' => 'party_name'
             ],
             [
-                'text' => __('debtor'),
-                'value' => 'debtor'
+                'text' => __('dollar_balance'),
+                'value' => 'dolar'
             ],
             [
-                'text' => __('creditor'),
-                'value' => 'creditor'
+                'text' => __('shekel_balance'),
+                'value' => 'shekel'
             ],
             [
-                'text' => __('balance'),
-                'value' => 'balance'
+                'text' => __('dinar_balance'),
+                'value' => 'dinar'
+            ],
+            [
+                'text' => __('euro_balance'),
+                'value' => 'euro'
             ]
         ];
 
         $from_date = Carbon::parse($from_date)->toDateString();
         $to_date = Carbon::parse($to_date)->toDateString();
+        $show_zeros = request('show_zeros');
 
-        $sql = "select p.id as party_id, p.name as party_name, sum(e.debtor) as debtor,  sum(e.creditor) as creditor, sum(e.debtor - e.creditor) as balance 
-        from entry_transactions e 
-        INNER join parties p using(account_id)
-        where e.created_at::date >= '$from_date' and e.created_at::date <= '$to_date'
-        group by(p.name, p.id)";
+        if ($show_zeros == 1) {
+            $sql = "
+            Select *
+            from crosstab (
+            'select   p.name ,  cur.id , sum(e.creditor - e.debtor) as total
+            from parties p inner join entry_transactions e
+            using(account_id)
+            inner join currencies cur on cur.id = e.currency_id
+            where e.created_at::date >= ''$from_date'' and e.created_at::date <= ''$to_date'' 
+            group by (p.id , p.name ,  cur.id) '
+        ) as ct (party_name varchar, dolar float8 , shekel float8  ,dinar float8  ,euro float8  , derham float8  ,reyal float8 ,pound float8  );
+            ";
+        } else {
+            $sql = "
+            Select *
+            from crosstab (
+            'select   p.name ,  cur.id , sum(e.creditor - e.debtor) as total
+            from parties p inner join entry_transactions e
+            using(account_id)
+            inner join currencies cur on cur.id = e.currency_id
+            where e.created_at::date >= ''$from_date'' and e.created_at::date <= ''$to_date'' 
+            group by (p.id , p.name ,  cur.id) HAVING   SUM(e.creditor - e.debtor) <> 0'
+        ) as ct (party_name varchar, dolar float8 , shekel float8  ,dinar float8  ,euro float8  , derham float8  ,reyal float8 ,pound float8  );
+            ";
+        }
 
         $parties = DB::select($sql);
 

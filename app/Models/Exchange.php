@@ -236,6 +236,21 @@ class Exchange extends BaseModel implements Document
     }
     public function scopeSort($query, $request)
     {
+        $sortBy = $request->sortBy;
+        $sortDesc = $request->sortDesc;
+        $custom_fields = [];
+        if (!$sortBy && !$sortDesc)
+            $query->orderby('id', 'desc');
+        if ($sortBy && $sortDesc) {
+            foreach ($sortBy as $index => $field) {
+                $desc = $sortDesc[$index] == 'true' ? "desc" : "asc";
+                if (!isset($custom_fields[$field])) {
+                    $query->orderBy($field, $desc);
+                } else {
+                    $custom_fields[$field]($query, $desc);
+                }
+            }
+        }
     }
     public function scopeSearch($query, $request)
     {

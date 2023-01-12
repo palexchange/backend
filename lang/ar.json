@@ -39,5 +39,9 @@
     "debtor": "مدين",
     "name": "الاسم",
     "creditor": "دائن",
+    "dollar_balance": "رصيد الدولار",
+    "shekel_balance": "رصيد الشيكل",
+    "dinar_balance": "رصيد الدينار",
+    "euro_balance": "رصيد اليورو",
     "creditor_in_group_curr": "دائن بعملة المجموعة"
 }

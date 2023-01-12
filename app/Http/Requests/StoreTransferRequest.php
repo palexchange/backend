@@ -68,6 +68,7 @@ class StoreTransferRequest extends FormRequest
             'a_received_amount' => 'sometimes|numeric',
             'user_id' => 'required|exists:users,id',
             'returned_commission' => 'sometimes|numeric',
+            'office_exchange_rate_to_usd' => 'nullable|numeric',
             'returned_commission_type' => 'sometimes|integer',
         ];
     }
