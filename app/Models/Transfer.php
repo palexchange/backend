@@ -589,11 +589,14 @@ class Transfer extends BaseModel implements Document
     }
     public function scopeSearch($query, $request)
     {
-        $query->when($request->type, function ($query, $type) {
-            $query->where('type', $type);
+        $query->when($request->type != null, function ($query, $type) use ($request) {
+            $query->where('type', $request->type);
         });
         $query->when($request->status, function ($query, $status) {
             $query->where('status', $status);
+        });
+        $query->when($request->transfer_id, function ($query, $id) {
+            $query->where('id', $id);
         });
         $query->when($request->party_id, function ($query, $party_id) {
             $query
@@ -603,6 +606,10 @@ class Transfer extends BaseModel implements Document
         });
         $query->when($request->delivering_type, function ($query, $delivering_type) {
             $query->whereIn('delivering_type', $delivering_type);
+        });
+        $query->when($request->from && $request->to, function ($query, $from) use ($request) {
+            $query->where(DB::raw('issued_at::date'), '>=', $request->from)
+                ->where(DB::raw('issued_at::date'), '<=', $request->to);
         });
         $query->when($request->user_id, function ($q, $user_id) {
             if (auth()->user()['role'] != 1) {
