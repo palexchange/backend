@@ -122,8 +122,15 @@ class AccountingReportGenerator extends BaseReportGenerator
         $user_id = 0;
         // dd($user_id);
         // // $user_id = 0;
-        $currency_id = request('currency_id') > 0 ? request('currency_id') : 0;
-
+        $currency_ids = "NULL";
+        $curr_len =  0;
+        $currencies = request('currency_id') > 0 ? request('currency_id') : 0;
+        if (isset($currencies[0])) {
+            $curr_len =  count($currencies);
+            $ids = join(',', $currencies);
+            $currency_ids = "ARRAY [$ids]";
+        }
+        // dd($currency_ids);
         $last_before = Carbon::parse($from)->toDateString();
         $sql = "select
         case when t.document_id is null then null else r_id end as r_id,
@@ -140,7 +147,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         ac_creditor,
         acc_balance,
         statement
-        from account_statement($account,'$from','$tto',false , '$currency_id' , '$user_id')t order by t.r_id ";
+        from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , '$user_id')t order by t.r_id ";
         // from account_statement($account,'$from','$tto',false)t order by t.r_id ";
         // $entry_accounts = DB::select($sql);
 

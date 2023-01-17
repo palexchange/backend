@@ -39,9 +39,15 @@
     "debtor": "مدين",
     "name": "الاسم",
     "creditor": "دائن",
+    "total_creditor": "مجموع الدائن",
+    "total_debtor": "مجموع المدين",
+    "total": "المجموع",
     "dollar_balance": "رصيد الدولار",
     "shekel_balance": "رصيد الشيكل",
     "dinar_balance": "رصيد الدينار",
     "euro_balance": "رصيد اليورو",
+    "derham_balance": "رصيد الدرهم",
+    "reyal_balance": "رصيد ر.س",
+    "pound_balance": "رصيد الجنيه",
     "creditor_in_group_curr": "دائن بعملة المجموعة"
 }

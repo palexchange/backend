@@ -21,7 +21,8 @@ return new class extends Migration
             date_from date,
             date_to date,
             _active_only boolean ,
-		curr_id bigint, 
+		curr_ids bigint[], 
+		curr_length int, 
         logged_in_user_id bigint )
             RETURNS TABLE(
                 transaction_id bigint,
@@ -69,7 +70,11 @@ return new class extends Migration
                         entries.document_number,
                         entries.document_id,
                         entries.document_sub_type,
-                       	case when  curr_id > 0 then (entry_transactions.debtor - entry_transactions.creditor) else (entry_transactions.ac_debtor - entry_transactions.ac_creditor) end as balance,
+                       	case when  curr_length = 1 
+                        then
+                        (entry_transactions.debtor - entry_transactions.creditor) 
+                         else 
+                        (entry_transactions.ac_debtor - entry_transactions.ac_creditor) end as balance,
                         ROW_NUMBER() over(order by entry_transactions.id) as r_id,
                         entry_transactions.account_id,
 					currencies.name,
@@ -81,8 +86,13 @@ return new class extends Migration
 					inner join currencies ON currencies.id = entry_transactions.currency_id
                     left join users ON entries.user_id = users.id
                     where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1
-					and entries.date < date_to and  case when  logged_in_user_id > 0 THEN  entries.user_id = logged_in_user_id ELSE entries.user_id IS NOT NULL END
-					and case  WHEN curr_id > 0  THEN entry_transactions.currency_id = curr_id ELSE entry_transactions.currency_id IS NOT NULL END 
+					and entries.date < date_to and  
+                    case when  logged_in_user_id > 0 
+                    THEN  entries.user_id = logged_in_user_id 
+                    ELSE entries.user_id IS NOT NULL END
+					and case  WHEN curr_ids is not null   
+                    THEN entry_transactions.currency_id =  ANY (curr_ids) 
+                    ELSE entry_transactions.currency_id IS NOT NULL END 
                         )e
                         order by entry_id,transaction_id, r_id desc;
                 END 

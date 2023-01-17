@@ -16,7 +16,7 @@ use PhpParser\Node\Stmt\Else_;
 
 class PartiesReportGenerator extends BaseReportGenerator
 {
-    public static function partiesReport(Request $request)
+    public static function partiesTotalInEveryCurr(Request $request)
     {
         $from_date = request('from_date');
         $to_date = request('to_date');
@@ -48,7 +48,19 @@ class PartiesReportGenerator extends BaseReportGenerator
             [
                 'text' => __('euro_balance'),
                 'value' => 'euro'
-            ]
+            ],
+            [
+                'text' => __('derham_balance'),
+                'value' => 'derham'
+            ],
+            [
+                'text' => __('reyal_balance'),
+                'value' => 'reyal'
+            ],
+            [
+                'text' => __('pound_balance'),
+                'value' => 'pound'
+            ],
         ];
 
         $from_date = Carbon::parse($from_date)->toDateString();
@@ -88,6 +100,62 @@ class PartiesReportGenerator extends BaseReportGenerator
             $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
             return parent::returnFile($parties, $report_headers, $options);
         }
+        return response()->json(['items' => $parties, 'headers' => $headers]);
+    }
+    public static function partiesTotalInOneCurr(Request $request)
+    {
+        $from_date = request('from_date');
+        $to_date = request('to_date');
+        $currency_id = request('currency_id');
+
+        if ($from_date == null) $from_date = '0001-01-01';
+        if ($to_date == null) $to_date = '9999-12-31';
+
+        $headers = [
+            [
+                'text' => __('id'),
+                'value' => 'party_id'
+            ],
+            [
+                'text' => __('name'),
+                'value' => 'p_name'
+            ],
+            [
+                'text' => __('total_creditor'),
+                'value' => 'total_creditor'
+            ],
+            [
+                'text' => __('total_debtor'),
+                'value' => 'total_debtor'
+            ],
+
+            [
+                'text' => __('total'),
+                'value' => 'total'
+            ],
+        ];
+
+        $from_date = Carbon::parse($from_date)->toDateString();
+        $to_date = Carbon::parse($to_date)->toDateString();
+
+        $sql = "
+        select p_name , cur_name  ,total_creditor ,  total_debtor , sum(total_debtor-total_creditor) as total  from (select   p.name as p_name , cur.id as cur_id , cur.name as cur_name , sum(e.creditor )  as total_creditor , sum(e.debtor)  as total_debtor
+        from parties p inner join entry_transactions e
+        using(account_id)
+		inner join currencies cur on cur.id = e.currency_id
+        where e.created_at::date >= '$from_date' and e.created_at::date <= '$to_date' 
+		group by (p.id , p.name ,  cur.name , cur_id) )w 
+		where w.cur_id  =  $currency_id
+		group by   cur_name ,p_name , total_creditor , total_debtor
+        ";
+
+        $parties = DB::select($sql);
+
+        // if ($request->download == true) {
+        //     $report_headers = [__('id'), __('name'), __('debtor'), __('creditor'), __('balance'),];
+        //     $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
+        //     return parent::returnFile($parties, $report_headers, $options);
+        // }
         return response()->json(['items' => $parties, 'headers' => $headers]);
     }
 }
