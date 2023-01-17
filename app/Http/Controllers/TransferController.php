@@ -28,7 +28,7 @@ class TransferController extends Controller
     }
     public function index(Request $request)
     {
-        return TransferResource::collection(Transfer::search($request)->sort($request)->paginate($this->pagination));
+        return TransferResource::collection(Transfer::Search($request)->Sort($request)->paginate($this->pagination));
     }
     public function store(StoreTransferRequest $request)
     {

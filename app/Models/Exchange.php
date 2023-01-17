@@ -89,55 +89,6 @@ class Exchange extends BaseModel implements Document
             $detail->log($entry);
         });
     }
-    // public function confirmMultiExchange($entry)
-    // {
-    // }
-    // public function confirmNormalExchange($entry)
-    // {
-    //     $exchange_profit_account_id = Account::find(3)->id;
-    //     EntryTransaction::create([
-    //         'entry_id' => $entry->id,
-    //         'account_id' => $this->user_account_id, //   $this->currency->account_id
-    //         'currency_id' => $this->currency_id,
-    //         'debtor' => $this->amount,
-    //         'creditor' => 0,
-    //         'transaction_type' => 1,
-    //         'ac_debtor' => $this->amount_after,
-    //         'ac_creditor' => 0,
-    //         'exchange_rate' => $this->exchange_rate
-    //     ]);
-
-    //     // $profit_and_lose_account_id = Setting::find('losses_and_profits')?->value;
-    //     // profit transactoin from currency account 
-    //     // EntryTransaction::create([
-    //     //     'entry_id' => $entry->id,
-    //     //     'account_id' => $profit_and_lose_account_id ?? 3,
-    //     //     'currency_id' => 1,
-    //     //     'debtor' => $this->profit - (($this->amount - $this->details_after_amount) * $this->exchange_rate),
-    //     //     'creditor' => 0,
-    //     //     'transaction_type' => 1,
-    //     //     'ac_debtor' => $this->profit - (($this->amount - $this->details_after_amount) * $this->exchange_rate),
-    //     //     'ac_creditor' => 0,
-    //     //     'exchange_rate' => 1
-    //     // ]);
-
-    //     // profit transactin to currency exchange_profit_account  
-    //     EntryTransaction::create([
-    //         'entry_id' => $entry->id,
-    //         'account_id' => $exchange_profit_account_id,
-    //         'currency_id' => 1,
-    //         'debtor' => 0,
-    //         'transaction_type' => 0,
-    //         'creditor' => $this->profit,
-    //         'ac_debtor' => 0,
-    //         'ac_creditor' => $this->profit,
-    //         'exchange_rate' => 1
-    //     ]);
-
-    //     $this->details()->each(function ($detail) use ($entry) {
-    //         $detail->log($entry);
-    //     });
-    // }
     public function dispose()
     {
         $old_entry = $this->entry;
@@ -240,7 +191,7 @@ class Exchange extends BaseModel implements Document
         $sortDesc = $request->sortDesc;
         $custom_fields = [];
         if (!$sortBy && !$sortDesc)
-            $query->orderby('id', 'desc');
+            $query->orderby('exchanges.id', 'desc');
         if ($sortBy && $sortDesc) {
             foreach ($sortBy as $index => $field) {
                 $desc = $sortDesc[$index] == 'true' ? "desc" : "asc";
@@ -254,6 +205,31 @@ class Exchange extends BaseModel implements Document
     }
     public function scopeSearch($query, $request)
     {
+        $query->when($request->status, function ($query, $status) {
+            $query->where('status', $status);
+        });
+
+        $query->when($request->from_currency_id, function ($query, $from_currency_id) {
+            $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
+                ->where('exchange_details.type', 1)
+                ->where('exchange_details.currency_id', $from_currency_id);
+        });
+
+        $query->when($request->to_currency_id, function ($query, $to_currency_id) {
+            $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
+                ->where('exchange_details.type', 2)
+                ->where('exchange_details.currency_id', $to_currency_id);
+        });
+        // $query->when($request->transfer_id, function ($query, $id) {
+        //     $query->where('id', $id);
+        // });
+        $query->when($request->party_id, function ($query, $party_id) {
+            $query->where('beneficiary_id', $party_id);
+        });
+        $query->when($request->from && $request->to, function ($query, $from) use ($request) {
+            $query->where(DB::raw('date::date'), '>=', $request->from)
+                ->where(DB::raw('date::date'), '<=', $request->to);
+        });
         $query->when($request->user_id, function ($q, $user_id) {
             if (auth()->user()['role'] != 1) {
                 $q->where('user_id',   $user_id);
