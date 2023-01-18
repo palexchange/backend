@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Imports\CountrtyImport;
+use App\Imports\money_gram_parties;
 use App\Imports\PartyImport;
 use App\Imports\TransfersPartyImport;
 use App\Models\Account;
@@ -58,8 +60,10 @@ Route::get('/import', function () {
     return response()->json(['data' => 'success', 'All good!']);
 });
 Route::get('/import_boxs', function () {
-    // Excel::import(new PartyImport(1), base_path() . '/excel/k_parties.xlsx');
-    // Excel::import(new PartyImport(2), base_path() . '/excel/ah_parties.xlsx');
     Excel::import(new TransfersPartyImport(), base_path() . '/excel/boxes.xlsx');
+    return response()->json(['data' => 'success', 'All good!']);
+});
+Route::get('/money_grams', function () {
+    Excel::import(new money_gram_parties(), base_path() . '/excel/parties.xlsx');
     return response()->json(['data' => 'success', 'All good!']);
 });

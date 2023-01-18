@@ -30,6 +30,7 @@ class ExportDataController extends Controller
     {
         $model = ucfirst($request->model);
         $get_model = "App\\Models\\" . $model;
+
         return Excel::download(new ExportTable($get_model), $model . ".xlsx", null, ['test_header_test' => 'moew']);
         // return ExportDataResource::collection(ExportData::search($request)->sort($request)->paginate($this->pagination));
     }

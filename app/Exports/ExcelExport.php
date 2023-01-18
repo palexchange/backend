@@ -24,9 +24,13 @@ class ExcelExport implements FromArray, WithHeadings, WithEvents, WithMapping
     }
     public function map($row): array
     {
+
         $arr = [];
         foreach ($row as $key => $value) {
-            if (isset($this->options[$key])) {
+
+            if (isset($value) && isset($this->options[$key])) {
+                logger($key);
+                logger($value);
                 $arr[] = $this->options[$key][$value];
             } else {
                 $arr[] = $value;
