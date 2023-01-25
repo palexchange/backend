@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ExportTable;
+use App\Exports\TransferExport;
 use App\Models\ExportData;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ExportDataResource;
@@ -29,9 +30,8 @@ class ExportDataController extends Controller
     public function index(Request $request)
     {
         $model = ucfirst($request->model);
-        $get_model = "App\\Models\\" . $model;
-
-        return Excel::download(new ExportTable($get_model), $model . ".xlsx", null, ['test_header_test' => 'moew']);
+        $get_export_model = "App\\Exports\\" . $model . 'Export';
+        return Excel::download(new $get_export_model($request), $model . ".xlsx", null, ['moew_moew_header' => 'moew moew']);
         // return ExportDataResource::collection(ExportData::search($request)->sort($request)->paginate($this->pagination));
     }
     public function store(StoreExportDataRequest $request)

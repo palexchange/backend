@@ -62,7 +62,7 @@ class StoreTransferRequest extends FormRequest
             'office_commission' => 'nullable|numeric',
             'exchange_rate_to_office_currency' => 'sometimes|numeric',
             'office_commission_type' => 'sometimes|integer',
-            'transfer_commission' => 'sometimes|numeric',
+            'transfer_commission' => 'nullable|numeric',
             'office_amount' => 'sometimes|numeric',
             'office_amount_in_office_currency' => 'sometimes|numeric',
             'a_received_amount' => 'sometimes|numeric',
@@ -70,6 +70,8 @@ class StoreTransferRequest extends FormRequest
             'returned_commission' => 'sometimes|numeric',
             'office_exchange_rate_to_usd' => 'nullable|numeric',
             'returned_commission_type' => 'sometimes|integer',
+            'started_at' => 'sometimes|date',
+
         ];
     }
 }

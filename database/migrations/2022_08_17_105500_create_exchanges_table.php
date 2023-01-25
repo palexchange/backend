@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('exchanges', function (Blueprint $table) {
             $table->id();
             $table->dateTime('date');
+            $table->dateTime('started_at')->nullable();
             // $table->integer('type'); // 1 normal ,, 2 reverse
             // $table->float('amount')->default(0);
             // $table->foreignId('currency_id')->references('id')->on('currencies');

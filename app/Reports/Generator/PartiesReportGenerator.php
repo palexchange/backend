@@ -25,10 +25,7 @@ class PartiesReportGenerator extends BaseReportGenerator
         if ($to_date == null) $to_date = '9999-12-31';
 
         $headers = [
-            [
-                'text' => __('id'),
-                'value' => 'party_id'
-            ],
+
             [
                 'text' => __('name'),
                 'value' => 'party_name'
@@ -96,9 +93,18 @@ class PartiesReportGenerator extends BaseReportGenerator
         $parties = DB::select($sql);
 
         if ($request->download == true) {
-            $report_headers = [__('id'), __('name'), __('debtor'), __('creditor'), __('balance'),];
-            $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
-            return parent::returnFile($parties, $report_headers, $options);
+            $report_headers = [
+                __('name'),
+                __('dollar_balance'),
+                __('shekel_balance'),
+                __('dinar_balance'),
+                __('euro_balance'),
+                __('derham_balance'),
+                __('reyal_balance'),
+                __('pound_balance'),
+            ];
+            // $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
+            return parent::returnFile($parties, $report_headers);
         }
         return response()->json(['items' => $parties, 'headers' => $headers]);
     }
@@ -112,10 +118,7 @@ class PartiesReportGenerator extends BaseReportGenerator
         if ($to_date == null) $to_date = '9999-12-31';
 
         $headers = [
-            [
-                'text' => __('id'),
-                'value' => 'party_id'
-            ],
+
             [
                 'text' => __('name'),
                 'value' => 'p_name'
@@ -151,11 +154,17 @@ class PartiesReportGenerator extends BaseReportGenerator
 
         $parties = DB::select($sql);
 
-        // if ($request->download == true) {
-        //     $report_headers = [__('id'), __('name'), __('debtor'), __('creditor'), __('balance'),];
-        //     $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
-        //     return parent::returnFile($parties, $report_headers, $options);
-        // }
+        if ($request->download == true) {
+            $report_headers = [
+                __('name'),
+                __('currency'),
+                __('total_creditor'),
+                __('total_debtor'),
+                __('total'),
+            ];
+            // $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
+            return parent::returnFile($parties, $report_headers);
+        }
         return response()->json(['items' => $parties, 'headers' => $headers]);
     }
 }

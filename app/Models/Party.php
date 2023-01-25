@@ -11,8 +11,15 @@ class Party extends BaseModel
 {
     use HasFactory;
     protected $with = ['image'];
-    protected $appends = ['received_money_gram_count', 'sended_money_gram_count'];
-
+    protected $appends = ['country_name', 'received_money_gram_count', 'sended_money_gram_count'];
+    public function country()
+    {
+        return $this->belongsTo(Country::class)->withDefault(['name_ar' => '']);
+    }
+    public function getCountryNameAttribute()
+    {
+        return $this->country->name_ar;
+    }
     public function getSendedMoneyGramCountAttribute()
     {
         return Transfer::where('sender_party_id', $this->id)
@@ -60,8 +67,8 @@ class Party extends BaseModel
         $query->when($request->id_no, function ($q, $id_no) {
             $q->where('id_no', 'LIKE', "%{$id_no}%");
         });
-        $query->when($request->phone, function ($q, $phone) {
-            $q->where('phone', 'LIKE', "%{$phone}%");
+        $query->when($request->mobile, function ($q, $mobile) {
+            $q->where('phone', 'LIKE', "%{$mobile}%");
         });
     }
     public function image()

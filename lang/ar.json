@@ -49,5 +49,9 @@
     "derham_balance": "رصيد الدرهم",
     "reyal_balance": "رصيد ر.س",
     "pound_balance": "رصيد الجنيه",
+    "receiver_name": "اسم المستلم",
+    "delivering_type": "نوع التسليم",
+    "document_id": "رقم المصدر",
+    "currency id": "العملة",
     "creditor_in_group_curr": "دائن بعملة المجموعة"
 }

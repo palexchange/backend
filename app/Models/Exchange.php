@@ -209,6 +209,10 @@ class Exchange extends BaseModel implements Document
             $query->where('status', $status);
         });
 
+        $query->when($request->user_action_id, function ($query, $user_action_id) {
+            $query->where('user_id', $user_action_id);
+        });
+
         $query->when($request->from_currency_id, function ($query, $from_currency_id) {
             $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
                 ->where('exchange_details.type', 1)

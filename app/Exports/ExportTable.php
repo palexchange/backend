@@ -38,10 +38,6 @@ class ExportTable implements WithHeadings, WithEvents, FromArray, WithMapping
         $arr = [];
         foreach ($row as $key => $value) {
             if (isset($this->model::$export_options[$key])) {
-                logger("key");
-                logger($key);
-                logger("value");
-                logger($value);
                 $arr[] = $this->model::$export_options[$key][$value];
             } else {
                 $arr[] = $value;

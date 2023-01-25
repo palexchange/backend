@@ -149,7 +149,7 @@ class Transfer extends BaseModel implements Document
             $transactions[] = [
                 'account_id' => $usd_commission_account_id, // $this->user_account_id
                 'amount' => $this->transfer_commission,
-                'transaction_type' => 2,
+                'transaction_type' => 2, //
                 'exchange_rate' => 1,
                 'currency_id' => 1,
                 'type' => 0,
@@ -589,6 +589,17 @@ class Transfer extends BaseModel implements Document
     }
     public function scopeSearch($query, $request)
     {
+        $query->when($request->delivering_type &&  $request->party_id, function ($q) use ($request) {
+            $q
+                ->where('sender_party_id', $request->party_id)
+                ->orWhere('receiver_party_id', $request->party_id)
+                ->orWhere('office_id', $request->party_id)
+                ->fromSub(function ($qq) use ($request) {
+                    $qq->select('*')
+                        ->from('transfers')
+                        ->where('delivering_type', $request->delivering_type);
+                }, 'agg_tabel');
+        });
         $query->when($request->type != null, function ($query, $type) use ($request) {
             $query->where('type', $request->type);
         });
@@ -598,12 +609,12 @@ class Transfer extends BaseModel implements Document
         $query->when($request->transfer_id, function ($query, $id) {
             $query->where('id', $id);
         });
-        $query->when($request->party_id, function ($query, $party_id) {
-            $query
-                ->where('sender_party_id', $party_id)
-                ->orWhere('receiver_party_id', $party_id)
-                ->orWhere('office_id', $party_id);
-        });
+        // $query->when($request->party_id, function ($query, $party_id) {
+        //     $query
+        //         ->where('sender_party_id', $party_id)
+        //         ->orWhere('receiver_party_id', $party_id)
+        //         ->orWhere('office_id', $party_id);
+        // });
         $query->when($request->delivering_type, function ($query, $delivering_type) {
             $query->whereIn('delivering_type', $delivering_type);
         });

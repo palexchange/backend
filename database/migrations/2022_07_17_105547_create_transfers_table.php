@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->dateTime('issued_at')->default(DB::raw('NOW()'));
+            $table->dateTime('started_at')->nullable();
             $table->integer('type')->default(0); // 0 OUT COMING , 1 INCOMING
             $table->integer('status')->default(0); // 
             $table->integer('number')->nullable(); // 

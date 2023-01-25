@@ -48,6 +48,10 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'value' => 'document_type'
             ],
             [
+                'text' => __('document_id'), // اسم الحركة
+                'value' => 'document_id'
+            ],
+            [
                 'text' => __('public.debtor'), // مدين
                 'value' => 'debtor'
             ],
@@ -139,6 +143,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         debtor,
         creditor,
         document_type,
+        document_id,
         user_name,
         currency_name,
         currency_id,
@@ -159,24 +164,42 @@ class AccountingReportGenerator extends BaseReportGenerator
         // dd($entry_accounts);
         // dd($entry_accounts);
         $report_headers = [
-            __('journal_no'),
-            __('public.date'),
-            __('public.transaction_type'),
-            __('public.debtor'),
-            __('public.creditor'),
-            __('type_name'),
+            __('journal_no'), //رقم القيد
+            __('public.date'), // تاريخ
+            __('public.transaction_type'), // نوع الحوالة
+            __('public.debtor'), // مدين
+            __('public.creditor'), //دائن
+            __('document_type'), // اسم الحركة
+            __('document_id'), // اسم الحركة
             __('user_name'),
-            __('currency_name'),
-
+            __('currency_id'),
             __('exchange rate'),
-            __('debtor_in_group_curr'),
-            __('creditor_in_group_curr'),
-            __('public.accumulated_balance'),
-            __('statement'),
+            __('currency id'),
+            __('debtor_in_group_curr'), //مدين بعملة المجموهة
+            __('creditor_in_group_curr'), //دائن بعملة المجموهة
+            __('public.accumulated_balance'), //دائن بعملة المجموهة
+            __('statement'), // اسم الحركة
         ];
 
         if ($request->download == true) {
-            $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
+            $options = [
+                'transaction_type' => [
+                    1 => 1,
+                    0 => 0,
+                    2 => 2,
+                    3 => 3,
+                    4 => 4,
+                    5 => 5,
+                    6 => 6,
+                    7 => 7,
+                ],
+                'document_type' => [
+                    1 => __('transfer'),
+                    2 => __('exchange'),
+                    3 => __('receipt'),
+
+                ]
+            ];
             return parent::returnFile($entry_accounts, $report_headers, $options);
         }
         return response()->json(['items' => $entry_accounts, 'headers' => $headers]);

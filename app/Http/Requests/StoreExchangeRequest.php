@@ -26,6 +26,7 @@ class StoreExchangeRequest extends FormRequest
         return [
             //
             'date' => 'required|date',
+            'started_at' => 'required|date',
             // 'amount' => 'required|numeric',
             'profit' => 'required|numeric',
             // 'currency_id' => 'required|exists:currencies,id',
