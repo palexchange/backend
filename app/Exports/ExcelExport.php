@@ -33,7 +33,7 @@ class ExcelExport implements FromArray, WithHeadings, WithEvents, WithMapping
                 logger($value);
                 $arr[] = $this->options[$key][$value];
             } else {
-                $arr[] = $value;
+                $arr[] = __($value);
             }
         }
         return   $arr;

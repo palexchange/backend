@@ -19,6 +19,9 @@ class AccountingReportGenerator extends BaseReportGenerator
     {
         $prev_balance = null;
         $after_balance = null;
+        $show_sender = boolval(request('show_sender'));
+
+        $show_receiver = boolval(request('show_receiver'));
         $account = request('account');
         // App::setlocale('ar');
         $headers = [
@@ -30,27 +33,14 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'text' => __('public.date'), // تاريخ
                 'value' => 'date'
             ],
-            // [
-            //     'text' => __('public.beneficiary_name'), // المستفيد
-            //     'value' => 'beneficiary_name'
-            // ],
-
-            // [
-            //     'text' => __('public.transaction_no'),
-            //     'value' => 'document_number'
-            // ],
-            // [
-            //     'text' => __('public.reference'), // 
-            //     'value' => 'reference',
-            // ],
             [
                 'text' => __('document_type'), // اسم الحركة
                 'value' => 'document_type'
             ],
-            [
-                'text' => __('document_id'), // اسم الحركة
-                'value' => 'document_id'
-            ],
+            // [
+            //     'text' => __('document_id'), // اسم الحركة
+            //     'value' => 'document_id'
+            // ],
             [
                 'text' => __('public.debtor'), // مدين
                 'value' => 'debtor'
@@ -59,16 +49,28 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'text' => __('public.creditor'), //دائن
                 'value' => 'creditor'
             ],
-            // [
-            //     'text' => __('balance'), //الرصيد   
-            //     'value' => 'balance'
-            // ],
+        ];
+        if ($show_sender) {
+
+            $headers[] =
+                [
+                    'text' => __('sender_name'), //دائن
+                    'value' => 'sender_name'
+                ];
+        }
+        if ($show_receiver) {
+            $headers[] =
+                [
+                    'text' => __('receiver_name'), //دائن
+                    'value' => 'receiver_name'
+                ];
+        }
+        $headers = array_merge($headers,  [
+
             [
                 'text' => __('public.transaction_type'), // نوع الحوالة
                 'value' => 'transaction_type'
             ],
-
-
             [
                 'text' => __('user_name'),
                 'value' => 'user_name'
@@ -77,10 +79,6 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'text' => __('currency_id'),
                 'value' => 'currency_id'
             ],
-            // [
-            //     'text' => __('balance'),
-            //     'value' => 'balance'
-            // ],
             [
                 'text' => __('exchange rate'),
                 'value' => 'exchange_rate'
@@ -101,12 +99,8 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'text' => __('statement'), // اسم الحركة
                 'value' => 'statement'
             ],
+        ]);
 
-            // [
-            //     'text' => __('public.accumulated_balance'), //الرصيد التراكمي 
-            //     'value' => 'a_balance'
-            // ]
-        ];
         if ($account == null)
             return response()->json(['items' => [], 'headers' => $headers]);
         // $year_end = year_end();
@@ -136,15 +130,23 @@ class AccountingReportGenerator extends BaseReportGenerator
         }
         // dd($currency_ids);
         $last_before = Carbon::parse($from)->toDateString();
+        $vars = "";
+        if ($show_sender) {
+
+            $vars =  "sender_name,";
+        }
+        if ($show_receiver) {
+            $vars = $vars . "receiver_name,";
+        }
         $sql = "select
-        case when t.document_id is null then null else r_id end as r_id,
+        t.document_id   as r_id,
         case when t.document_id is null then '$last_before' else date end as date,
         transaction_type,
         debtor,
         creditor,
         document_type,
-        document_id,
         user_name,
+        $vars
         currency_name,
         currency_id,
         exchange_rate,
@@ -157,8 +159,8 @@ class AccountingReportGenerator extends BaseReportGenerator
         // $entry_accounts = DB::select($sql);
 
         // $sql = "select *,case when t.document_id is null then null else r_id end as r_id ,case when t.document_id is null then '$from' else date end as date from account_statement($account,'$from','$tto',false)t order by case when r_id is null then '$last_before'::date else t.date end,t.r_id";
-
         $entry_accounts = DB::select($sql);
+
         // account_statement(a_id BIGINT, date_from DATE , date_to DATE,_active_only BOOLEAN)
 
         // dd($entry_accounts);
@@ -170,8 +172,15 @@ class AccountingReportGenerator extends BaseReportGenerator
             __('public.debtor'), // مدين
             __('public.creditor'), //دائن
             __('document_type'), // اسم الحركة
-            __('document_id'), // اسم الحركة
             __('user_name'),
+        ];
+        if ($show_sender) {
+            $report_headers[] =  __('sender_name');
+        }
+        if ($show_receiver) {
+            $report_headers[] =  __('receiver_name');
+        }
+        $report_headers = array_merge($report_headers, [
             __('currency_id'),
             __('exchange rate'),
             __('currency id'),
@@ -179,14 +188,14 @@ class AccountingReportGenerator extends BaseReportGenerator
             __('creditor_in_group_curr'), //دائن بعملة المجموهة
             __('public.accumulated_balance'), //دائن بعملة المجموهة
             __('statement'), // اسم الحركة
-        ];
+        ]);
 
         if ($request->download == true) {
             $options = [
                 'transaction_type' => [
                     1 => 1,
                     0 => 0,
-                    2 => 2,
+                    2 => "عمولة زبون",
                     3 => 3,
                     4 => 4,
                     5 => 5,
@@ -197,7 +206,6 @@ class AccountingReportGenerator extends BaseReportGenerator
                     1 => __('transfer'),
                     2 => __('exchange'),
                     3 => __('receipt'),
-
                 ]
             ];
             return parent::returnFile($entry_accounts, $report_headers, $options);
