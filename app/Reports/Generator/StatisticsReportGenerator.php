@@ -21,22 +21,34 @@ class StatisticsReportGenerator
         $entry_accounts = DB::select($sql);
     }
 
-    public static function mothly()
+    public static function countTransfers()
     {
 
         $now = Carbon::now()->toDateString();
-        // $trasfers =
-        //     [
-        //         'data' => DB::select("select extract(day from dates) as day,coalesce(sum(b.total),0) as total from generate_series( date_trunc('year', '$now','UTC')::date, '$now' , interval '1 day') dates left join (select * from transfers  on b.issued_at=dates group by dates.dates order by extract(day from dates) asc"),
-        //         'info' => Transfer::join('bill_items', 'bill_items.bill_id', 'bills.id')->whereRaw('cast(bills.issue_date as date)=current_date::date')->where('bills.bill_type_id', '=', $bill_type_id)->select([DB::raw('coalesce(sum(bills.total),0) as total'), DB::raw('count(item_id) as items'), DB::raw('count(bills.id) as bills_total')])->get()
-        //     ];
-        // $exchanges =
-        //     [
-        //         'data' => DB::select("select extract(day from dates) as day,coalesce(sum(b.total),0) as total from generate_series( date_trunc('year', '$now','UTC')::date, '$now' , interval '1 day') dates left join (select * from exchanges where bills.bill_type_id=$bill_type_id and bills.tenant_id =$tenant_id) b on b.issue_date=dates group by dates.dates order by extract(day from dates) asc"),
-        //         'info' => Exchange::join('bill_items', 'bill_items.bill_id', 'bills.id')->whereRaw("cast(bills.issue_date as date)>=date_trunc('month',current_date)::date")->where('bills.bill_type_id', '=', $bill_type_id)->select([DB::raw('coalesce(sum(bills.total),0) as total'), DB::raw('count(item_id) as items'), DB::raw('count(bills.id) as bills'), DB::raw('count(bills.id) as bills_total')])->get()
-        //     ];
+        $transfers = DB::select("
+        WITH months AS (SELECT * FROM generate_series(1, 12) AS t(n))
+SELECT TO_CHAR( TO_DATE(months.n::TEXT , 'MM'),'Month') AS MONTH , COUNT(issued_at) as transfers_count  FROM transfers
+RIGHT JOIN months ON EXTRACT(MONTH from issued_at) = months.n 
+where EXTRACT(YEAR from NOW())  = EXTRACT(YEAR from issued_at)
+GROUP BY months.n  
+ORDER By months.n;
+");
+        $exchanges = DB::select("
+        WITH months AS (SELECT * FROM generate_series(1, 12) AS t(n))
+SELECT TO_CHAR( TO_DATE(months.n::TEXT , 'MM'),'Month') AS MONTH , COUNT(issued_at) as transfers_count  FROM transfers
+RIGHT JOIN months ON EXTRACT(MONTH from issued_at) = months.n 
+where EXTRACT(YEAR from NOW())  = EXTRACT(YEAR from issued_at)
+GROUP BY months.n  
+ORDER By months.n;
+");
+        $months = [];
+        $counts = [];
+        foreach ($transfers as $el) {
+            $months[] = $el->month;
+            $counts[] = $el->transfers_count;
+        }
 
-        $data = compact('trasfers', 'exchanges');
+        $data = compact('months', 'counts');
         return response()->json(compact('data'), 200);
     }
 }

@@ -8,8 +8,8 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Events\AfterSheet;
-
-class TransferExport implements FromCollection, WithHeadings, WithMapping
+use Maatwebsite\Excel\Concerns\WithEvents;
+class TransferExport implements FromCollection, WithHeadings, WithMapping , WithEvents
 {
     public $request;
     public function __construct(Request $request)

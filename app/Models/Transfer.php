@@ -497,66 +497,65 @@ class Transfer extends BaseModel implements Document
             ->where('accounts.currency_id', $this->type == 0 ?  $this->delivery_currency_id : $this->received_currency_id)->first(['accounts.id'])->id;
         return $id;
     }
-    public static function exportData()
+    public function getDeliveryCurrencyNameAttribute()
     {
-        return  Transfer::join('parties as sender', 'sender.id', 'transfers.sender_party_id')
-            ->leftJoin('parties as office', 'office.id', 'transfers.office_id')
-            ->leftJoin('currencies as d_c', 'd_c.id', 'transfers.delivery_currency_id')
-            ->leftJoin('currencies as r_c', 'r_c.id', 'transfers.received_currency_id')
-            ->leftJoin('currencies as of_c', 'of_c.id', 'transfers.office_currency_id')
-            ->select(
-                '*',
-                'transfers.id as id',
-                'transfers.status',
-                'office.name as office_name',
-                'sender.name as sender_name',
-                'd_c.name as delivery_currency',
-                'r_c.name as received_currency',
-                'of_c.name as office_currency'
-            )->orderBy('transfers.id', 'asc')->get()->toArray();
+        return $this->delivery_currency->name;
     }
-    public static  $exportHeaders =
-    [
-        "id",
-        "issued_at",
-        "type",
-        "status",
-        "commission_side",
-        "received_amount",
-        "to_send_amount",
-        "exchange_rate_to_reference_currency",
-        "exchange_rate_to_delivery_currency",
-        "exchange_rate_to_office_currency",
-        "office_amount_in_office_currency",
-        "office_name",
-        "sender_name",
-        "delivery_currency",
-        "received_currency",
-        "office_currency",
-        "profit",
-    ];
-    public static   function exportheaders()
+    public function getReceivedCurrencyNameAttribute()
     {
-        return [
-            __("id"),
-            __("issued_at"),
-            __("type"),
-            __("status"),
-            __("commission_side"),
-            __("received_amount"),
-            __("to_send_amount"),
-            __("exchange_rate_to_reference_currency"),
-            __("exchange_rate_to_delivery_currency"),
-            __("exchange_rate_to_office_currency"),
-            __("office_amount_in_office_currency"),
-            __("office_name"),
-            __("sender_name"),
-            __("delivery_currency"),
-            __("received_currency"),
-            __("office_currency"),
-            __("profit")
-        ];
+        return $this->received_currency->name;
     }
+    public function getSenderNameAttribute()
+    {
+        return $this->sender_party->name;
+    }
+    public function getReceiverNameAttribute()
+    {
+        return $this->receiver_party->name;
+    }
+    public function getTransferStatusAttribute()
+    {
+        return [0 => 'مسودة', 1 => 'معتمدة', 255 => 'ملغاة'][$this->status];
+    }
+    // public static function exportData()
+    // {
+    //     return  Transfer::join('parties as sender', 'sender.id', 'transfers.sender_party_id')
+    //         ->leftJoin('parties as office', 'office.id', 'transfers.office_id')
+    //         ->leftJoin('currencies as d_c', 'd_c.id', 'transfers.delivery_currency_id')
+    //         ->leftJoin('currencies as r_c', 'r_c.id', 'transfers.received_currency_id')
+    //         ->leftJoin('currencies as of_c', 'of_c.id', 'transfers.office_currency_id')
+    //         ->select(
+    //             '*',
+    //             'transfers.id as id',
+    //             'transfers.status',
+    //             'office.name as office_name',
+    //             'sender.name as sender_name',
+    //             'd_c.name as delivery_currency',
+    //             'r_c.name as received_currency',
+    //             'of_c.name as office_currency'
+    //         )->orderBy('transfers.id', 'asc')->get()->toArray();
+    // }
+    // public static  $exportHeaders =
+    // [
+    //     "id",
+    //     "issued_at",
+    //     "type",
+    //     "status",
+    //     "commission_side",
+    //     "received_amount",
+    //     "to_send_amount",
+    //     "exchange_rate_to_reference_currency",
+    //     "exchange_rate_to_delivery_currency",
+    //     "exchange_rate_to_office_currency",
+    //     "office_amount_in_office_currency",
+    //     "office_name",
+    //     "sender_name",
+    //     "delivery_currency",
+    //     "received_currency",
+    //     "office_currency",
+    //     "profit",
+    // ];
+
 
     // public static function hasAbilityToCreateModelInCurrency($currency_id)
     // {
@@ -646,5 +645,38 @@ class Transfer extends BaseModel implements Document
         if ($this->delivering_type == 2) $statement = "$statement moneygram";
         if ($this->delivering_type == 3) $statement = "$statement on account";
         return $statement;
+    }
+    public static   function pdf_translated_headers()
+    {
+        return [
+            __("id"),
+            __("issued_at"),
+            __("status"),
+            __("sender_name"),
+            __("to_send_amount"),
+            __("delivery_currency"),
+            __("receiver_name"),
+            __("received_amount"),
+            __("received_currency"),
+
+        ];
+    }
+    public static $pdf_headers =
+    [
+        "id",
+        "issued_at",
+        "transfer_status",
+        "sender_name",
+        "to_send_amount",
+        "delivery_currency_name",
+        "receiver_name",
+        "received_amount",
+        "received_currency_name",
+
+    ];
+
+    public  function  pdf_title()
+    {
+        return $this->getTypeStatement();
     }
 }

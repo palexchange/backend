@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePdfRequest;
 use App\Http\Requests\UpdatePdfRequest;
+use App\Models\Transfer;
 use Illuminate\Support\Facades\Validator;
 use ExportPDF;
 
@@ -26,16 +27,18 @@ class PdfController extends Controller
     }
     public function index(Request $request)
     {
-        $headers = ['name', 'age', 'family'];
-        $title = "حوالة صادرة";
-        $items = [
-            ['name' => 'احمد', 'age' => 23, 'family' => 'حسونة'],
-            ['name' => 'ahmad', 'age' => 19, 'family' => 'hassouna']
-        ];
 
-        $pdf = ExportPDF::loadView('pdf', compact("headers", 'items', 'title'));
+        $model_id = $request->id; // transfer
+        $model_name = $request->model; // transfer
+        $model_class = 'App\\Models\\' . ucfirst($model_name);
+        $headers = $model_class::pdf_translated_headers();
+        $headers_name = $model_class::$pdf_headers;
+        $item = $model_class::find($model_id);
+        $title = __($item->pdf_title());
 
-        
+        $pdf = ExportPDF::loadView('pdf', compact("headers", 'item', 'title', 'headers_name'));
+
+
         return $pdf->stream('document.pdf');
         // return PdfResource::collection(Pdf::search($request)->sort($request)->paginate($this->pagination));
     }

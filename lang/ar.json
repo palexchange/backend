@@ -53,5 +53,11 @@
     "delivering_type": "نوع التسليم",
     "document_id": "رقم المصدر",
     "currency id": "العملة",
+    "outcomming transfer": "حوالة صادرة",
+    "incoming transfer": "حوالة واردة",
+    "outcomming transfer moneygram": "حوالة صادرة موني غرام",
+    "incoming transfer moneygram": "حوالة واردة موني غرام",
+    "outcomming transfer on account": "حوالة صادرة علي الحساب",
+    "incoming transfer on account": "حوالة واردة علي الحساب",
     "creditor_in_group_curr": "دائن بعملة المجموعة"
 }
