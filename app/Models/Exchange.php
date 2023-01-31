@@ -12,7 +12,7 @@ class Exchange extends BaseModel implements Document
 {
 
     // protected $appends = ["currency_name"];
-    protected $with = ["user"];
+    protected $with = ["user", 'details'];
     protected $casts = [
         'amount' => Rounded::class,
 

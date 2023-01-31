@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\StoreCountryRequest;
 use App\Http\Requests\UpdateCountryRequest;
 use App\Http\Resources\CountryResource;
 use App\Models\Country;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Validator;
@@ -13,16 +15,23 @@ use Illuminate\Support\Facades\Validator;
 class CountryController extends Controller
 {
 
-    public static function routeName(){
+    public static function routeName()
+    {
         return Str::snake("Country");
     }
-    public function __construct(Request $request){
+    public function __construct(Request $request)
+    {
         parent::__construct($request);
-        $this->authorizeResource(Country::class,Str::snake("Country"));
+        $this->authorizeResource(Country::class, Str::snake("Country"));
     }
     public function index(Request $request)
     {
-        return CountryResource::collection(Country::search($request)->sort($request)->paginate($this->pagination));
+
+        DB::enableQueryLog();
+        // $data = DB::select('select * from countries');
+        $data = CountryResource::collection(Country::search($request)->sort($request)->get());
+        logger(json_encode(DB::getQueryLog()));
+        return $data;
     }
     public function store(StoreCountryRequest $request)
     {
@@ -33,20 +42,20 @@ class CountryController extends Controller
         }
         return new CountryResource($country);
     }
-    public function show(Request $request,Country $country)
+    public function show(Request $request, Country $country)
     {
         return new CountryResource($country);
     }
     public function update(UpdateCountryRequest $request, Country $country)
     {
         $country->update($request->validated());
-          if ($request->translations) {
+        if ($request->translations) {
             foreach ($request->translations as $translation)
                 $country->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
         return new CountryResource($country);
     }
-    public function destroy(Request $request,Country $country)
+    public function destroy(Request $request, Country $country)
     {
         $country->delete();
         return new CountryResource($country);

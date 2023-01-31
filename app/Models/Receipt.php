@@ -11,6 +11,7 @@ class Receipt extends BaseModel implements Document
 {
     use HasFactory;
     protected $appends = ['from_account_name', 'to_account_name'];
+    protected $with = ['user', 'currency'];
     public function confirm()
     {
         if ($this->type == 3) {
@@ -58,6 +59,11 @@ class Receipt extends BaseModel implements Document
     {
         return $this->morphOne(Entry::class, 'document');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function from_account()
     {
         return $this->belongsTo(Account::class, 'from_account_id', 'id');
@@ -174,7 +180,7 @@ class Receipt extends BaseModel implements Document
 
     public function currency()
     {
-        return $this->hasOne(Currency::class);
+        return $this->belongsTo(Currency::class);
     }
 
     // public function getPartyNameAttribute()
@@ -206,5 +212,23 @@ class Receipt extends BaseModel implements Document
             ->where('main', true)
             ->where('accounts.currency_id', $this->currency()->first("id")->id)
             ->first(['accounts.id'])->id;
+    }
+    public function scopeSort($query, $request)
+    {
+        $sortBy = $request->sortBy;
+        $sortDesc = $request->sortDesc;
+        $custom_fields = [];
+        if (!$sortBy && !$sortDesc)
+            $query->orderby('id', 'desc');
+        if ($sortBy && $sortDesc) {
+            foreach ($sortBy as $index => $field) {
+                $desc = $sortDesc[$index] == 'true' ? "desc" : "asc";
+                if (!isset($custom_fields[$field])) {
+                    $query->orderBy($field, $desc);
+                } else {
+                    $custom_fields[$field]($query, $desc);
+                }
+            }
+        }
     }
 }

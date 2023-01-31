@@ -1,5 +1,5 @@
 {
-    "journal_no": "رقم القيد",
+    "journal_no": "رقم المصدر",
     "public.date": "التاريخ",
     "public.transaction_type": "نوع الحركة",
     "public.debtor": "مدين",

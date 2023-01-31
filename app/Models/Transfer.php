@@ -45,7 +45,7 @@ class Transfer extends BaseModel implements Document
         }
 
         if ($this->type == 1) {
-            $this->logIncomingAmount()->handleCommision();
+            $this->logIncomingAmount($entry)->handleCommision();
             $trans =  $this->addIncomingPartiesTransactions();
             foreach ($trans as $transaction) {
                 EntryTransaction::create([
@@ -61,7 +61,7 @@ class Transfer extends BaseModel implements Document
                 ]);
             };
         } else {
-            $this->logAmount()->handleCommision();
+            $this->logAmount($entry)->handleCommision();
             $trans =  $this->addOutcomingPartiesTransactions();
             foreach ($trans as $transaction) {
                 EntryTransaction::create([
@@ -80,6 +80,7 @@ class Transfer extends BaseModel implements Document
     }
     public function dispose()
     {
+
         $old_entry = $this->entry;
         try {
             DB::beginTransaction();
@@ -112,12 +113,10 @@ class Transfer extends BaseModel implements Document
         }
     }
 
-    public  function logAmount()
+    public  function logAmount($entry)
     {
 
         $user_account_id = $this->user_account_id;
-
-        $entry = $this->entry;
         $transfer_profit_account_id = Account::find(2)->id;
         // $commission_account_id = Setting::find('commission_account_id')?->value;
         // $transfer_commission_account_id = Setting::find('transfer_commission_account_id')?->value;
@@ -189,13 +188,6 @@ class Transfer extends BaseModel implements Document
             'exchange_rate' => 1,
             'type' => $this->profit > 0 ?  1 : 0,
         ];
-
-
-
-
-
-
-
         foreach ($transactions as $transaction) {
             if (!$transaction['account_id']) {
                 // dd($transfer_commission_account_id);
@@ -216,10 +208,9 @@ class Transfer extends BaseModel implements Document
 
         return $this;
     }
-    public  function logIncomingAmount()
+    public  function logIncomingAmount($entry)
     {
 
-        $entry = $this->entry;
         $transfer_profit_account_id = Account::find(2)->id;
         $transactions = [];
         $user_account_id = $this->user_account_id;
@@ -344,7 +335,7 @@ class Transfer extends BaseModel implements Document
     {
         $trans = [];
         /////  sender transactions
-        if ($this->delivering_type != 2) {
+        if ($this->delivering_type == 1) {
             $trans[] = [
                 'account_id' => $this->sender_party->account_id,
                 'exchange_rate' => $this->exchange_rate_to_delivery_currency,
@@ -422,6 +413,10 @@ class Transfer extends BaseModel implements Document
     public function entry()
     {
         return $this->morphOne(Entry::class, 'document');
+    }
+    public function entries()
+    {
+        return $this->morphMany(Entry::class, 'document');
     }
 
     public function received_currency()
@@ -602,8 +597,8 @@ class Transfer extends BaseModel implements Document
         $query->when($request->type != null, function ($query, $type) use ($request) {
             $query->where('type', $request->type);
         });
-        $query->when($request->status, function ($query, $status) {
-            $query->where('status', $status);
+        $query->when($request->status != null, function ($query, $status) use ($request) {
+            $query->where('status', $request->status);
         });
         $query->when($request->transfer_id, function ($query, $id) {
             $query->where('id', $id);
@@ -678,5 +673,41 @@ class Transfer extends BaseModel implements Document
     public  function  pdf_title()
     {
         return $this->getTypeStatement();
+    }
+
+    public function disposeAll()
+    {
+
+        $old_entry = $this->entries()->orderBy('id', 'desc')->first();
+        // $old_entry = $entry;
+        try {
+            DB::beginTransaction();
+            $entry = $this->entry()->create([
+                'user_id' => request('user_id'),
+                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
+                'status' => 1,
+                'document_sub_type' => 1,
+                'statement' => $old_entry->statement,
+                'ref_currency_id' => $this->reference_currency_id,
+                'inverse_entry_id' =>  $old_entry->id
+            ]);
+            foreach ($old_entry->transactions as $transaction) {
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => $transaction->creditor,
+                    'creditor' => $transaction->debtor,
+                    'account_id' => $transaction->account_id,
+                    'exchange_rate' => $transaction->exchange_rate,
+                    'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
+                    'ac_debtor' => $transaction->ac_creditor,
+                    'ac_creditor' => $transaction->ac_debtor,
+                    'transaction_type' => !$transaction->transaction_type,
+                ]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
     }
 }

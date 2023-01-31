@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 class DocumentUpdatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public $document;
     /**
      * Create a new event instance.
      *

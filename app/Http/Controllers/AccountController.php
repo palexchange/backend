@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
 use App\Models\Account;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +26,14 @@ class AccountController extends Controller
     }
     public function index(Request $request)
     {
-        return AccountResource::collection(Account::search($request)->sort($request)->paginate($this->pagination));
+        $data = [];
+        if ($this->pagination == -1) {
+            $data =  response()->json(["data" => DB::select('select * from accounts')]);
+            // AccountResource::collection(Account::search($request)->sort($request)->paginate($this->pagination));
+        } else {
+            $data = AccountResource::collection(Account::search($request)->sort($request)->paginate($this->pagination));
+        }
+        return  $data;
     }
     public function store(StoreAccountRequest $request)
     {

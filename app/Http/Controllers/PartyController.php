@@ -8,6 +8,7 @@ use App\Http\Resources\PartyResource;
 use App\Models\Account;
 use App\Models\Party;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +27,13 @@ class PartyController extends Controller
     }
     public function index(Request $request)
     {
-        return PartyResource::collection(Party::search($request)->sort($request)->paginate($this->pagination));
+        $data = [];
+        if ($this->pagination == -1) {
+            $data =  response()->json(["data" => DB::select('select * from parties')]);
+        } else {
+            $data = PartyResource::collection(Party::search($request)->sort($request)->paginate($this->pagination));
+        }
+        return $data;
     }
     public function store(StorePartyRequest $request)
     {

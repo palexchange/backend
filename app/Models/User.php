@@ -121,11 +121,11 @@ class User extends Authenticatable
     {
         $count = 0;
         if ($this->role != 1) {
-            $count = Entry::where('user_id', $this->id)
-                ->where('document_type', 2)
+            $count = Exchange::where('user_id', $this->id)
+                ->where('status', 1)
                 ->whereDate('created_at', Carbon::today())->count();
         } else {
-            $count = Entry::where('document_type', 2)
+            $count = Exchange::where('status', 1)
                 ->whereDate('created_at', Carbon::today())->count();
         }
         return  $count;
