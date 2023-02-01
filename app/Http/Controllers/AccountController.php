@@ -28,7 +28,7 @@ class AccountController extends Controller
     {
         $data = [];
         if ($this->pagination == -1) {
-            $data =  response()->json(["data" => Account::search($request)->get()]);
+            $data =  response()->json(["data" => DB::select('select * from accounts')]);
             // AccountResource::collection(Account::search($request)->sort($request)->paginate($this->pagination));
         } else {
             $data = AccountResource::collection(Account::search($request)->sort($request)->paginate($this->pagination));
