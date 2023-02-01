@@ -63,7 +63,7 @@ class TransferController extends Controller
     {
         if ($transfer->status != 1) return new TransferResource($transfer);
         $transfer->status = 255;
-        DocumentStoredEvent::dispatch($transfer);
+        DocumentDeletedEvent::dispatch($transfer);
         $transfer->save();
         // $transfer->delete();
         return new TransferResource($transfer);

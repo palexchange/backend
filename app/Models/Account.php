@@ -90,5 +90,8 @@ class Account extends BaseModel
         $query->when($request->is_transaction, function ($query, $is_transaction) {
             $query->where("is_transaction", $is_transaction);
         });
+        $query->when($request->no_party, function ($query, $is_transaction) {
+            $query->where("type_id", '!=', 1);
+        });
     }
 }

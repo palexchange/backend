@@ -111,11 +111,11 @@ class AccountingReportGenerator extends BaseReportGenerator
         //     $to = $request->to;
         $from = request('from') ?? '2023-01-01 01:00:00';
         $tto = request('to') ?? Carbon::now()->timezone('Asia/Gaza')->toDateTimeString();
-        $tto = Carbon::parse($tto)->addDay()->toDateString();
-        $from = Carbon::parse($from)->subDay()->toDateString();
+        $tto = Carbon::parse($tto)->toDateString();
+        $from = Carbon::parse($from)->toDateString();
         // $user_id = request('user_id');
         // if (auth()->user()['role'] == 1) {
-        //     $user_id =  request('for_user_id') ?? 0;
+        $user_id =  request('for_user_id') ?? 0;
         // }
         $user_id = 0;
         // dd($user_id);
