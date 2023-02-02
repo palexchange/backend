@@ -182,9 +182,8 @@ class User extends Authenticatable
     public function getFundsAccountsBalanceAttribute()
     {
         $sql = '
-        select  round( case when 
-        sum(sub_table.balance)::numeric < 0 then 0  else 
-        sum(sub_table.balance)::numeric end , 3)  as balance , sub_table.acc_currency_id as currency_id ,sub_table.name 
+        select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
+         sub_table.acc_currency_id as currency_id ,sub_table.name 
 		from  (
 			select sum(et.debtor- et.creditor)  as balance , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
 			from

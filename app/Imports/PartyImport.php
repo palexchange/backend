@@ -97,7 +97,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
                     'entry_id' => $entry->id,
                     'debtor' => !($row[2] > 0) ? abs($row[2]) : 0,
                     'creditor' => $row[2] > 0 ? abs($row[2]) : 0,
-                    'account_id' => $row[0] == 'money_gram' ? $moneygram_account_id : $account->id,
+                    'account_id' => $row[0] == 'موني جرام' ? $moneygram_account_id : $account->id,
                     'exchange_rate' => 1,
                     'currency_id' => 1,   //,$this->received_currency_id,
                     'ac_debtor' => !($row[2] > 0) ? abs($row[2]) : 0,

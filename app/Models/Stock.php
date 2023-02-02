@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Stock extends BaseModel
 {
@@ -23,7 +24,8 @@ class Stock extends BaseModel
     }
     public function getMidAttribute()
     {
-        return ($this->start_purchasing_price + $this->start_selling_price) / 2;
+        $id = $this->id;
+        return DB::select("select (start_selling_price::numeric + start_purchasing_price::numeric)/2  as mid from stocks where id = $id ")[0]->mid;
     }
     public function getRefCurrencyNameAttribute()
     {

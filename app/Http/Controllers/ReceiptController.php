@@ -56,8 +56,8 @@ class ReceiptController extends Controller
     }
     public function destroy(Request $request, Receipt $receipt)
     {
-        $receipt->status = 255;
         DocumentDeletedEvent::dispatch($receipt);
+        $receipt->status = 255;
         $receipt->save();
         // $receipt->delete();
         // DocumentDeletedEvent::dispatch($receipt);

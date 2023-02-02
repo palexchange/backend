@@ -62,8 +62,8 @@ class TransferController extends Controller
     public function destroy(Request $request, Transfer $transfer)
     {
         if ($transfer->status != 1) return new TransferResource($transfer);
-        $transfer->status = 255;
         DocumentDeletedEvent::dispatch($transfer);
+        $transfer->status = 255;
         $transfer->save();
         // $transfer->delete();
         return new TransferResource($transfer);
