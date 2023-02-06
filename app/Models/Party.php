@@ -75,4 +75,8 @@ class Party extends BaseModel
     {
         return $this->morphOne(File::class, 'attachable');
     }
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

@@ -20,7 +20,7 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance'];
+    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance'];
     /**
      * The attributes that are mass assignable.
      *
@@ -132,20 +132,34 @@ class User extends Authenticatable
     }
     public function getDailyExchangeProfitAttribute()
     {
-
+        $sum = 0;
         if ($this->role != 1) {
-            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-                ->where('entries.user_id', $this->id)
-                ->where('account_id', 3)
+            $sum = Exchange::where('user_id', $this->id)
+                ->where('status', 1)
+                ->whereDate('created_at', Carbon::today())
+                ->sum(DB::raw('profit'));
+        } else {
+            $sum = Exchange::where('status', 1)
+                ->whereDate('created_at', Carbon::today())
+                ->sum(DB::raw('profit'));
+        }
+        return  $sum;
+    }
+    public function getDailyTransferProfitAttribute()
+    {
+        $sum = 0;
+        if ($this->role != 1) {
+            $sum = $this->entries()
+                ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+                ->where('account_id', 2)
                 ->whereDate('entry_transactions.created_at', Carbon::today())
                 ->sum(DB::raw('creditor -debtor '));
         } else {
             $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-                ->where('account_id', 3)
+                ->where('account_id', 2)
                 ->whereDate('entry_transactions.created_at', Carbon::today())
                 ->sum(DB::raw('creditor -debtor '));
         }
-
         return  $sum;
     }
 

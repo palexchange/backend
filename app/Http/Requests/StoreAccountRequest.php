@@ -24,7 +24,7 @@ class StoreAccountRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
+            'name' => 'required|unique:accounts,name',
             'parent_id' => 'sometimes|exists:accounts,id',
             'type_id' => 'required|exists:account_types,id',
             'code' => 'nullable',

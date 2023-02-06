@@ -44,7 +44,6 @@ return new class extends Migration
 				currency_name character varying(255),
 				currency_id bigint,
 				user_name character varying(255),
-				office_name character varying(255),
 				sender_name character varying(255),
 				receiver_name character varying(255),
                   inside integer,
@@ -83,16 +82,20 @@ return new class extends Migration
 					currencies.name,
 					currencies.id,
 					users.name,
-					p_o.name,
-					p_s.name,
-					p_r.name,
+					coalesce(p_s.name ,p_f.name),
+					coalesce(p_r.name,p_t.name) ,
                         case when entries.date<date_from then 1 else 0 end as inside
                     from entry_transactions 
                     inner join entries ON entries.id = entry_transactions.entry_id
 					left join transfers ON entries.document_id = transfers.id and entries.document_type = 1
-					left join parties p_o ON p_o.id = transfers.office_id
-					left join parties p_s ON p_s.id = transfers.sender_party_id
-					left join parties p_r ON p_r.id = transfers.receiver_party_id
+					left join parties p_s ON p_s.id = transfers.sender_party_id   
+					left join parties p_r ON p_r.id = transfers.receiver_party_id   
+					
+					left join receipts re ON entries.document_id = re.id and entries.document_type = 3
+					left join accounts p_f ON p_f.id = re.from_account_id    
+					left join accounts p_t ON p_t.id = re.to_account_id   
+ 
+					
 					inner join currencies ON currencies.id = entry_transactions.currency_id
                     left join users ON entries.user_id = users.id
                     where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1

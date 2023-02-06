@@ -46,16 +46,19 @@ class ReceiptController extends Controller
     }
     public function update(UpdateReceiptRequest $request, Receipt $receipt)
     {
+        $receipt->dispose();
         $receipt->update($request->validated());
         if ($request->translations) {
             foreach ($request->translations as $translation)
                 $receipt->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
-        // DocumentUpdatedEvent::dispatch($receipt);
+        $receipt = $receipt->fresh();
+        DocumentStoredEvent::dispatch($receipt);
         return new ReceiptResource($receipt);
     }
     public function destroy(Request $request, Receipt $receipt)
     {
+        if ($receipt->status != 1) return new ReceiptResource($receipt);
         DocumentDeletedEvent::dispatch($receipt);
         $receipt->status = 255;
         $receipt->save();

@@ -25,7 +25,7 @@ class StorePartyRequest extends FormRequest
     {
         return [
             //
-            'name'=>'required',
+            'name'=>'required|unique:parties,name',
             'id_no'=>'nullable',
             'phone'=>'nullable',
             'address'=>'nullable',

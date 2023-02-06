@@ -24,13 +24,18 @@ class UpdateReceiptRequest extends FormRequest
     public function rules()
     {
         return [
-            'from_account_id' => 'sometimes|exists:accounts,id',
-            'to_account_id' => 'sometimes|exists:accounts,id',
+            'from_account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'required|exists:accounts,id',
             'from_amount' => 'nullable|numeric',
             'to_amount' => 'nullable|numeric',
             'status' => 'nullable|numeric',
-            'type' => 'sometimes|numeric',
+            'type' => 'required|numeric',
+            'currency_id' => 'nullable|exists:currencies,id',
+            'statement' => 'nullable',
+            'user_id' => 'required|exists:users,id',
             'exchange_rate' => 'sometimes|numeric',
+            'is_expenses' => 'sometimes|boolean',
+            'expenses_account_id' => 'nullable|required_if:is_expenses,true|exists:accounts,id',
         ];
     }
 }

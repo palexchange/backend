@@ -18,7 +18,7 @@ class PdfPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class PdfPolicy
      */
     public function view(User $user, Pdf $pdf)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class PdfPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class PdfPolicy
      */
     public function update(User $user, Pdf $pdf)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class PdfPolicy
      */
     public function delete(User $user, Pdf $pdf)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class PdfPolicy
      */
     public function restore(User $user, Pdf $pdf)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class PdfPolicy
      */
     public function forceDelete(User $user, Pdf $pdf)
     {
-        //
+        return true;
     }
 }

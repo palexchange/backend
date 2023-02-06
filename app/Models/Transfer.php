@@ -78,40 +78,40 @@ class Transfer extends BaseModel implements Document
             };
         }
     }
-    public function dispose()
-    {
+    // public function dispose()
+    // {
 
-        $old_entry = $this->entry;
-        try {
-            DB::beginTransaction();
-            $entry = $this->entry()->create([
-                'user_id' => request('user_id'),
-                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
-                'status' => 1,
-                'document_sub_type' => 1,
-                'statement' => $old_entry->statement,
-                'ref_currency_id' => $this->reference_currency_id,
-                'inverse_entry_id' =>  $old_entry->id
-            ]);
-            foreach ($old_entry->transactions as $transaction) {
-                EntryTransaction::create([
-                    'entry_id' => $entry->id,
-                    'debtor' => $transaction->creditor,
-                    'creditor' => $transaction->debtor,
-                    'account_id' => $transaction->account_id,
-                    'exchange_rate' => $transaction->exchange_rate,
-                    'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
-                    'ac_debtor' => $transaction->ac_creditor,
-                    'ac_creditor' => $transaction->ac_debtor,
-                    'transaction_type' => !$transaction->transaction_type,
-                ]);
-            }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            throw $e;
-        }
-    }
+    //     $old_entry = $this->entry;
+    //     try {
+    //         DB::beginTransaction();
+    //         $entry = $this->entry()->create([
+    //             'user_id' => request('user_id'),
+    //             'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
+    //             'status' => 1,
+    //             'document_sub_type' => 1,
+    //             'statement' => $old_entry->statement,
+    //             'ref_currency_id' => $this->reference_currency_id,
+    //             'inverse_entry_id' =>  $old_entry->id
+    //         ]);
+    //         foreach ($old_entry->transactions as $transaction) {
+    //             EntryTransaction::create([
+    //                 'entry_id' => $entry->id,
+    //                 'debtor' => $transaction->creditor,
+    //                 'creditor' => $transaction->debtor,
+    //                 'account_id' => $transaction->account_id,
+    //                 'exchange_rate' => $transaction->exchange_rate,
+    //                 'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
+    //                 'ac_debtor' => $transaction->ac_creditor,
+    //                 'ac_creditor' => $transaction->ac_debtor,
+    //                 'transaction_type' => !$transaction->transaction_type,
+    //             ]);
+    //         }
+    //         DB::commit();
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         throw $e;
+    //     }
+    // }
 
     public  function logAmount($entry)
     {
@@ -675,7 +675,7 @@ class Transfer extends BaseModel implements Document
         return $this->getTypeStatement();
     }
 
-    public function disposeAll()
+    public function dispose()
     {
 
         $old_entry = $this->entries()->orderBy('id', 'desc')->first();

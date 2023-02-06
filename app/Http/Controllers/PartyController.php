@@ -57,6 +57,7 @@ class PartyController extends Controller
     public function update(UpdatePartyRequest $request, Party $party)
     {
         $party->update($request->validated());
+        $party->account->update(['name' => $party->name]);
         if ($request->translations) {
             foreach ($request->translations as $translation)
                 $party->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
