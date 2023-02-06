@@ -23,6 +23,8 @@ class StorePartyRequest extends FormRequest
      */
     public function rules()
     {
+
+        
         return [
             //
             'name'=>'required|unique:parties,name',
