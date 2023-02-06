@@ -23,7 +23,7 @@ class DocumentStoredEvent
     public Document $document;
     public function __construct(Document $document)
     {
-        //
+         
         $this->document = $document;
     }
 
