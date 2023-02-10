@@ -99,7 +99,7 @@ return new class extends Migration
 					inner join currencies ON currencies.id = entry_transactions.currency_id
                     left join users ON entries.user_id = users.id
                     where entry_transactions.account_id in (select id from get_account_with_children(a_id)) and entries.status=1
-					and entries.date < date_to and  
+					and entries.type=1 and entries.date < date_to and  
                     case when  logged_in_user_id > 0 
                     THEN  entries.user_id = logged_in_user_id 
                     ELSE entries.user_id IS NOT NULL END

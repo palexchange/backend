@@ -679,7 +679,6 @@ class Transfer extends BaseModel implements Document
     {
 
         $old_entry = $this->entries()->orderBy('id', 'desc')->first();
-        // $old_entry = $entry;
         try {
             DB::beginTransaction();
             $entry = $this->entry()->create([
@@ -689,7 +688,8 @@ class Transfer extends BaseModel implements Document
                 'document_sub_type' => 1,
                 'statement' => $old_entry->statement,
                 'ref_currency_id' => $this->reference_currency_id,
-                'inverse_entry_id' =>  $old_entry->id
+                'inverse_entry_id' =>  $old_entry->id,
+                'type' => 2,
             ]);
             foreach ($old_entry->transactions as $transaction) {
                 EntryTransaction::create([
@@ -704,6 +704,8 @@ class Transfer extends BaseModel implements Document
                     'transaction_type' => !$transaction->transaction_type,
                 ]);
             }
+            $old_entry->type = 2;
+            $old_entry->save();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class Exchange extends BaseModel implements Document
 {
 
-    // protected $appends = ["currency_name"];
+    protected $appends = ["party_name"];
     protected $with = ["user", 'details'];
     protected $casts = [
         'amount' => Rounded::class,
@@ -19,10 +19,10 @@ class Exchange extends BaseModel implements Document
     ];
     use HasFactory;
 
-    // public function party()
-    // {
-    //     return $this->hasOne(Party::class, "id", "beneficiary_id");
-    // }
+    public function party()
+    {
+        return $this->hasOne(Party::class, "id", "beneficiary_id")->withDefault(["name" => "زبون عام"]);
+    }
     // public function currency()
     // {
     //     return $this->belongsTo(Currency::class);
@@ -32,10 +32,10 @@ class Exchange extends BaseModel implements Document
     //     return $this->belongsTo(Currency::class);
     // }
 
-    // public function getPartyNameAttribute()
-    // {
-    //     return $this->party()->first("name")->name;
-    // }
+    public function getPartyNameAttribute()
+    {
+        return $this->party()->first("name")?->name ?? "زبون عام";
+    }
 
     // public function getCurrencyNameAttribute()
     // {
@@ -91,7 +91,8 @@ class Exchange extends BaseModel implements Document
     }
     public function dispose()
     {
-        $old_entry = $this->entry;
+        // $old_entry = $this->entry;
+        $old_entry = $this->entries()->orderBy('id', 'desc')->first();
         try {
             DB::beginTransaction();
             $entry = $this->entry()->create([
@@ -101,7 +102,8 @@ class Exchange extends BaseModel implements Document
                 'document_sub_type' => 2,
                 'statement' => $old_entry->statement,
                 'ref_currency_id' => $this->reference_currency_id,
-                'inverse_entry_id' =>  $old_entry->id
+                'inverse_entry_id' =>  $old_entry->id,
+                'type' => 2,
             ]);
             foreach ($old_entry->transactions as $transaction) {
                 EntryTransaction::create([
@@ -116,6 +118,8 @@ class Exchange extends BaseModel implements Document
                     'transaction_type' => !$transaction->transaction_type,
                 ]);
             }
+            $old_entry->type = 2;
+            $old_entry->save();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -125,6 +129,10 @@ class Exchange extends BaseModel implements Document
     public function entry()
     {
         return $this->morphOne(Entry::class, 'document');
+    }
+    public function entries()
+    {
+        return $this->morphMany(Entry::class, 'document');
     }
     public function user()
     {

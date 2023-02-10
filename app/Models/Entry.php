@@ -60,6 +60,7 @@ class Entry extends BaseModel
     {
 
         try {
+
             DB::beginTransaction();
             $entry = $this->create([
                 'user_id' => request('user_id'),
@@ -68,7 +69,8 @@ class Entry extends BaseModel
                 'document_sub_type' => 1,
                 'statement' => $this->statement,
                 'ref_currency_id' => $this->reference_currency_id,
-                'inverse_entry_id' =>  $this->id
+                'inverse_entry_id' =>  $this->id,
+                'type' =>  2
             ]);
             foreach ($this->transactions as $transaction) {
                 EntryTransaction::create([
@@ -87,7 +89,8 @@ class Entry extends BaseModel
                 $this->document->status = 255;
                 $this->document->save();
             }
-
+            $this->type = 2;
+            $this->save();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();

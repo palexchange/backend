@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('date');
             $table->bigInteger('number')->default(0);
             $table->string('statement')->nullable();
+            $table->integer('type')->default(1);  // 1  used , 2 disabled
             $table->integer('status')->default(0);
             $table->integer('document_type')->nullable();
             $table->integer('document_sub_type')->default(3); // 1=>transfer , 2 => exchange ,3 => fund_adjusment , 4=>inputs , 5 =,outputs , 6=profit_and_lose_transaction
