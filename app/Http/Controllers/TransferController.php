@@ -50,13 +50,16 @@ class TransferController extends Controller
     }
     public function update(UpdateTransferRequest $request, Transfer $transfer)
     {
-        $transfer->dispose();
-        $transfer->update($request->validated());
+
         if ($request->translations) {
             foreach ($request->translations as $translation)
                 $transfer->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
         }
-        $transfer = $transfer->fresh();
+        if ($transfer->status == 1) {
+            $transfer->dispose();
+            $transfer->update($request->validated());
+            $transfer = $transfer->fresh();
+        }
         DocumentStoredEvent::dispatch($transfer);
         return new TransferResource($transfer);
     }

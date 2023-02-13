@@ -237,7 +237,7 @@ class Receipt extends BaseModel implements Document
     }
     public function dispose()
     {
-
+ 
         $old_entry = $this->entries()->orderBy('id', 'desc')->first();
         // $old_entry = $entry;
         try {

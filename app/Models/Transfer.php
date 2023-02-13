@@ -584,6 +584,7 @@ class Transfer extends BaseModel implements Document
     public function scopeSearch($query, $request)
     {
         $query->when($request->delivering_type &&  $request->party_id, function ($q) use ($request) {
+            dd("Tes");
             $q
                 ->where('sender_party_id', $request->party_id)
                 ->orWhere('receiver_party_id', $request->party_id)
@@ -591,7 +592,7 @@ class Transfer extends BaseModel implements Document
                 ->fromSub(function ($qq) use ($request) {
                     $qq->select('*')
                         ->from('transfers')
-                        ->where('delivering_type', $request->delivering_type);
+                        ->whereIn('delivering_type', $request->delivering_type);
                 }, 'agg_tabel');
         });
         $query->when($request->type != null, function ($query, $type) use ($request) {

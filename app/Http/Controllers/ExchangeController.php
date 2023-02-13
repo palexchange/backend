@@ -74,6 +74,7 @@ class ExchangeController extends Controller
     }
     public function destroy(Request $request, Exchange $exchange)
     {
+        if ($exchange->status != 1) return new ExchangeResource($exchange);
         DocumentDeletedEvent::dispatch($exchange);
         $exchange->status = 255;
         $exchange->save();
