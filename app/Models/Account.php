@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -56,6 +57,35 @@ class Account extends BaseModel
         }
         return  $amount;
     }
+    public function getNetBalanceTodayAttribute()
+    {
+        if ($this->balance == 0) return  0;
+        $amount = $this->entry_transactions()
+            ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+            ->whereDate(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
+            ->whereNotIn('entries.document_sub_type',  [4, 5])
+            ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
+        if (gettype($amount) == 'string') {
+            $amount =  substr($amount, 0, 8);
+        }
+        return  $amount;
+    }
+    public function getMidAttribute()
+    {
+
+        $mid = Stock::where('currency_id', $this->currency_id)->first()?->mid ?? 0;
+        return $mid;
+        if ($this->currency_id != 4) {
+            return $this->net_balance / $mid;
+        } else {
+            return $this->net_balance * $mid;
+        }
+    }
+    public function getCloseMidAttribute()
+    {
+        $mid = Stock::where('currency_id', $this->currency_id)->first()?->close_mid ?? 0;
+        return $mid;
+    }
     public function getInputsBalanceAttribute()
     {
 
@@ -77,6 +107,31 @@ class Account extends BaseModel
         }
         return null;
     }
+
+    // public function getOpenNetBalanceInDollarAttribute()
+    // {
+    //     $mid = Stock::where('currency_id', $this->currency_id)->first()?->mid ?? 0;
+    //     if ($mid == 0) return 0;
+    //     if ($this->currency_id != 4) {
+    //         return $this->open_net_balance / $mid;
+    //     } else {
+    //         return $this->open_net_balance * $mid;
+    //     }
+    // }
+
+    // public function getOpenNetBalanceAttribute()
+    // {
+    //     if ($this->balance == 0) return  0;
+    //     $amount = $this->entry_transactions()
+    //         ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+    //         ->whereNotIn('entries.document_sub_type',  [4, 5])
+    //         ->where('entries.date', '<', Carbon::today())
+    //         ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
+    //     if (gettype($amount) == 'string') {
+    //         $amount =  substr($amount, 0, 8);
+    //     }
+    //     return  $amount;
+    // }
 
 
     public function scopeSearch($query, $request)

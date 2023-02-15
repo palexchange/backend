@@ -130,20 +130,38 @@ class User extends Authenticatable
         }
         return  $count;
     }
+    public $open_total_dollars = 0;
+    public $total_start_dollars = 0;
+    public $total_final_dollars = 0;
     public function getDailyExchangeProfitAttribute()
     {
-        $sum = 0;
-        if ($this->role != 1) {
-            $sum = Exchange::where('user_id', $this->id)
-                ->where('status', 1)
-                ->whereDate('created_at', Carbon::today())
-                ->sum(DB::raw('profit'));
-        } else {
-            $sum = Exchange::where('status', 1)
-                ->whereDate('created_at', Carbon::today())
-                ->sum(DB::raw('profit'));
-        }
-        return  $sum;
+        // $this->accounts()->where('status', 1)->get()
+        //     ->each(function ($account) {
+        //         $this->total_dollars = $this->total_dollars + $account->net_balance_in_dollar;
+        //     });
+        $ss = $this->accounts()
+            ->leftJoin('entry_transactions', 'accounts.id', 'entry_transactions.account_id')
+            ->leftJoin('entries', 'entries.id', 'entry_transactions.entry_id')
+            ->where(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
+            ->where('user_accounts.status', 1)->distinct()
+            ->get()
+            ->each(function ($account) {
+                $mid = $account->mid;
+                $start = 0;
+                $end = 0;
+                if ($account->currency_id == 4) {
+                    $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
+                    $end =  ($account->net_balance * $account->close_mid);
+                } else {
+
+                    $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
+                    $end =  ($account->net_balance / $account->close_mid);
+                }
+                $this->total_start_dollars += $start;
+                $this->total_final_dollars += $end;
+            });
+
+        return   $this->total_final_dollars - $this->total_start_dollars;
     }
     public function getDailyTransferProfitAttribute()
     {
@@ -152,12 +170,12 @@ class User extends Authenticatable
             $sum = $this->entries()
                 ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
                 ->where('account_id', 2)
-                ->whereDate('entry_transactions.created_at', Carbon::today())
+                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
                 ->sum(DB::raw('creditor -debtor '));
         } else {
             $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
                 ->where('account_id', 2)
-                ->whereDate('entry_transactions.created_at', Carbon::today())
+                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
                 ->sum(DB::raw('creditor -debtor '));
         }
         return  $sum;
@@ -206,7 +224,8 @@ class User extends Authenticatable
         		join entries en on en.id = et.entry_id 
         		join currencies crr on crr.id = ac.currency_id 
          where ac.is_transaction = true and ac.type_id in (4 ,3 )  and en.document_sub_type not in (4,5)
-        group by et.currency_id ,crr.name ,ac.name,ac.currency_id  ) as sub_table group by sub_table.name , sub_table.acc_currency_id';
+        group by et.currency_id ,crr.name ,ac.name,ac.currency_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
+ ';
         $data = DB::select($sql);
         return $data;
 

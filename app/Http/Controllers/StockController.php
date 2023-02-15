@@ -35,10 +35,10 @@ class StockController extends Controller
         foreach ($stocks as $stock) {
             $stock = Stock::updateOrCreate(['ref_currency_id' => $stock['ref_currency_id'], 'currency_id' => $stock['currency_id']], $stock);
             $stock_trans = ['stock_id' => $stock->id, 'selling_price' => $stock->final_selling_price, 'purchasing_price' => $stock->final_purchasing_price];
-            if ($stock->closed_at != null) {
-                $stock_trans += ['time' => $stock->closed_at];
-                $stock_trans += ['closing' => true];
-            }
+            // if ($stock->closed_at != null) {
+            //     $stock_trans += ['time' => $stock->closed_at];
+            //     $stock_trans += ['closing' => true];
+            // }
             StockTransaction::create($stock_trans);
         }
         if ($request->translations) {

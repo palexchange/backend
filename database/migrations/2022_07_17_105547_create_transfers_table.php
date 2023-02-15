@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('type')->default(0); // 0 OUT COMING , 1 INCOMING
             $table->integer('status')->default(0); // 
             $table->integer('number')->nullable(); // 
-            $table->integer('delivering_type')->default(1); // 1=> hand / 2=> money gram / 3=> on account 
+            $table->integer('delivering_type')->default(1); // 1=> hand / 2=> money gram / 3=> on account  /4=> in account 
             $table->foreignId('sender_party_id')->nullable()->references('id')->on('parties');
             $table->string('sender_id_no')->nullable();
             $table->string('sender_phone')->nullable();

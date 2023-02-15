@@ -317,16 +317,19 @@ class Transfer extends BaseModel implements Document
                 'ac_creditor' => $this->to_send_amount,
                 'transaction_type' => 0,
             ];
-            $trans[] = [
-                'account_id' => $this->receiver_party->account_id,
-                'exchange_rate' => $this->exchange_rate_to_reference_currency,
-                'currency_id' => $this->received_currency_id,
-                'debtor' =>   $this->to_send_amount * $this->exchange_rate_to_reference_currency,
-                'ac_debtor' => $this->to_send_amount,
-                'creditor' => 0,
-                'ac_creditor' => 0,
-                'transaction_type' => 1,
-            ];
+            if ($this->delivering_type != 4) {
+
+                $trans[] = [
+                    'account_id' => $this->receiver_party->account_id,
+                    'exchange_rate' => $this->exchange_rate_to_reference_currency,
+                    'currency_id' => $this->received_currency_id,
+                    'debtor' =>   $this->to_send_amount * $this->exchange_rate_to_reference_currency,
+                    'ac_debtor' => $this->to_send_amount,
+                    'creditor' => 0,
+                    'ac_creditor' => 0,
+                    'transaction_type' => 1,
+                ];
+            }
         }
 
         return $trans;
@@ -336,26 +339,28 @@ class Transfer extends BaseModel implements Document
         $trans = [];
         /////  sender transactions
         if ($this->delivering_type == 1) {
-            $trans[] = [
-                'account_id' => $this->sender_party->account_id,
-                'exchange_rate' => $this->exchange_rate_to_delivery_currency,
-                'currency_id' => $this->delivery_currency_id,
-                'debtor' =>  0,
-                'ac_debtor' => 0,
-                'creditor' => $this->to_send_amount,
-                'ac_creditor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
-                'transaction_type' => 0,
-            ];
-            $trans[] = [
-                'account_id' => $this->sender_party->account_id,
-                'exchange_rate' => $this->exchange_rate_to_delivery_currency,
-                'currency_id' => $this->delivery_currency_id,
-                'debtor' => $this->to_send_amount,
-                'ac_debtor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
-                'creditor' => 0,
-                'ac_creditor' => 0,
-                'transaction_type' => 1,
-            ];
+            if ($this->receiver_party->account_id != $this->sender_party->account_id) {
+                $trans[] = [
+                    'account_id' => $this->sender_party->account_id,
+                    'exchange_rate' => $this->exchange_rate_to_delivery_currency,
+                    'currency_id' => $this->delivery_currency_id,
+                    'debtor' =>  0,
+                    'ac_debtor' => 0,
+                    'creditor' => $this->to_send_amount,
+                    'ac_creditor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
+                    'transaction_type' => 0,
+                ];
+                $trans[] = [
+                    'account_id' => $this->sender_party->account_id,
+                    'exchange_rate' => $this->exchange_rate_to_delivery_currency,
+                    'currency_id' => $this->delivery_currency_id,
+                    'debtor' => $this->to_send_amount,
+                    'ac_debtor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
+                    'creditor' => 0,
+                    'ac_creditor' => 0,
+                    'transaction_type' => 1,
+                ];
+            };
         }
 
         /////   receiver  transactions
@@ -584,7 +589,6 @@ class Transfer extends BaseModel implements Document
     public function scopeSearch($query, $request)
     {
         $query->when($request->delivering_type &&  $request->party_id, function ($q) use ($request) {
-            dd("Tes");
             $q
                 ->where('sender_party_id', $request->party_id)
                 ->orWhere('receiver_party_id', $request->party_id)
