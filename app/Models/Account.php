@@ -63,7 +63,7 @@ class Account extends BaseModel
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereDate(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
-            ->whereNotIn('entries.document_sub_type',  [4, 5])
+            ->whereIn('entries.document_sub_type',  [2])
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
