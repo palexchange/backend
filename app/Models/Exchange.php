@@ -85,6 +85,7 @@ class Exchange extends BaseModel implements Document
             'exchange_rate' => 1
         ]);
 
+
         $this->details()->each(function ($detail) use ($entry) {
             $detail->log($entry);
         });

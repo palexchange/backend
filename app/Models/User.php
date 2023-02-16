@@ -135,6 +135,8 @@ class User extends Authenticatable
     public $total_final_dollars = 0;
     public function getDailyExchangeProfitAttribute()
     {
+
+        
         // $this->accounts()->where('status', 1)->get()
         //     ->each(function ($account) {
         //         $this->total_dollars = $this->total_dollars + $account->net_balance_in_dollar;
