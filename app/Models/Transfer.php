@@ -306,14 +306,17 @@ class Transfer extends BaseModel implements Document
                 'transaction_type' => 1,
             ];
         } else {
-
+            $exchange_rate = $this->exchange_rate_to_reference_currency;
+            if ($this->delivering_type != 2) {
+                $exchange_rate = $this->exchange_rate_to_office_currency;
+            }
             $trans[] = [
                 'account_id' => $this->receiver_party->account_id,
-                'exchange_rate' => $this->exchange_rate_to_reference_currency,
+                'exchange_rate' => $exchange_rate,
                 'currency_id' => $this->received_currency_id,
                 'debtor' =>  0,
                 'ac_debtor' => 0,
-                'creditor' =>   $this->to_send_amount * $this->exchange_rate_to_reference_currency,
+                'creditor' =>   $this->to_send_amount * $exchange_rate,
                 'ac_creditor' => $this->to_send_amount,
                 'transaction_type' => 0,
             ];
@@ -321,9 +324,9 @@ class Transfer extends BaseModel implements Document
 
                 $trans[] = [
                     'account_id' => $this->receiver_party->account_id,
-                    'exchange_rate' => $this->exchange_rate_to_reference_currency,
+                    'exchange_rate' => $exchange_rate,
                     'currency_id' => $this->received_currency_id,
-                    'debtor' =>   $this->to_send_amount * $this->exchange_rate_to_reference_currency,
+                    'debtor' =>   $this->to_send_amount * $exchange_rate,
                     'ac_debtor' => $this->to_send_amount,
                     'creditor' => 0,
                     'ac_creditor' => 0,

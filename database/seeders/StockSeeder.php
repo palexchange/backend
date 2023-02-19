@@ -23,6 +23,8 @@ class StockSeeder extends Seeder
                 'ref_currency_id' => 1,
                 'start_selling_price' => 3.5,
                 'start_purchasing_price' => 3.5,
+                'final_purchasing_price' => 3.5,
+                'final_purchasing_price' => 3.5,
                 'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
             ]);
         }
