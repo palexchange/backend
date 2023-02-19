@@ -64,6 +64,7 @@ class Entry extends BaseModel
             DB::beginTransaction();
             $entry = $this->create([
                 'user_id' => request('user_id'),
+                'date' => $this->date,
                 'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 1,

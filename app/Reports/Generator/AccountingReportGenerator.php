@@ -129,7 +129,7 @@ class AccountingReportGenerator extends BaseReportGenerator
             $currency_ids = "ARRAY [$ids]";
         }
         // dd($currency_ids);
-        $last_before = Carbon::parse($from)->toDateString();
+        $last_before = Carbon::parse($from)->subDay()->toDateString();
         $vars = "";
         if ($show_sender) {
 
@@ -138,9 +138,10 @@ class AccountingReportGenerator extends BaseReportGenerator
         if ($show_receiver) {
             $vars = $vars . "receiver_name,";
         }
+        // $test = Carbon::parse($tto)->addDay()->toDateString();
         $sql = "select
         t.document_id   as r_id,
-        case when t.document_id is null then '$last_before' else date end as date,
+        case when t.document_id is null and user_name is null then '$tto' else date end as date,
         transaction_type,
         debtor,
         creditor,
@@ -154,7 +155,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         ac_creditor,
         acc_balance,
         statement
-        from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , '$user_id')t order by t.r_id ";
+        from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , 'الرصيد الإجمالي', '$user_id')t order by date ";
         // from account_statement($account,'$from','$tto',false)t order by t.r_id ";
         // $entry_accounts = DB::select($sql);
 

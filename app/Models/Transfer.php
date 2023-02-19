@@ -232,17 +232,17 @@ class Transfer extends BaseModel implements Document
             'exchange_rate' => $this->exchange_rate_to_office_currency,
             'type' => 0,
         ];
-
-        $transactions[] = [
-            'account_id' =>  $user_account_id,
-            'amount' => $this->received_amount,
-            'ac_amount' => $this->a_received_amount,
-            'currency_id' => $this->received_currency_id,
-            'transaction_type' => 1,
-            'exchange_rate' => $this->delivering_type == 2 ? 1 : number_format($this->received_amount / $this->a_received_amount, 3, '.', ""),
-            'type' => 1,
-        ];
-
+        if ($this->delivering_type != 4) {
+            $transactions[] = [
+                'account_id' =>  $user_account_id,
+                'amount' => $this->received_amount,
+                'ac_amount' => $this->a_received_amount,
+                'currency_id' => $this->received_currency_id,
+                'transaction_type' => 1,
+                'exchange_rate' => $this->delivering_type == 2 ? 1 : number_format($this->received_amount / $this->a_received_amount, 3, '.', ""),
+                'type' => 1,
+            ];
+        }
         $transactions[] = [
             'account_id' => $transfer_profit_account_id,
             'amount' => abs($this->profit),
@@ -688,7 +688,8 @@ class Transfer extends BaseModel implements Document
             DB::beginTransaction();
             $entry = $this->entry()->create([
                 'user_id' => request('user_id'),
-                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
+                'date' => $old_entry->date,
+                // 'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 1,
                 'statement' => $old_entry->statement,
@@ -706,6 +707,7 @@ class Transfer extends BaseModel implements Document
                     'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
                     'ac_debtor' => $transaction->ac_creditor,
                     'ac_creditor' => $transaction->ac_debtor,
+
                     'transaction_type' => !$transaction->transaction_type,
                 ]);
             }

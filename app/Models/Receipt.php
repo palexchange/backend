@@ -244,7 +244,8 @@ class Receipt extends BaseModel implements Document
             DB::beginTransaction();
             $entry = $this->entry()->create([
                 'user_id' => request('user_id'),
-                'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
+                'date' => $old_entry->date,
+                // 'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
                 'document_sub_type' => 1,
                 'statement' => $old_entry->statement,
