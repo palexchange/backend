@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SetDailyStockEvent;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -16,6 +17,8 @@ class Controller extends BaseController
     public $user;
     public function __construct(Request $request)
     {
+
+        SetDailyStockEvent::dispatch();
         $this->user = auth()->user();
         $this->middleware('auth:api', ['except' => $this->except]);
         $this->pagination = (request('itemsPerPage') ?? request('per_page')) ?? 500;

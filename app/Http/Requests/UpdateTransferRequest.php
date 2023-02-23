@@ -72,6 +72,7 @@ class UpdateTransferRequest extends FormRequest
             'office_exchange_rate_to_usd' => 'nullable|numeric',
             'returned_commission_type' => 'sometimes|integer',
             'started_at' => 'sometimes|date',
+            'a_received_amount_exchange_rate' => 'nullable|numeric',
         ];
     }
 }

@@ -70,6 +70,7 @@ class StoreTransferRequest extends FormRequest
             'returned_commission' => 'sometimes|numeric',
             'office_exchange_rate_to_usd' => 'nullable|numeric',
             'returned_commission_type' => 'sometimes|integer',
+            'a_received_amount_exchange_rate' => 'nullable|numeric',
             'started_at' => 'sometimes|date',
 
         ];

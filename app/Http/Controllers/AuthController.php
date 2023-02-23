@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SetDailyStockEvent;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -16,6 +17,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
+        SetDailyStockEvent::dispatch();
         $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
     }
 

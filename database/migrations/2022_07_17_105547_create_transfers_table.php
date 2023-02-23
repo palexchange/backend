@@ -38,12 +38,13 @@ return new class extends Migration
 
             $table->integer('commission_side')->default(1); // 1 sender ,  2 receiver
             $table->float('transfer_commission')->default(0);
-            $table->boolean('is_commission_percentage')->default(0);
+            $table->integer('is_commission_percentage')->default(0);
 
             $table->float('received_amount');
 
             $table->float('final_received_amount');
             $table->float('a_received_amount')->default(0);
+            $table->float('a_received_amount_exchange_rate')->default(0);
             $table->float('to_send_amount');
             $table->foreignId('received_currency_id')->nullable()->references('id')->on('currencies');
             $table->foreignId('delivery_currency_id')->nullable()->references('id')->on('currencies');
@@ -60,6 +61,7 @@ return new class extends Migration
             $table->float('returned_commission')->default(0);
             $table->integer('returned_commission_type')->default(0);
             $table->float('office_amount')->default(0);
+            $table->float('office_amount_befor_commission')->default(0);
             $table->float('office_amount_in_office_currency')->default(0);
             $table->float('office_exchange_rate_to_usd')->default(0);
             $table->foreignId('user_id')->references('id')->on('users');

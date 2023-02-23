@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Events\DocumentDeletedEvent;
 use App\Events\DocumentStoredEvent;
 use App\Events\DocumentUpdatedEvent;
+use App\Events\SetDailyStockEvent;
 use App\Listeners\HandleDocumentDeletedEvent;
 use App\Listeners\HandleDocumentStoreEvent;
 use App\Listeners\HandleDocumentUpdatedEvent;
+use App\Listeners\SetStockListener;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -34,6 +36,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         DocumentDeletedEvent::class => [
             HandleDocumentDeletedEvent::class
+        ],
+        SetDailyStockEvent::class => [
+            SetStockListener::class
         ]
     ];
 

@@ -214,6 +214,26 @@ return new class extends Migration
         END $$ LANGUAGE plpgsql;
        ";
         DB::unprepared($sql);
+
+        $sql = "create or replace function get_cur_exch_rate(curr_id bigint)
+        returns DECIMAL
+        language plpgsql
+        as
+        $$
+        declare
+            exchange_rate decimal;
+        begin
+            select round(cast(float8((start_selling_price + start_purchasing_price) / 2) as numeric), 10)
+            into exchange_rate
+            from stocks
+            where id = curr_id
+            order by updated_at desc limit 1;
+            
+            return exchange_rate;
+        end;
+        $$;
+        ";
+        DB::unprepared($sql);
     }
 
     /**

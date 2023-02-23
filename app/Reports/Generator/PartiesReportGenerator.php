@@ -66,27 +66,47 @@ class PartiesReportGenerator extends BaseReportGenerator
 
         if ($show_zeros == 1) {
             $sql = "
-            Select *
-            from crosstab (
-            'select   p.name ,  cur.id , sum(e.creditor - e.debtor) as total
-            from parties p inner join entry_transactions e
-            using(account_id)
-            inner join currencies cur on cur.id = e.currency_id
-            where e.created_at::date >= ''$from_date'' and e.created_at::date <= ''$to_date'' 
-            group by (p.id , p.name ,  cur.id) '
-        ) as ct (party_name varchar, dolar float8 , shekel float8  ,dinar float8  ,euro float8  , derham float8  ,reyal float8 ,pound float8  );
+            select Party_Name, sum(dolar) dolar, sum(shekel) shekel, sum(dinar) dinar, sum(euro) euro, sum(derham) derham, sum(rial) rial, sum(pound) pound, sum(sum_using_tr_ex_rate) sum_using_tr_exchange, sum(sum_using_last_ex_rate) as sum_using_last_ex_rate 
+            from (
+                select p.name as Party_Name, 
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 1) as dolar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 2) as shekel,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 3) as dinar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 4) as euro,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 5) as derham,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 6) as rial,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 7) as pound,
+                    sum(e.creditor - e.debtor) / e.exchange_rate as sum_using_tr_ex_rate,
+                    Sum(e.creditor - e.debtor) / get_cur_exch_rate(e.currency_id) as sum_using_last_ex_rate
+                from parties p inner join entry_transactions e
+                            using(account_id)
+                            inner join currencies cur on cur.id = e.currency_id
+                            where e.created_at::date >= ''$from_date'' and e.created_at::date <= ''$to_date'' 
+                            group by (p.name,e.currency_id,e.exchange_rate)
+            ) a 
+            group by Party_Name;
             ";
         } else {
             $sql = "
-            Select *
-            from crosstab (
-            'select   p.name ,  cur.id , sum(e.creditor - e.debtor) as total
-            from parties p inner join entry_transactions e
-            using(account_id)
-            inner join currencies cur on cur.id = e.currency_id
-            where e.created_at::date >= ''$from_date'' and e.created_at::date <= ''$to_date'' 
-            group by (p.id , p.name ,  cur.id) HAVING   SUM(e.creditor - e.debtor) <> 0'
-        ) as ct (party_name varchar, dolar float8 , shekel float8  ,dinar float8  ,euro float8  , derham float8  ,reyal float8 ,pound float8  );
+            select Party_Name, sum(dolar) dolar, sum(shekel) shekel, sum(dinar) dinar, sum(euro) euro, sum(derham) derham, sum(rial) rial, sum(pound) pound, sum(sum_using_tr_ex_rate) sum_using_tr_exchange, sum(sum_using_last_ex_rate) as sum_using_last_ex_rate 
+            from (
+                select p.name as Party_Name, 
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 1) as dolar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 2) as shekel,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 3) as dinar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 4) as euro,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 5) as derham,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 6) as rial,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 7) as pound,
+                    sum(e.creditor - e.debtor) / e.exchange_rate as sum_using_tr_ex_rate,
+                    Sum(e.creditor - e.debtor) / get_cur_exch_rate(e.currency_id) as sum_using_last_ex_rate
+                from parties p inner join entry_transactions e
+                            using(account_id)
+                            inner join currencies cur on cur.id = e.currency_id
+                            where e.created_at::date >= ''$from_date'' and e.created_at::date <= ''$to_date'' 
+                            group by (p.name,e.currency_id,e.exchange_rate) HAVING   SUM(e.creditor - e.debtor) <> 0
+            ) a 
+            group by Party_Name;
             ";
         }
 

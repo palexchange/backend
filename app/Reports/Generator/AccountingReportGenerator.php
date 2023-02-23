@@ -20,6 +20,7 @@ class AccountingReportGenerator extends BaseReportGenerator
         $prev_balance = null;
         $after_balance = null;
         $show_sender = boolval(request('show_sender'));
+        $no_details = boolval(request('no_details'));
 
         $show_receiver = boolval(request('show_receiver'));
         $account = request('account');
@@ -41,14 +42,7 @@ class AccountingReportGenerator extends BaseReportGenerator
             //     'text' => __('document_id'), // اسم الحركة
             //     'value' => 'document_id'
             // ],
-            [
-                'text' => __('public.debtor'), // مدين
-                'value' => 'debtor'
-            ],
-            [
-                'text' => __('public.creditor'), //دائن
-                'value' => 'creditor'
-            ],
+
         ];
         if ($show_sender) {
 
@@ -65,24 +59,37 @@ class AccountingReportGenerator extends BaseReportGenerator
                     'value' => 'receiver_name'
                 ];
         }
+        if (!$no_details) {
+
+            $headers = array_merge($headers,  [
+                [
+                    'text' => __('public.debtor'), // مدين
+                    'value' => 'debtor'
+                ],
+                [
+                    'text' => __('public.creditor'), //دائن
+                    'value' => 'creditor'
+                ],
+                [
+                    'text' => __('public.transaction_type'), // نوع الحوالة
+                    'value' => 'transaction_type'
+                ],
+                [
+                    'text' => __('user_name'),
+                    'value' => 'user_name'
+                ],
+                [
+                    'text' => __('currency_id'),
+                    'value' => 'currency_id'
+                ],
+                [
+                    'text' => __('exchange rate'),
+                    'value' => 'exchange_rate'
+                ],
+            ]);
+        }
         $headers = array_merge($headers,  [
 
-            [
-                'text' => __('public.transaction_type'), // نوع الحوالة
-                'value' => 'transaction_type'
-            ],
-            [
-                'text' => __('user_name'),
-                'value' => 'user_name'
-            ],
-            [
-                'text' => __('currency_id'),
-                'value' => 'currency_id'
-            ],
-            [
-                'text' => __('exchange rate'),
-                'value' => 'exchange_rate'
-            ],
             [
                 'text' => __('debtor_in_group_curr'), //مدين بعملة المجموهة
                 'value' => 'ac_debtor'
@@ -100,7 +107,13 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'value' => 'statement'
             ],
         ]);
+        // $array = array(1, 2, 3, 4, 5, 6);
 
+        // // positive $offset: an offset from the begining of array  
+        // dd(array_slice($array, 2)); // [3,4,5,6]
+
+
+        //    $headers);
         if ($account == null)
             return response()->json(['items' => [], 'headers' => $headers]);
         // $year_end = year_end();
@@ -139,23 +152,38 @@ class AccountingReportGenerator extends BaseReportGenerator
             $vars = $vars . "receiver_name,";
         }
         // $test = Carbon::parse($tto)->addDay()->toDateString();
-        $sql = "select
-        t.document_id   as r_id,
-        case when t.document_id is null and user_name is null then '$tto' else date end as date,
-        transaction_type,
-        debtor,
-        creditor,
-        document_type,
-        user_name,
-        $vars
-        currency_name,
-        currency_id,
-        exchange_rate,
-        ac_debtor,
-        ac_creditor,
-        acc_balance,
-        statement
-        from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , 'الرصيد الإجمالي', '$user_id')t order by date ";
+        $sql = "";
+        if ($no_details) {
+            $sql = "select
+            t.document_id   as r_id,
+            case when t.document_id is null and user_name is null then '$tto' else date end as date,
+            document_type,
+            $vars
+            ac_debtor,
+            ac_creditor,
+            acc_balance,
+            statement
+            from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , 'الرصيد الإجمالي', '$user_id')t order by date ";
+        } else {
+            $sql = "select
+            t.document_id   as r_id,
+            case when t.document_id is null and user_name is null then '$tto' else date end as date,
+            transaction_type,
+            debtor,
+            creditor,
+            document_type,
+            user_name,
+            $vars
+            currency_name,
+            currency_id,
+            exchange_rate,
+            ac_debtor,
+            ac_creditor,
+            acc_balance,
+            statement
+            from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , 'الرصيد الإجمالي', '$user_id')t order by date ";
+        }
+
         // from account_statement($account,'$from','$tto',false)t order by t.r_id ";
         // $entry_accounts = DB::select($sql);
 
@@ -169,22 +197,33 @@ class AccountingReportGenerator extends BaseReportGenerator
         $report_headers = [
             __('journal_no'), //رقم القيد
             __('public.date'), // تاريخ
-            __('public.transaction_type'), // نوع الحوالة
-            __('public.debtor'), // مدين
-            __('public.creditor'), //دائن
-            __('document_type'), // اسم الحركة
-            __('user_name'),
+            __('public.transaction_type'),
+
         ];
+
+        if (!$no_details) {
+            $report_headers = array_merge($report_headers,  [
+                // نوع الحوالة
+                __('public.debtor'), // مدين
+                __('public.creditor'), //دائن
+                __('document_type'), // اسم الحركة
+                __('user_name'),
+            ]);
+        }
         if ($show_sender) {
             $report_headers[] =  __('sender_name');
         }
         if ($show_receiver) {
             $report_headers[] =  __('receiver_name');
         }
+        if (!$no_details) {
+            $report_headers = array_merge($report_headers, [
+                __('currency_id'),
+                __('exchange rate'),
+                __('currency id')
+            ]);
+        }
         $report_headers = array_merge($report_headers, [
-            __('currency_id'),
-            __('exchange rate'),
-            __('currency id'),
             __('debtor_in_group_curr'), //مدين بعملة المجموهة
             __('creditor_in_group_curr'), //دائن بعملة المجموهة
             __('public.accumulated_balance'), //دائن بعملة المجموهة
@@ -196,11 +235,15 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'transaction_type' => [
                     1 => 1,
                     0 => 0,
-                    2 => "عمولة زبون",
-                    3 => 3,
-                    4 => 4,
-                    5 => 5,
-                    6 => 6,
+                    2 => "عمولة حوالة",
+                    3 => "عمولة وسيط",
+                    4 => "مرجع",
+                    5 => "عمولة موني جرام إضافية",
+                    6 => "مبلغ حوالة صادرة",
+                    7 => "مصروف",
+                    // 8 => "ربحية حوالة",
+                    8 => "ربحية من الوسيط",
+                    9 => "ربحية فرق عملة",
                     7 => 7,
                 ],
                 'document_type' => [
