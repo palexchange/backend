@@ -43,6 +43,7 @@ class SettingSeeder extends Seeder
             ['key' => 'time_allowed_for_deletion', 'value' => 3, 'description' => 'the allowed time to delete'],
             ['key' => 'general_customer', 'value' => 1, 'description' => 'general customer account'],
             ['key' => 'moneygram_account', 'value' => $mony_gram->id, 'description' => 'moneygram account'],
+            ['key' => 'days_to_search_before', 'value' => 14, 'description' => 'default value to search before'],
             // ['key' => 'losses_and_profits', 'value' => $losses_and_profits->id, 'description' => 'losses and profits account'],
         ];
         foreach ($settings as $setting) {
