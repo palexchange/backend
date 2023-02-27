@@ -244,7 +244,8 @@ class AccountingReportGenerator extends BaseReportGenerator
                     // 8 => "ربحية حوالة",
                     8 => "ربحية من الوسيط",
                     9 => "ربحية فرق عملة",
-                    7 => 7,
+                    10 => "مبلغ تسليم واردة",
+                    // 7 => 7,
                 ],
                 'document_type' => [
                     1 => __('transfer'),

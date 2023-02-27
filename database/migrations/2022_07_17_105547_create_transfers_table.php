@@ -65,6 +65,7 @@ return new class extends Migration
             $table->float('office_amount_in_office_currency')->default(0);
             $table->float('office_exchange_rate_to_usd')->default(0);
             $table->foreignId('user_id')->references('id')->on('users');
+            $table->boolean('on_dollar_account')->default(false); // 
             $table->timestamps();
         });
     }

@@ -47,7 +47,7 @@ class StoreTransferRequest extends FormRequest
             'receiver_city_id' => 'nullable|exists:cities,id',
             'commission_side' => 'sometimes|integer',
             'commission' => 'sometimes|numeric',
-            'is_commission_percentage' => 'sometimes|boolean',
+            'is_commission_percentage' => 'sometimes|integer',
             'received_amount' => 'required|numeric',
             'to_send_amount' => 'required|numeric',
             'received_currency_id' => 'required|exists:currencies,id',
@@ -71,6 +71,7 @@ class StoreTransferRequest extends FormRequest
             'office_exchange_rate_to_usd' => 'nullable|numeric',
             'returned_commission_type' => 'sometimes|integer',
             'a_received_amount_exchange_rate' => 'nullable|numeric',
+            'on_dollar_account' => 'nullable|boolean',
             'started_at' => 'sometimes|date',
 
         ];
