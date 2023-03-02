@@ -156,7 +156,7 @@ class Transfer extends BaseModel implements Document
                 'account_id' => $transfer_commission_box_id,
                 'amount' => $t_amount,
                 'ac_amount' => $t_amount,
-                'transaction_type' => 2,
+                'transaction_type' => $this->delivering_type == 3 ? 11 : 2,
                 'exchange_rate' => 1,
                 'currency_id' => 1,
                 'type' =>  0,
