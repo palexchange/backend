@@ -31,7 +31,10 @@ class SettingSeeder extends Seeder
         // $transfer_commission_account = Account::create(['name' => 'Transfer Commission Account', 'type_id' => 1]);
         // $returned_commission_account = Account::create(['name' => 'Returned Commission Account', 'type_id' => 1]);
         // $transfer_expense_account = Account::create(['name' => 'Transfer Expense Account', 'type_id' => 1]);
-        $exchange_difference_account = Account::create(['name' => 'Exchange Difference Account', 'type_id' => 6]);
+        $exchange_difference_account = Account::create(['name' => 'فرق عملة', 'type_id' => 6]);
+        $returned_commission_account = Account::create(['name' => 'مرجع', 'type_id' => 5]);
+        $office_commission_account = Account::create(['name' => 'عمولة وسيط', 'type_id' => 5]);
+        $transfers_commission_account = Account::create(['name' => 'عمولة حوالات', 'type_id' => 5]);
         $settings = [
             // ['key' => 'commission_account_id', 'value' => $commssion_account->id, 'description' => 'transfer commission account'],
             // ['key' => 'transfer_commission_account_id', 'value' => $transfer_commission_account->id,  'description' => 'transfer commission account'],
@@ -43,6 +46,9 @@ class SettingSeeder extends Seeder
             ['key' => 'time_allowed_for_deletion', 'value' => 3, 'description' => 'the allowed time to delete'],
             ['key' => 'general_customer', 'value' => 1, 'description' => 'general customer account'],
             ['key' => 'moneygram_account', 'value' => $mony_gram->id, 'description' => 'moneygram account'],
+            ['key' => 'returned_commission_account_id', 'value' => $returned_commission_account->id, 'description' => 'returned_commission_account'],
+            ['key' => 'office_commission_account_id', 'value' => $office_commission_account->id, 'description' => 'office_commission_account'],
+            ['key' => 'transfers_commission_account_id', 'value' => $transfers_commission_account->id, 'description' => 'transfer_commission_account'],
             ['key' => 'days_to_search_before', 'value' => 14, 'description' => 'default value to search before'],
             // ['key' => 'losses_and_profits', 'value' => $losses_and_profits->id, 'description' => 'losses and profits account'],
         ];
