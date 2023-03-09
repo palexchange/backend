@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use Maatwebsite\Excel\Concerns\ToArray;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -104,7 +105,8 @@ class User extends Authenticatable
     public function getMainActiveAccountsAttribute()
     {
 
-        return  $this->accounts()->where('status', 1)->where('main', true)
+        return  $this->accounts()->where('status', 1)
+            ->where('main', true)
             ->get()->toArray();
     }
     // public function getUserCurrenceisAttribute()
@@ -136,7 +138,7 @@ class User extends Authenticatable
     public function getDailyExchangeProfitAttribute()
     {
 
-        
+
         // $this->accounts()->where('status', 1)->get()
         //     ->each(function ($account) {
         //         $this->total_dollars = $this->total_dollars + $account->net_balance_in_dollar;
@@ -168,18 +170,21 @@ class User extends Authenticatable
     public function getDailyTransferProfitAttribute()
     {
         $sum = 0;
-        if ($this->role != 1) {
-            $sum = $this->entries()
-                ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-                ->where('account_id', 2)
-                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
-                ->sum(DB::raw('creditor -debtor '));
-        } else {
-            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-                ->where('account_id', 2)
-                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
-                ->sum(DB::raw('creditor -debtor '));
-        }
+        $profit_accounts_id =
+            Setting::whereIn(
+                'key',
+                [
+                    'exchange_difference_account_id',
+                    'returned_commission_account_id',
+                    'office_commission_account_id',
+                    'transfers_commission_account_id'
+                ]
+            )->pluck('value')->all();
+        $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+            ->whereIn('account_id', $profit_accounts_id)
+            ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
+            ->sum(DB::raw('creditor -debtor '));
+
         return  $sum;
     }
 
