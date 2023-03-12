@@ -63,6 +63,8 @@ class StoreTransferRequest extends FormRequest
             'exchange_rate_to_office_currency' => 'sometimes|numeric',
             'office_commission_type' => 'sometimes|integer',
             'transfer_commission' => 'nullable|numeric',
+            'transfer_commission_currency' => 'nullable|integer',
+            'transfer_commission_exchange_rate' => 'sometimes|numeric',
             'office_amount' => 'sometimes|numeric',
             'office_amount_in_office_currency' => 'sometimes|numeric',
             'a_received_amount' => 'sometimes|numeric',

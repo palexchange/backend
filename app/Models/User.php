@@ -151,15 +151,16 @@ class User extends Authenticatable
             ->get()
             ->each(function ($account) {
                 $mid = $account->mid;
+                $close_mid = $account->close_mid;
                 $start = 0;
                 $end = 0;
                 if ($account->currency_id == 4) {
                     $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
-                    $end =  ($account->net_balance * $account->close_mid);
+                    $end =  ($account->net_balance * $close_mid);
                 } else {
 
                     $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
-                    $end =  ($account->net_balance / $account->close_mid);
+                    $end =  ($account->net_balance / $close_mid);
                 }
                 $this->total_start_dollars += $start;
                 $this->total_final_dollars += $end;
@@ -183,7 +184,7 @@ class User extends Authenticatable
         $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
             ->whereIn('account_id', $profit_accounts_id)
             ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
-            ->sum(DB::raw('creditor -debtor '));
+            ->sum(DB::raw('ac_creditor - ac_debtor '));
 
         return  $sum;
     }
