@@ -31,7 +31,7 @@ class SettingSeeder extends Seeder
         // $transfer_commission_account = Account::create(['name' => 'Transfer Commission Account', 'type_id' => 1]);
         // $returned_commission_account = Account::create(['name' => 'Returned Commission Account', 'type_id' => 1]);
         // $transfer_expense_account = Account::create(['name' => 'Transfer Expense Account', 'type_id' => 1]);
-        $exchange_difference_account = Account::create(['name' => 'فرق عملة', 'type_id' => 6]);
+        $exchange_difference_account = Account::create(['name' => 'فرق عملة', 'type_id' => 5]);
         $returned_commission_account = Account::create(['name' => 'مرجع', 'type_id' => 5]);
         $office_commission_account = Account::create(['name' => 'عمولة وسيط', 'type_id' => 5]);
         $transfers_commission_account = Account::create(['name' => 'عمولة حوالات', 'type_id' => 5]);

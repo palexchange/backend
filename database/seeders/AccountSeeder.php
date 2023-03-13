@@ -18,8 +18,8 @@ class AccountSeeder extends Seeder
 
         Account::create(['name' => 'حساب الخزينة المركزي', 'type_id' => 4, 'currency_id' => 1, 'is_transaction' => false]); // 1
 
-        Account::create(['name' => 'ربحية الحوالات', 'type_id' => 5, 'currency_id' => 1]); // 2
-        Account::create(['name' => 'ربحية الصرافة', 'type_id' => 5, 'currency_id' => 1]); // 3
+        Account::create(['name' => 'ربحية الحوالات', 'type_id' => 8, 'currency_id' => 1]); // 2
+        Account::create(['name' => 'ربحية الصرافة', 'type_id' => 8, 'currency_id' => 1]); // 3
 
         Account::create(['name' => 'خزينة دولار', 'type_id' => 4,  'currency_id' => 1]); // 4
         Account::create(['name' => 'خزينة شيكل', 'type_id' => 4,  'currency_id' => 2]); // 5
@@ -56,8 +56,8 @@ class AccountSeeder extends Seeder
 
 
         Account::create(['name' => 'حساب رأس المال', 'type_id' => 4, 'currency_id' => 1, 'is_transaction' => false]);
-        Account::create(['name' => 'ريحية العجز و الزيادة', 'type_id' => 5, 'currency_id' => 1]); // 2
-        Account::create(['name' => 'أرباح وخسائر', 'type_id' => 5, 'currency_id' => 1]); // 2
+        Account::create(['name' => 'ريحية العجز و الزيادة', 'type_id' => 8, 'currency_id' => 1]); // 2
+        Account::create(['name' => 'أرباح وخسائر', 'type_id' => 8, 'currency_id' => 1]); // 2
 
 
         $acc = Account::create(['name' => 'حساب المصروفات', 'type_id' => 7, 'currency_id' => 1]);

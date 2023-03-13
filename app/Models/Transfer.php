@@ -667,60 +667,57 @@ class Transfer extends BaseModel implements Document
         $trans = [];
         /////  sender transactions
         if ($this->delivering_type == 1) {
-
-            if ($this->receiver_party->account_id != $this->sender_party->account_id) {
-
-                //add commission as transaction
-                if ($this->transfer_commission > 0) {
-                    $t_amount = $this->is_commission_percentage == 1 ?
-                        $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
-                        : $this->transfer_commission;
-                    $transfer_commission_inDoller = $this->toDoller($t_amount, $this->transfer_commission_currency, $this->transfer_commission_exchange_rate);
-                    $trans[] = [
-                        'account_id' => $this->sender_party->account_id,
-                        'debtor' =>  $t_amount,
-                        'ac_debtor' => $transfer_commission_inDoller,
-                        'creditor' => 0,
-                        'ac_creditor' =>  0,
-                        'transaction_type' => 2,
-                        'exchange_rate' => $this->transfer_commission_exchange_rate,
-                        'currency_id' => $this->transfer_commission_currency,
-                    ];
-                    $trans[] = [
-                        'account_id' => $this->sender_party->account_id,
-                        'debtor' => 0,
-                        'ac_debtor' => 0,
-                        'creditor' => $t_amount,
-                        'ac_creditor' =>  $transfer_commission_inDoller,
-                        'transaction_type' => 2,
-                        'exchange_rate' => $this->transfer_commission_exchange_rate,
-                        'currency_id' => $this->transfer_commission_currency,
-
-                    ];
-                }
-
+            //add commission as transaction
+            if ($this->transfer_commission > 0) {
+                $t_amount = $this->is_commission_percentage == 1 ?
+                    $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
+                    : $this->transfer_commission;
+                $transfer_commission_inDoller = $this->toDoller($t_amount, $this->transfer_commission_currency, $this->transfer_commission_exchange_rate);
                 $trans[] = [
                     'account_id' => $this->sender_party->account_id,
-                    'exchange_rate' => $this->exchange_rate_to_delivery_currency,
-                    'currency_id' => $this->delivery_currency_id,
-                    'debtor' =>  0,
-                    'ac_debtor' => 0,
-                    'creditor' => $this->to_send_amount,
-                    'ac_creditor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
-                    'transaction_type' => 0,
-                ];
-                $trans[] = [
-                    'account_id' => $this->sender_party->account_id,
-                    'exchange_rate' => $this->exchange_rate_to_delivery_currency,
-                    'currency_id' => $this->delivery_currency_id,
-                    'debtor' => $this->to_send_amount,
-                    'ac_debtor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
+                    'debtor' =>  $t_amount,
+                    'ac_debtor' => $transfer_commission_inDoller,
                     'creditor' => 0,
-                    'ac_creditor' => 0,
-                    'transaction_type' => 1,
+                    'ac_creditor' =>  0,
+                    'transaction_type' => 2,
+                    'exchange_rate' => $this->transfer_commission_exchange_rate,
+                    'currency_id' => $this->transfer_commission_currency,
                 ];
-            };
-        }
+                $trans[] = [
+                    'account_id' => $this->sender_party->account_id,
+                    'debtor' => 0,
+                    'ac_debtor' => 0,
+                    'creditor' => $t_amount,
+                    'ac_creditor' =>  $transfer_commission_inDoller,
+                    'transaction_type' => 2,
+                    'exchange_rate' => $this->transfer_commission_exchange_rate,
+                    'currency_id' => $this->transfer_commission_currency,
+
+                ];
+            }
+
+            $trans[] = [
+                'account_id' => $this->sender_party->account_id,
+                'exchange_rate' => $this->exchange_rate_to_delivery_currency,
+                'currency_id' => $this->delivery_currency_id,
+                'debtor' =>  0,
+                'ac_debtor' => 0,
+                'creditor' => $this->to_send_amount,
+                'ac_creditor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
+                'transaction_type' => 0,
+            ];
+            $trans[] = [
+                'account_id' => $this->sender_party->account_id,
+                'exchange_rate' => $this->exchange_rate_to_delivery_currency,
+                'currency_id' => $this->delivery_currency_id,
+                'debtor' => $this->to_send_amount,
+                'ac_debtor' =>  $this->to_send_amount * $this->exchange_rate_to_delivery_currency,
+                'creditor' => 0,
+                'ac_creditor' => 0,
+                'transaction_type' => 1,
+            ];
+        };
+
 
         /////   receiver  transactions
         if ($this->delivering_type == 2) {
@@ -766,26 +763,28 @@ class Transfer extends BaseModel implements Document
                 'transaction_type' => 1,
             ];
         } else {
-            $trans[] = [
-                'account_id' => $this->receiver_party->account_id,
-                'exchange_rate' => $this->exchange_rate_to_reference_currency,
-                'currency_id' => $this->received_currency_id,
-                'debtor' =>  0,
-                'ac_debtor' => 0,
-                'creditor' =>   $this->received_amount,
-                'ac_creditor' => $this->a_received_amount,
-                'transaction_type' => 0,
-            ];
-            $trans[] = [
-                'account_id' => $this->receiver_party->account_id,
-                'exchange_rate' => $this->exchange_rate_to_reference_currency,
-                'currency_id' => $this->received_currency_id,
-                'debtor' =>   $this->received_amount,
-                'ac_debtor' => $this->a_received_amount,
-                'creditor' => 0,
-                'ac_creditor' => 0,
-                'transaction_type' => 1,
-            ];
+            if ($this->receiver_party->account_id != $this->sender_party->account_id) {
+                $trans[] = [
+                    'account_id' => $this->receiver_party->account_id,
+                    'exchange_rate' => $this->exchange_rate_to_reference_currency,
+                    'currency_id' => $this->received_currency_id,
+                    'debtor' =>  0,
+                    'ac_debtor' => 0,
+                    'creditor' =>   $this->received_amount,
+                    'ac_creditor' => $this->a_received_amount,
+                    'transaction_type' => 0,
+                ];
+                $trans[] = [
+                    'account_id' => $this->receiver_party->account_id,
+                    'exchange_rate' => $this->exchange_rate_to_reference_currency,
+                    'currency_id' => $this->received_currency_id,
+                    'debtor' =>   $this->received_amount,
+                    'ac_debtor' => $this->a_received_amount,
+                    'creditor' => 0,
+                    'ac_creditor' => 0,
+                    'transaction_type' => 1,
+                ];
+            }
         }
 
         return $trans;
