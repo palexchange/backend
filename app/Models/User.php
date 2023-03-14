@@ -113,12 +113,12 @@ class User extends Authenticatable
                         ]
                     )->pluck('value')->all();
                 return collect($account->toArray())
-                    ->put('price', Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-                        ->whereIn('account_id', $profit_accounts_id)
-                        ->where('currency_id', $account->currency_id)
-                        ->select('entry_transactions.currency_id', DB::raw('sum(creditor - debtor)  as total'))
-                        ->groupBy('entry_transactions.currency_id')->first()?->total ?? 0)
-                    ->all();
+                    ->put(
+                        'price',
+                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                            ->where('on_account_balance_id', $account->id)
+                            ->sum(DB::raw(' creditor - debtor '))
+                    )->all();
             })->toArray();
     }
     public function getMainActiveAccountsAttribute()
@@ -240,6 +240,8 @@ class User extends Authenticatable
 
     public function getFundsAccountsBalanceAttribute()
     {
+
+
         $sql = '
         select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
         sub_table.acc_currency_id as currency_id ,sub_table.name 
@@ -250,30 +252,20 @@ class User extends Authenticatable
            from
                entry_transactions et
                join accounts ac on ac.id = et.account_id 
+               join user_accounts u_ac on ac.id = u_ac.account_id 
                join entries en on en.id = et.entry_id 
                join currencies crr on crr.id = ac.currency_id 
-        where ac.is_transaction = true and ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5)
+        where ac.is_transaction = true and 
+        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5) and et.transaction_type not in (6, 8)
+        
        group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
 ';
         $data = DB::select($sql);
         return $data;
-
-
-
-        $sql = 'select
-        round(sum(et.debtor- et.creditor)::numeric , 3) as balance , et.currency_id , crr.name  as name    from
-        entry_transactions et
-        join accounts ac on ac.id = et.account_id 
-        join entries en on en.id = et.entry_id 
-        join currencies crr on crr.id = ac.currency_id 
-        where en.document_sub_type not in (4,5)
-         and ac.is_transaction = true and ac.type_id in (4 ,3 )  
-        group by et.currency_id ,crr.name';
     }
     public function getStartFundsAccountsBalanceAttribute()
     {
-
-        $sql = '   select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
+        $sql = 'select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
         sub_table.acc_currency_id as currency_id ,sub_table.name 
        from  (
            select 
@@ -282,9 +274,12 @@ class User extends Authenticatable
            from
                entry_transactions et
                join accounts ac on ac.id = et.account_id 
+               join user_accounts u_ac on ac.id = u_ac.account_id 
                join entries en on en.id = et.entry_id 
                join currencies crr on crr.id = ac.currency_id 
-        where ac.is_transaction = true and ac.type_id in (4 ,3  , 5 )  and en.document_sub_type not in (4,5) and  en.date < CURRENT_DATE  
+        where ac.is_transaction = true and 
+        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5) and et.transaction_type not in (6, 8)
+         and  en.date < CURRENT_DATE  
        group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
 ';
         $data = DB::select($sql);

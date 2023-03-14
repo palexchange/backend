@@ -25,6 +25,7 @@ return new class extends Migration
             $table->float('ac_debtor', 18, 5)->default(0);
             $table->float('ac_creditor', 18, 5)->default(0);
             $table->foreignId('account_id')->references('id')->on('accounts');
+            $table->foreignId('on_account_balance_id')->nullable()->references('id')->on('accounts');
             $table->integer('source_type')->nullable();
             $table->unsignedBigInteger('source_id')->nullable();
             $table->integer('subject_type')->nullable();

@@ -52,7 +52,7 @@ class Account extends BaseModel
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereNotIn('entries.document_sub_type',  [4, 5]) // 
-            ->whereNotIn('entry_transactions.transaction_type',  [6, 8, 10])
+            ->whereNotIn('entry_transactions.transaction_type',  [6, 8, 10 , 2 , 3 , 4 , 9])
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
