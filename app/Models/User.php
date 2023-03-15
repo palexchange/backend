@@ -21,7 +21,7 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance', 'start_funds_accounts_balance'];
+    protected $appends = ['start_main_active_accounts', 'main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance', 'start_funds_accounts_balance'];
     /**
      * The attributes that are mass assignable.
      *
@@ -100,7 +100,9 @@ class User extends Authenticatable
     {
 
         // return  auth()->user()->role == 1 ? Account::where('type_id', 3)->get()->toArray() : $this->accounts()->where('status', 1)->get()->toArray();
-        return  $this->accounts()->where('status', 1)->get()
+        return  $this->accounts()->where('status', 1)
+            ->orderBy('accounts.id')
+            ->get()
             ->map(function ($account) {
                 $profit_accounts_id =
                     Setting::whereIn(
@@ -126,7 +128,55 @@ class User extends Authenticatable
 
         return  $this->accounts()->where('status', 1)
             ->where('main', true)
-            ->get()->toArray();
+            ->orderBy('accounts.id')
+            ->get()
+            ->map(function ($account) {
+                $profit_accounts_id =
+                    Setting::whereIn(
+                        'key',
+                        [
+                            'exchange_difference_account_id',
+                            'returned_commission_account_id',
+                            'office_commission_account_id',
+                            'transfers_commission_account_id'
+                        ]
+                    )->pluck('value')->all();
+                return collect($account->toArray())
+                    ->put(
+                        'price',
+                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                            ->where('on_account_balance_id', $account->id)
+                            ->sum(DB::raw(' creditor - debtor '))
+                    )->all();
+            })->toArray();
+    }
+    public function getStartMainActiveAccountsAttribute()
+    {
+
+        return  $this->accounts()->where('status', 1)
+            ->where('main', true)
+            ->orderBy('accounts.id')
+            ->get()
+            ->map(function ($account) {
+                $profit_accounts_id =
+                    Setting::whereIn(
+                        'key',
+                        [
+                            'exchange_difference_account_id',
+                            'returned_commission_account_id',
+                            'office_commission_account_id',
+                            'transfers_commission_account_id'
+                        ]
+                    )->pluck('value')->all();
+                return collect($account->toArray())
+                    ->put(
+                        'start_price',
+                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                            ->where('on_account_balance_id', $account->id)
+                            ->whereDate('created_at', '<', Carbon::today()->toDateString())
+                            ->sum(DB::raw(' creditor - debtor '))
+                    )->all();
+            })->toArray();
     }
     // public function getUserCurrenceisAttribute()
     // {
@@ -256,7 +306,7 @@ class User extends Authenticatable
                join entries en on en.id = et.entry_id 
                join currencies crr on crr.id = ac.currency_id 
         where ac.is_transaction = true and 
-        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5) and et.transaction_type not in (6, 8)
+        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
         
        group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
 ';
@@ -278,7 +328,7 @@ class User extends Authenticatable
                join entries en on en.id = et.entry_id 
                join currencies crr on crr.id = ac.currency_id 
         where ac.is_transaction = true and 
-        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5) and et.transaction_type not in (6, 8)
+        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
          and  en.date < CURRENT_DATE  
        group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
 ';
