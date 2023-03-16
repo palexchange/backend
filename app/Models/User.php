@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use Maatwebsite\Excel\Concerns\ToArray;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -20,7 +21,7 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance'];
+    protected $appends = ['start_main_active_accounts', 'main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance', 'start_funds_accounts_balance'];
     /**
      * The attributes that are mass assignable.
      *
@@ -97,15 +98,85 @@ class User extends Authenticatable
     }
     public function getActiveAccountsAttribute()
     {
+
         // return  auth()->user()->role == 1 ? Account::where('type_id', 3)->get()->toArray() : $this->accounts()->where('status', 1)->get()->toArray();
         return  $this->accounts()->where('status', 1)
-            ->get()->toArray();
+            ->orderBy('accounts.id')
+            ->get()
+            ->map(function ($account) {
+                $profit_accounts_id =
+                    Setting::whereIn(
+                        'key',
+                        [
+                            'exchange_difference_account_id',
+                            'returned_commission_account_id',
+                            'office_commission_account_id',
+                            'transfers_commission_account_id'
+                        ]
+                    )->pluck('value')->all();
+                return collect($account->toArray())
+                    ->put(
+                        'price',
+                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                            ->where('on_account_balance_id', $account->id)
+                            ->sum(DB::raw(' creditor - debtor '))
+                    )->all();
+            })->toArray();
     }
     public function getMainActiveAccountsAttribute()
     {
 
-        return  $this->accounts()->where('status', 1)->where('main', true)
-            ->get()->toArray();
+        return  $this->accounts()->where('status', 1)
+            ->where('main', true)
+            ->orderBy('accounts.id')
+            ->get()
+            ->map(function ($account) {
+                $profit_accounts_id =
+                    Setting::whereIn(
+                        'key',
+                        [
+                            'exchange_difference_account_id',
+                            'returned_commission_account_id',
+                            'office_commission_account_id',
+                            'transfers_commission_account_id'
+                        ]
+                    )->pluck('value')->all();
+                return collect($account->toArray())
+                    ->put(
+                        'price',
+                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                            ->where('on_account_balance_id', $account->id)
+                            ->sum(DB::raw(' creditor - debtor '))
+                    )->all();
+            })->toArray();
+    }
+    public function getStartMainActiveAccountsAttribute()
+    {
+
+        return  $this->accounts()->where('status', 1)
+            ->where('main', true)
+            ->orderBy('accounts.id')
+            ->get()
+            ->map(function ($account) {
+                $profit_accounts_id =
+                    Setting::whereIn(
+                        'key',
+                        [
+                            'exchange_difference_account_id',
+                            'returned_commission_account_id',
+                            'office_commission_account_id',
+                            'transfers_commission_account_id'
+                        ]
+                    )->pluck('value')->all();
+                return collect($account->toArray())
+                    ->put(
+                        'start_price',
+                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                            ->where('on_account_balance_id', $account->id)
+                            ->whereDate('created_at', '<', Carbon::today()->toDateString())
+                            ->sum(DB::raw(' creditor - debtor '))
+                    )->all();
+            })->toArray();
     }
     // public function getUserCurrenceisAttribute()
     // {
@@ -136,7 +207,7 @@ class User extends Authenticatable
     public function getDailyExchangeProfitAttribute()
     {
 
-        
+
         // $this->accounts()->where('status', 1)->get()
         //     ->each(function ($account) {
         //         $this->total_dollars = $this->total_dollars + $account->net_balance_in_dollar;
@@ -149,15 +220,16 @@ class User extends Authenticatable
             ->get()
             ->each(function ($account) {
                 $mid = $account->mid;
+                $close_mid = $account->close_mid;
                 $start = 0;
                 $end = 0;
                 if ($account->currency_id == 4) {
                     $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
-                    $end =  ($account->net_balance * $account->close_mid);
+                    $end =  ($account->net_balance * $close_mid);
                 } else {
 
                     $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
-                    $end =  ($account->net_balance / $account->close_mid);
+                    $end =  ($account->net_balance / $close_mid);
                 }
                 $this->total_start_dollars += $start;
                 $this->total_final_dollars += $end;
@@ -168,18 +240,21 @@ class User extends Authenticatable
     public function getDailyTransferProfitAttribute()
     {
         $sum = 0;
-        if ($this->role != 1) {
-            $sum = $this->entries()
-                ->join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-                ->where('account_id', 2)
-                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
-                ->sum(DB::raw('creditor -debtor '));
-        } else {
-            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-                ->where('account_id', 2)
-                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
-                ->sum(DB::raw('creditor -debtor '));
-        }
+        $profit_accounts_id =
+            Setting::whereIn(
+                'key',
+                [
+                    'exchange_difference_account_id',
+                    'returned_commission_account_id',
+                    'office_commission_account_id',
+                    'transfers_commission_account_id'
+                ]
+            )->pluck('value')->all();
+        $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+            ->whereIn('account_id', $profit_accounts_id)
+            ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
+            ->sum(DB::raw('ac_creditor - ac_debtor '));
+
         return  $sum;
     }
 
@@ -215,32 +290,49 @@ class User extends Authenticatable
 
     public function getFundsAccountsBalanceAttribute()
     {
+
+
         $sql = '
         select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
-         sub_table.acc_currency_id as currency_id ,sub_table.name 
-		from  (
-			select sum(et.debtor- et.creditor)  as balance , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
-			from
-        		entry_transactions et
-        		join accounts ac on ac.id = et.account_id 
-        		join entries en on en.id = et.entry_id 
-        		join currencies crr on crr.id = ac.currency_id 
-         where ac.is_transaction = true and ac.type_id in (4 ,3 )  and en.document_sub_type not in (4,5)
-        group by et.currency_id ,crr.name ,ac.name,ac.currency_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
- ';
+        sub_table.acc_currency_id as currency_id ,sub_table.name 
+       from  (
+           select 
+           case when ac.type_id in (6,5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
+           , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
+           from
+               entry_transactions et
+               join accounts ac on ac.id = et.account_id 
+               join user_accounts u_ac on ac.id = u_ac.account_id 
+               join entries en on en.id = et.entry_id 
+               join currencies crr on crr.id = ac.currency_id 
+        where ac.is_transaction = true and 
+        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
+        
+       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
+';
         $data = DB::select($sql);
         return $data;
-
-
-
-        $sql = 'select
-        round(sum(et.debtor- et.creditor)::numeric , 3) as balance , et.currency_id , crr.name  as name    from
-        entry_transactions et
-        join accounts ac on ac.id = et.account_id 
-        join entries en on en.id = et.entry_id 
-        join currencies crr on crr.id = ac.currency_id 
-        where en.document_sub_type not in (4,5)
-         and ac.is_transaction = true and ac.type_id in (4 ,3 )  
-        group by et.currency_id ,crr.name';
+    }
+    public function getStartFundsAccountsBalanceAttribute()
+    {
+        $sql = 'select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
+        sub_table.acc_currency_id as currency_id ,sub_table.name 
+       from  (
+           select 
+           case when ac.type_id in (6,5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
+           , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
+           from
+               entry_transactions et
+               join accounts ac on ac.id = et.account_id 
+               join user_accounts u_ac on ac.id = u_ac.account_id 
+               join entries en on en.id = et.entry_id 
+               join currencies crr on crr.id = ac.currency_id 
+        where ac.is_transaction = true and 
+        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
+         and  en.date < CURRENT_DATE  
+       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
+';
+        $data = DB::select($sql);
+        return $data;
     }
 }

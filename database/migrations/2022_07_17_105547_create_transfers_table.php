@@ -38,6 +38,8 @@ return new class extends Migration
 
             $table->integer('commission_side')->default(1); // 1 sender ,  2 receiver
             $table->float('transfer_commission')->default(0);
+            $table->integer('transfer_commission_currency')->default(1);
+            $table->float('transfer_commission_exchange_rate')->default(1);
             $table->integer('is_commission_percentage')->default(0);
 
             $table->float('received_amount');

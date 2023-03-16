@@ -101,7 +101,7 @@ class Exchange extends BaseModel implements Document
                 'date' => $old_entry->date,
                 // 'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
-                'document_sub_type' => 2,
+                'document_sub_type' => $old_entry->document_sub_type,
                 'statement' => $old_entry->statement,
                 'ref_currency_id' => $this->reference_currency_id,
                 'inverse_entry_id' =>  $old_entry->id,

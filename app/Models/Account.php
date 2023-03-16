@@ -11,7 +11,7 @@ class Account extends BaseModel
 {
     use HasFactory;
     protected $with = ['currency', 'children'];
-    protected $appends = ['inputs_balance',   'balance', 'user_account_id', 'net_balance', 'inventory_balance'];
+    protected $appends = ['inputs_balance',   'balance', 'user_account_id', 'net_balance', 'start_net_balance', 'inventory_balance' ,'usd_balance'];
     protected $hidden = ['entry_transactions', 'user_accounts'];
 
     public function currency()
@@ -32,14 +32,17 @@ class Account extends BaseModel
     }
     public function getBalanceAttribute()
     {
-        // if ($this->children) {
-        //     dd($this->children);
-        // }
-        $amount = $this->entry_transactions()->sum(DB::raw('debtor - creditor'));
-        // dd($amount);
-        // $amount = $this->entry_transactions()
-        //     ->join('entries', 'entries.id', 'entry_transactions.entry_id')
-        //     ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
+        $amount = $this->entry_transactions()
+            ->sum(DB::raw('debtor - creditor'));
+        if (gettype($amount) == 'string') {
+            $amount =  substr($amount, 0, 8);
+        }
+        return  $amount;
+    }
+    public function getUsdBalanceAttribute()
+    {
+        $amount = $this->entry_transactions()
+            ->sum(DB::raw('ac_debtor - ac_creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
         }
@@ -51,8 +54,22 @@ class Account extends BaseModel
         if ($this->balance == 0) return  0;
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
-            ->whereNotIn('entries.document_sub_type',  [4, 5]) // 
-            ->whereNotIn('entry_transactions.transaction_type',  [6, 8 , 10])
+            ->whereNotIn('entries.document_sub_type',  [4, 5, 6]) // 
+            ->whereNotIn('entry_transactions.transaction_type',  [6, 8, 10, 2, 3, 4, 9])
+            ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
+        if (gettype($amount) == 'string') {
+            $amount =  substr($amount, 0, 8);
+        }
+        return  $amount;
+    }
+    public function getStartNetBalanceAttribute()
+    {
+        if ($this->balance == 0) return  0;
+        $amount = $this->entry_transactions()
+            ->join('entries', 'entries.id', 'entry_transactions.entry_id')
+            ->whereNotIn('entries.document_sub_type',  [4, 5, 6]) // 
+            ->whereNotIn('entry_transactions.transaction_type',  [6, 8, 10, 2, 3, 4, 9])
+            ->whereDate('entry_transactions.created_at', '<', Carbon::today()->toDateString())
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
@@ -61,7 +78,7 @@ class Account extends BaseModel
     }
     public function getInventoryBalanceAttribute()
     {
-        $amount = $this->entry_transactions()->whereNotIn('transaction_type', [5, 9, 3, 4]) // commissions
+        $amount = $this->entry_transactions()->whereNotIn('transaction_type', [5, 9, 3, 4, 11]) // commissions
             ->sum(DB::raw('debtor - creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);

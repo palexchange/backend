@@ -61,6 +61,8 @@ class UpdateTransferRequest extends FormRequest
             'office_id' => 'required|exists:parties,id',
             'office_currency_id' => 'required|exists:currencies,id',
             'office_commission' => 'sometimes|numeric',
+            'transfer_commission_currency' => 'nullable|integer',
+            'transfer_commission_exchange_rate' => 'sometimes|numeric',
             'exchange_rate_to_office_currency' => 'sometimes|numeric',
             'office_commission_type' => 'sometimes|integer',
             'transfer_commission' => 'sometimes|numeric',
