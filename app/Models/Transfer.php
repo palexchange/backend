@@ -373,9 +373,6 @@ class Transfer extends BaseModel implements Document
         //returned_commission
         $returned_commission_amount_usd = 0;
         if ($this->returned_commission > 0) {
-            logger("this->returned_commission");
-            logger($this->returned_commission);
-
             $returned_commission_amount_usd = round($this->returned_commission * $this->exchange_rate_to_office_currency, 1);
             $transactions[] = [
                 'account_id' => $office_commission_account_id,
@@ -647,8 +644,8 @@ class Transfer extends BaseModel implements Document
                     'account_id' => $this->receiver_party->account_id,
                     'exchange_rate' => $exchange_rate,
                     'currency_id' => $this->received_currency_id,
-                    'creditor' =>     $this->received_amount,
-                    'ac_creditor' => $this->received_amount /  $exchange_rate,
+                    'creditor' =>     $this->final_received_amount,
+                    'ac_creditor' => $this->final_received_amount /  $exchange_rate,
                     'debtor' => 0,
                     'ac_debtor' => 0,
                     'transaction_type' => 1,
@@ -662,7 +659,7 @@ class Transfer extends BaseModel implements Document
                     'debtor' =>  0,
                     'ac_debtor' => 0,
                     'creditor' =>   $this->final_received_amount, // $this->to_send_amount * $exchange_rate,
-                    'ac_creditor' => $this->final_received_amount *  $exchange_rate, //$this->to_send_amount,
+                    'ac_creditor' => $this->final_received_amount / $exchange_rate, //$this->to_send_amount,
                     'transaction_type' => 0,
                 ];
             }
@@ -673,7 +670,7 @@ class Transfer extends BaseModel implements Document
                     'exchange_rate' => $exchange_rate,
                     'currency_id' => $this->received_currency_id,
                     'debtor' =>   $this->final_received_amount,
-                    'ac_debtor' => $this->final_received_amount * $exchange_rate,
+                    'ac_debtor' => $this->final_received_amount / $exchange_rate,
                     'creditor' => 0,
                     'ac_creditor' => 0,
                     'transaction_type' => 1,
