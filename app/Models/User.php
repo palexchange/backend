@@ -114,6 +114,7 @@ class User extends Authenticatable
                             'transfers_commission_account_id'
                         ]
                     )->pluck('value')->all();
+                dd($profit_accounts_id);
                 return collect($account->toArray())
                     ->put(
                         'price',

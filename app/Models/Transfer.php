@@ -324,6 +324,7 @@ class Transfer extends BaseModel implements Document
             'amount' => $this->on_dollar_account ? ($amount * $this->exchange_rate_to_office_currency) : $amount,
             'ac_amount' => $amount * $this->exchange_rate_to_office_currency,
             'transaction_type' => 1,
+            'on_account_balance_id' => $this->get_user_account_id($this->on_dollar_account ? 1 : $this->office_currency_id),
             'currency_id' => $this->on_dollar_account ? 1 : $this->office_currency_id,
             'exchange_rate' => $this->on_dollar_account ? 1 : (1 / $this->exchange_rate_to_office_currency),
             'type' => 0,
@@ -331,6 +332,7 @@ class Transfer extends BaseModel implements Document
         if ($this->delivering_type != 4) {
             if ($this->delivering_type == 2) {
                 $transactions[] = [
+                    'on_account_balance_id' => $this->get_user_account_id($this->received_currency_id),
                     'account_id' => $user_account_id,
                     'currency_id' => $this->received_currency_id,
                     'amount' =>   $this->received_amount,
@@ -347,6 +349,7 @@ class Transfer extends BaseModel implements Document
                     'currency_id' => $this->received_currency_id,
                     'exchange_rate' => $this->transfer_commission_exchange_rate, //$this->delivering_type == 2 ? 1 : number_format($this->received_amount / $this->a_received_amount, 3, '.', ""),
                     'transaction_type' =>  10,
+                    'on_account_balance_id' => $this->get_user_account_id($this->received_currency_id),
                     'type' => 1,
                 ];
             }
@@ -428,6 +431,7 @@ class Transfer extends BaseModel implements Document
             $transactions[] = [
                 'account_id' => $exchange_difference_account_id,
                 'amount' => abs($currency_diff),
+                'on_account_balance_id' => $this->get_user_account_id(1),
                 'transaction_type' => 9,
                 'exchange_rate' => 1,
                 'type' => $currency_diff > 0 ?  1 : 0,
