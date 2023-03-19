@@ -42,7 +42,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
         $box_denar_id = $this->who == 1 ? 13 : 27;
         $box_pond_id = $this->who == 1 ? 17 : 31;
         $box_reyal_id = $this->who == 1 ? 16 : 30;
-        $moneygram_account_id = 38;
+        $moneygram_account_id = 54;
 
 
         if ($row[0]) {
