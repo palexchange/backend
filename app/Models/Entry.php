@@ -67,7 +67,7 @@ class Entry extends BaseModel
                 'date' => $this->date,
                 'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
                 'status' => 1,
-                'document_sub_type' => 1,
+                'document_sub_type' => $this->document_sub_type,
                 'statement' => $this->statement,
                 'ref_currency_id' => $this->reference_currency_id,
                 'inverse_entry_id' =>  $this->id,

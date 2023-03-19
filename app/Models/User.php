@@ -297,41 +297,41 @@ class User extends Authenticatable
         sub_table.acc_currency_id as currency_id ,sub_table.name 
        from  (
            select 
-           case when ac.type_id in (6,5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
-           , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
+           case when ac.type_id in (5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
+           , et.currency_id , crr.name  as name ,et.currency_id as acc_currency_id  
            from
                entry_transactions et
-               join accounts ac on ac.id = et.account_id 
-               join user_accounts u_ac on ac.id = u_ac.account_id 
-               join entries en on en.id = et.entry_id 
-               join currencies crr on crr.id = ac.currency_id 
+                 join accounts ac on ac.id = et.account_id 
+                 join entries en on en.id = et.entry_id 
+                 join currencies crr on crr.id = et.currency_id 
         where ac.is_transaction = true and 
-        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
-        
-       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
-';
+        ac.type_id in (4 ,3 , 5 )  
+		and en.document_sub_type not in (4,5,6) 
+		and et.transaction_type not in (6, 8,2)
+       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id )
+	   as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc';
         $data = DB::select($sql);
         return $data;
     }
     public function getStartFundsAccountsBalanceAttribute()
     {
-        $sql = 'select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
+        $sql = ' select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
         sub_table.acc_currency_id as currency_id ,sub_table.name 
        from  (
            select 
-           case when ac.type_id in (6,5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
-           , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
+           case when ac.type_id in (5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
+           , et.currency_id , crr.name  as name ,et.currency_id as acc_currency_id  
            from
                entry_transactions et
-               join accounts ac on ac.id = et.account_id 
-               join user_accounts u_ac on ac.id = u_ac.account_id 
-               join entries en on en.id = et.entry_id 
-               join currencies crr on crr.id = ac.currency_id 
+                 join accounts ac on ac.id = et.account_id 
+                 join entries en on en.id = et.entry_id 
+                 join currencies crr on crr.id = et.currency_id 
         where ac.is_transaction = true and 
-        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
-         and  en.date < CURRENT_DATE  
-       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
-';
+        ac.type_id in (4 ,3 , 5 )  
+		and en.document_sub_type not in (4,5,6) 
+		and et.transaction_type not in (6, 8,2) and  en.date < CURRENT_DATE 
+       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id )
+	   as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc';
         $data = DB::select($sql);
         return $data;
     }
