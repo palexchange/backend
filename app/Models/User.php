@@ -114,12 +114,13 @@ class User extends Authenticatable
                             'transfers_commission_account_id'
                         ]
                     )->pluck('value')->all();
-                dd($profit_accounts_id);
+
                 return collect($account->toArray())
                     ->put(
                         'price',
-                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
                             ->where('on_account_balance_id', $account->id)
+                            ->where('type', 1)
                             ->sum(DB::raw(' creditor - debtor '))
                     )->all();
             })->toArray();
@@ -145,8 +146,9 @@ class User extends Authenticatable
                 return collect($account->toArray())
                     ->put(
                         'price',
-                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
                             ->where('on_account_balance_id', $account->id)
+                            ->where('type', 1)
                             ->sum(DB::raw(' creditor - debtor '))
                     )->all();
             })->toArray();
@@ -172,10 +174,12 @@ class User extends Authenticatable
                 return collect($account->toArray())
                     ->put(
                         'start_price',
-                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
                             ->where('on_account_balance_id', $account->id)
-                            ->whereDate('created_at', '<', Carbon::today()->toDateString())
+                            ->where('type', 1)
+                            ->whereDate('entry_transactions.created_at', '<', Carbon::today()->toDateString())
                             ->sum(DB::raw(' creditor - debtor '))
+
                     )->all();
             })->toArray();
     }

@@ -103,7 +103,7 @@ class Transfer extends BaseModel implements Document
             'account_id' => $account_id, // $this->user_account_id
             'amount' => $sender_amount,
             'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
-            'transaction_type' => $this->delivering_type == 3 ? 1 : 6, // 6 not include to net_balance
+            'transaction_type' => 15, //$this->delivering_type == 3 ? 1 : 6, 
             'exchange_rate' => $this->exchange_rate_to_delivery_currency,
             'currency_id' => $this->delivery_currency_id,
             'type' => 0,

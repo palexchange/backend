@@ -56,6 +56,7 @@ class Account extends BaseModel
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereNotIn('entries.document_sub_type',  [4, 5]) // 
             ->whereNotIn('entry_transactions.transaction_type',  [6, 8, 10, 2, 3, 4, 9])
+            ->where('entries.type',  1)
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
@@ -70,6 +71,7 @@ class Account extends BaseModel
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereNotIn('entries.document_sub_type',  [4, 5, 6]) // 
+            ->where('entries.type',  1)
             ->whereNotIn('entry_transactions.transaction_type',  [6, 8, 10, 2, 3, 4, 9])
             ->whereDate('entry_transactions.created_at', '<', Carbon::today()->toDateString())
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
@@ -97,6 +99,7 @@ class Account extends BaseModel
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereDate(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
             ->whereIn('entries.document_sub_type',  [2])
+            ->where('entries.type',  1)
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
