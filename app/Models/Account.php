@@ -84,7 +84,7 @@ class Account extends BaseModel
     }
     public function getInventoryBalanceAttribute()
     {
-        $amount = $this->entry_transactions()->whereNotIn('transaction_type', [5, 9, 3, 4, 11]) // commissions
+        $amount = $this->entry_transactions()->whereNotIn('transaction_type', [5, 9, 3, 4, 11, 16, 15]) // commissions
             ->sum(DB::raw('debtor - creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
@@ -98,7 +98,8 @@ class Account extends BaseModel
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereDate(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
-            ->whereIn('entries.document_sub_type',  [2])
+            // ->whereIn('entries.transaction_type',  [2])
+            ->whereIn('transaction_type',  [17, 18, 16, 15])
             ->where('entries.type',  1)
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {

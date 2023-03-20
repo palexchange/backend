@@ -232,7 +232,6 @@ class User extends Authenticatable
                     $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
                     $end =  ($account->net_balance * $close_mid);
                 } else {
-
                     $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
                     $end =  ($account->net_balance / $close_mid);
                 }
@@ -310,6 +309,7 @@ class User extends Authenticatable
                  join entries en on en.id = et.entry_id 
                  join currencies crr on crr.id = et.currency_id 
         where ac.is_transaction = true and 
+        en.type = 1 and 
         ac.type_id in (4 ,3 , 5 )  
 		and en.document_sub_type not in (4,5,6) 
 		and et.transaction_type not in (6, 8,2)
@@ -332,6 +332,7 @@ class User extends Authenticatable
                  join entries en on en.id = et.entry_id 
                  join currencies crr on crr.id = et.currency_id 
         where ac.is_transaction = true and 
+        en.type = 1 and 
         ac.type_id in (4 ,3 , 5 )  
 		and en.document_sub_type not in (4,5,6) 
 		and et.transaction_type not in (6, 8,2) and  en.date < CURRENT_DATE 
