@@ -321,8 +321,8 @@ class Transfer extends BaseModel implements Document
         $amount =  $this->office_amount_in_office_currency == 0 ?  $this->office_amount : $this->office_amount_in_office_currency;
         $transactions[] = [
             'account_id' => $this->office->account_id, // $this->user_account_id moew moew moew moew moew
-            'amount' => $this->on_dollar_account ? ($amount * $this->exchange_rate_to_office_currency) : $amount,
-            'ac_amount' => $amount * $this->exchange_rate_to_office_currency,
+            'amount' => $this->on_dollar_account ? $this->office_amount : $amount,
+            'ac_amount' => $this->office_amount,
             'transaction_type' => 1,
             'currency_id' => $this->on_dollar_account ? 1 : $this->office_currency_id,
             'exchange_rate' => $this->on_dollar_account ? 1 : (1 / $this->exchange_rate_to_office_currency),
@@ -387,24 +387,8 @@ class Transfer extends BaseModel implements Document
         }
         $t_amount_indoller = 0;
         //transfer_commission
-        if ($this->transfer_commission > 0 && $this->delivering_type == 2) {
-            $t_amount = $this->is_commission_percentage == 1 ?
-                $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
-                : $this->transfer_commission;
-            $t_amount_indoller = $t_amount;
-            $transactions[] = [
-                'account_id' => $transfers_commission_account_id,
-                'amount' => $t_amount,
-                'ac_amount' => $t_amount,
-                'on_account_balance_id' => $this->get_user_account_id(1),
-                'transaction_type' => 2,
-                'currency_id' => 1,
-                'exchange_rate' => 1,
-                'type' =>  1,
-            ];
-        }
 
-        if ($this->transfer_commission > 0 && $this->delivering_type != 2) {
+        if ($this->transfer_commission > 0) {
             $t_amount = $this->is_commission_percentage == 1 ?
                 $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
                 : $this->transfer_commission;
@@ -885,10 +869,7 @@ class Transfer extends BaseModel implements Document
                 return
                     number_format($this->office_amount - $this->a_received_amount, 3, '.', "");
             }
-            return number_format(($this->to_send_amount * $this->exchange_rate_to_office_currency) -
-                $this->a_received_amount -
-                ($this->returned_commission * $this->exchange_rate_to_office_currency) +
-                ($this->office_commission * $this->exchange_rate_to_office_currency), 3, '.', "");
+            return number_format($this->office_amount - $this->a_received_amount);
         }
     }
     public function ExchangeDiffernce()
