@@ -59,5 +59,6 @@
     "incoming transfer moneygram": "حوالة واردة موني غرام",
     "outcomming transfer on account": "حوالة صادرة علي الحساب",
     "incoming transfer on account": "حوالة واردة علي الحساب",
+    "receiver_party_id": "المستلم",
     "creditor_in_group_curr": "دائن بعملة المجموعة"
 }

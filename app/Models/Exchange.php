@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\DB;
 class Exchange extends BaseModel implements Document
 {
 
-    protected $appends = ["party_name"];
-    protected $with = ["user", 'details'];
+    protected $appends = ["party_name", "user_name"];
+    protected $with = ['details'];
     protected $casts = [
         'amount' => Rounded::class,
 
@@ -136,9 +136,9 @@ class Exchange extends BaseModel implements Document
     {
         return $this->morphMany(Entry::class, 'document');
     }
-    public function user()
+    public function getUserNameAttribute()
     {
-        return $this->belongsTo(User::class);
+        return DB::table("users")->where('id', $this->user_id)->first()->name;
     }
     public function getUserAccountIdAttribute()
     {

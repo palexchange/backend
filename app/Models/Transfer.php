@@ -13,7 +13,7 @@ class Transfer extends BaseModel implements Document
 {
     use HasFactory;
     public static $export_options = ['type' => [0 => "حوالة صادرة", 1 => "حوالة واردة"], 'status' => [0 => "مسودة", 1 => "معتمدة"], 'commission_side' => [1 => 'المرسل', 2 => 'المستقبل']];
-    protected $appends = ['profit'];
+    protected $appends = ['profit', 'sender_party_name', 'receiver_party_name' , 'office_name'];
     protected $with = ['receiver_party', 'sender_party', 'image', 'office', 'user'];
     protected $casts = [
         'transfer_commission' => Rounded::class,
@@ -845,13 +845,25 @@ class Transfer extends BaseModel implements Document
     {
         return $this->belongsTo(Party::class, 'sender_party_id');
     }
+    public function getSenderPartyNameAttribute()
+    {
+        return $this->sender_party()->first()->name;
+    }
     public function receiver_party()
     {
         return $this->belongsTo(Party::class, 'receiver_party_id');
     }
+    public function getReceiverPartyNameAttribute()
+    {
+        return $this->receiver_party()->first()->name;
+    }
     public function office()
     {
         return $this->belongsTo(Party::class, 'office_id');
+    }
+    public function getOfficeNameAttribute()
+    {
+        return $this->office()->first()->name;
     }
     public function user()
     {

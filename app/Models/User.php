@@ -21,7 +21,10 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['start_main_active_accounts', 'main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance', 'start_funds_accounts_balance'];
+    protected $appends = [
+        'start_main_active_accounts',
+        'main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance', 'start_funds_accounts_balance'
+    ];
     /**
      * The attributes that are mass assignable.
      *
