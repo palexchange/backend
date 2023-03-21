@@ -254,10 +254,19 @@ class User extends Authenticatable
                     'transfers_commission_account_id'
                 ]
             )->pluck('value')->all();
-        $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-            ->whereIn('account_id', $profit_accounts_id)
-            ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
-            ->sum(DB::raw('ac_creditor - ac_debtor '));
+        $sum = 0;
+        if ($this->role == 1) {
+            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+                ->whereIn('account_id', $profit_accounts_id)
+                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
+                ->sum(DB::raw('ac_creditor - ac_debtor '));
+        } else {
+            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+                ->where('entries.user_id', $this->id)
+                ->whereIn('account_id', $profit_accounts_id)
+                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
+                ->sum(DB::raw('ac_creditor - ac_debtor '));
+        }
 
         return  $sum;
     }
