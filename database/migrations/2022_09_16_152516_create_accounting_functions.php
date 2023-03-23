@@ -234,6 +234,41 @@ return new class extends Migration
         $$;
         ";
         DB::unprepared($sql);
+
+
+        $sql = '    
+        CREATE OR REPLACE FUNCTION PUBLIC.get_close_mid_that_date(currncy_id bigint, date timestamp )
+                RETURNS numeric  
+
+                AS 	$sql$
+	 
+				SELECT  
+				case when currncy_id = 4 then 1/((selling_price + purchasing_price)/2)::numeric else
+				((selling_price + purchasing_price)/2)::numeric end
+                 as mid from stock_transactions  where time = 
+                (select max(time) from stock_transactions where time::date = date::date	
+                and stock_id = currncy_id) and stock_id = currncy_id
+	 
+	            $sql$
+                LANGUAGE SQL
+        ';
+        DB::unprepared($sql);
+        $sql = '
+            CREATE OR REPLACE FUNCTION PUBLIC.get_start_mid_that_date(currncy_id bigint, date timestamp )
+            RETURNS numeric  
+                
+            AS 	$sql$
+                
+                    SELECT   
+                    case when currncy_id = 4 then 1/((selling_price + purchasing_price)/2)::numeric else
+                    ((selling_price + purchasing_price)/2)::numeric end
+            from stock_transactions  where time = 
+            (select min(time) from stock_transactions where time::date = date::date	
+            and stock_id = currncy_id) and stock_id = currncy_id
+                $sql$
+            LANGUAGE SQL
+        ';
+        DB::unprepared($sql);
     }
 
     /**

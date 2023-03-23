@@ -23,7 +23,14 @@ class User extends Authenticatable
 
     protected $appends = [
         'start_main_active_accounts',
-        'main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance', 'start_funds_accounts_balance'
+        'main_active_accounts', 'active_accounts',
+        'daily_exchange_transactions',
+        'daily_exchange_profit',
+        'daily_transfer_profit',
+        'exchnages_profit',
+        'transfers_profit',
+        'funds_accounts_balance',
+        'start_funds_accounts_balance'
     ];
     /**
      * The attributes that are mass assignable.
@@ -323,8 +330,8 @@ class User extends Authenticatable
         where ac.is_transaction = true and 
         en.type = 1 and 
         ac.type_id in (4 ,3 , 5 )  
-		and en.document_sub_type not in (4,5,6) 
-		and et.transaction_type not in (6, 8,2)
+		and en.document_sub_type not in (4,5) 
+		and et.transaction_type not in (6, 8, 10, 2, 3, 4, 9)
        group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id )
 	   as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc';
         $data = DB::select($sql);
@@ -346,8 +353,8 @@ class User extends Authenticatable
         where ac.is_transaction = true and 
         en.type = 1 and 
         ac.type_id in (4 ,3 , 5 )  
-		and en.document_sub_type not in (4,5,6) 
-		and et.transaction_type not in (6, 8,2) and  en.date < CURRENT_DATE 
+		and en.document_sub_type not in (4,5 ) 
+		and et.transaction_type not in (6, 8, 10, 2, 3, 4, 9) and  en.date < CURRENT_DATE 
        group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id )
 	   as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc';
         $data = DB::select($sql);

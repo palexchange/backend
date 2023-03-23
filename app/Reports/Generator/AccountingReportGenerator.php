@@ -338,4 +338,30 @@ class AccountingReportGenerator extends BaseReportGenerator
         // $children = DB::select("select distinct accounts.id,is_leaf(accounts.id) as is_leaf,name,sum(debtor) as debtor,sum(creditor) as creditor from accounts,get_balance(id,'" . $from . "','" . $to . "') where parent_id =" . $request->id . " group by accounts.id");
         return response()->json(compact('children'));
     }
+
+    public function ptofitPerDate()
+    {
+        $sql = "
+        SELECT SUM(balance) as balance , SUM(ac_balance) as ac_balance, date , name from (select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
+										  round(sum(sub_table.ac_balance)::numeric  , 3)  as ac_balance ,				 
+        sub_table.acc_currency_id as currency_id ,sub_table.name  ,date::DATE
+       from  (
+           select 
+           case when ac.type_id in (5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance ,
+		    case when ac.type_id in (5) then sum(et.ac_creditor - et.ac_debtor) else sum(et.ac_debtor- et.ac_creditor) end  as ac_balance 
+           , et.currency_id , crr.name  as name ,et.currency_id as acc_currency_id  ,en.date as date  
+           from
+               entry_transactions et
+                 join accounts ac on ac.id = et.account_id 
+                 join entries en on en.id = et.entry_id 
+                 join currencies crr on crr.id = et.currency_id 
+        where ac.is_transaction = true and 
+        en.type = 1 and 
+        ac.type_id in (4 ,3 , 5 )  
+		and en.document_sub_type not in (4,5 ) 
+		and et.transaction_type not in (6, 8, 10, 2, 3, 4, 9)
+       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id , en.date )
+	   as sub_table group by sub_table.name , sub_table.acc_currency_id , date   order by currency_id asc)ss
+	   group by date , name";
+    }
 }
