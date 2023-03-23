@@ -223,17 +223,7 @@ class Exchange extends BaseModel implements Document
             $query->where('user_id', $user_action_id);
         });
 
-        $query->when($request->from_currency_id, function ($query, $from_currency_id) {
-            $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
-                ->where('exchange_details.type', 1)
-                ->where('exchange_details.currency_id', $from_currency_id);
-        });
 
-        $query->when($request->to_currency_id, function ($query, $to_currency_id) {
-            $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
-                ->where('exchange_details.type', 2)
-                ->where('exchange_details.currency_id', $to_currency_id);
-        });
         // $query->when($request->transfer_id, function ($query, $id) {
         //     $query->where('id', $id);
         // });
@@ -249,5 +239,26 @@ class Exchange extends BaseModel implements Document
                 $q->where('user_id',   $user_id);
             }
         });
+
+        if ($request->from_currency_id > 0 && $request->to_currency_id > 0) {
+
+
+            $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
+                ->where('exchange_details.type', 1)
+                ->where('exchange_details.currency_id', $request->from_currency_id)
+                ->orWhere('exchange_details.type', 2)
+                ->where('exchange_details.currency_id', $request->to_currency_id);
+        } else {
+            $query->when($request->from_currency_id && $request->to_currency_id = null, function ($query) use ($request) {
+                $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
+                    ->where('exchange_details.type', 1)
+                    ->where('exchange_details.currency_id', $request->from_currency_id);
+            });
+            $query->when($request->to_currency_id && $request->from_currency_id = null, function ($query, $to_currency_id) use ($request) {
+                $query->join('exchange_details', 'exchange_details.exchange_id', 'exchanges.id')
+                    ->where('exchange_details.type', 2)
+                    ->where('exchange_details.currency_id', $request->to_currency_id);
+            });
+        }
     }
 }
