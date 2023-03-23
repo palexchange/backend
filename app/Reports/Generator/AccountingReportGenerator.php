@@ -253,7 +253,7 @@ class AccountingReportGenerator extends BaseReportGenerator
                     16 => "تسليم جوالة واردة غير دولار",
                     17 => "حركة صرافة صادرة  ",
                     18 => "حركة صرافة واردة  ",
-                    // 7 => 7,
+                    // 7 => 7, 470746 , (752 , 689) , 55 - 58
                 ],
                 'document_type' => [
                     1 => __('transfer'),

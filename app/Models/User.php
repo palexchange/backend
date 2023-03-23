@@ -316,47 +316,51 @@ class User extends Authenticatable
 
 
         $sql = '
-        select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
-        sub_table.acc_currency_id as currency_id ,sub_table.name 
-       from  (
-           select 
-           case when ac.type_id in (5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
-           , et.currency_id , crr.name  as name ,et.currency_id as acc_currency_id  
-           from
-               entry_transactions et
-                 join accounts ac on ac.id = et.account_id 
-                 join entries en on en.id = et.entry_id 
-                 join currencies crr on crr.id = et.currency_id 
-        where ac.is_transaction = true and 
-        en.type = 1 and 
-        ac.type_id in (4 ,3 , 5 )  
-		and en.document_sub_type not in (4,5) 
-		and et.transaction_type not in (6, 8, 10, 2, 3, 4, 9)
-       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id )
-	   as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc';
+       
+select sum(balance) as balance , currency_id , currency_name as name from (select
+case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
+else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name
+  , entry_transactions.currency_id  , currencies.name as currency_name from  
+entry_transactions 
+inner join entries on entries.id = entry_transactions.entry_id 
+inner join accounts on entry_transactions.account_id = accounts.id 
+inner join currencies on currencies.id = entry_transactions.currency_id 												   
+where   entry_transactions.account_id is not null 
+and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
+and entries.document_sub_type not in (4, 5) 
+and case when accounts.type_id = 5 then
+entry_transactions.transaction_type not in (6, 8, 10 ) 
+else 	
+entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+and entries.type = 1  
+group by currency_name,accounts.id,entry_transactions.currency_id
+order by entry_transactions.currency_id , accounts.name)agg
+group by currency_id,currency_name';
         $data = DB::select($sql);
         return $data;
     }
     public function getStartFundsAccountsBalanceAttribute()
     {
-        $sql = ' select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
-        sub_table.acc_currency_id as currency_id ,sub_table.name 
-       from  (
-           select 
-           case when ac.type_id in (5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
-           , et.currency_id , crr.name  as name ,et.currency_id as acc_currency_id  
-           from
-               entry_transactions et
-                 join accounts ac on ac.id = et.account_id 
-                 join entries en on en.id = et.entry_id 
-                 join currencies crr on crr.id = et.currency_id 
-        where ac.is_transaction = true and 
-        en.type = 1 and 
-        ac.type_id in (4 ,3 , 5 )  
-		and en.document_sub_type not in (4,5 ) 
-		and et.transaction_type not in (6, 8, 10, 2, 3, 4, 9) and  en.date < CURRENT_DATE 
-       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id )
-	   as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc';
+        $sql = ' 
+        select sum(balance) as balance , currency_id , currency_name as name from (select
+         case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
+         else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name
+           , entry_transactions.currency_id  , currencies.name as currency_name from  
+        entry_transactions 
+        inner join entries on entries.id = entry_transactions.entry_id 
+        inner join accounts on entry_transactions.account_id = accounts.id 
+        inner join currencies on currencies.id = entry_transactions.currency_id 												   
+        where   entry_transactions.account_id is not null 
+        and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
+        and entries.document_sub_type not in (4, 5) 
+        and case when accounts.type_id = 5 then
+        entry_transactions.transaction_type not in (6, 8, 10 ) 
+        else 	
+        entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+        and entries.type = 1  and  entries.date < CURRENT_DATE 
+        group by currency_name,accounts.id,entry_transactions.currency_id
+        order by entry_transactions.currency_id , accounts.name)agg
+        group by currency_id,currency_name';
         $data = DB::select($sql);
         return $data;
     }
