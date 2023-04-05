@@ -108,7 +108,7 @@ return new class extends Migration
                 
             $BODY$;
         
-        ALTER FUNCTION public.get_protfi_data(bigint, timestamp without time zone)
+        ALTER FUNCTION public.get_profit_data(bigint, timestamp without time zone)
             OWNER TO postgres;';
         DB::unprepared($sql);
        
