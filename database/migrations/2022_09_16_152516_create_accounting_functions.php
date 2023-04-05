@@ -14,6 +14,41 @@ return new class extends Migration
      */
     public function up()
     {
+        $sql = '    
+        CREATE OR REPLACE FUNCTION 
+        PUBLIC.get_close_mid_that_date(currncy_id bigint, date timestamp )
+               RETURNS numeric     
+               AS 	$sql$
+               SELECT  
+               ((selling_price + purchasing_price)/2)::numeric  as mid 
+               from 
+                   stock_transactions  
+                       where time = (
+                                   select max(time) from stock_transactions where   
+                                     time::date <= date::date or  time <= date and stock_id = currncy_id)
+                       and stock_id = currncy_id
+               $sql$
+               LANGUAGE SQL
+        ';
+        DB::unprepared($sql);
+        $sql = '
+        CREATE OR REPLACE FUNCTION 
+        PUBLIC.get_start_mid_that_date(currncy_id bigint, date timestamp )
+               RETURNS numeric     
+               AS 	$sql$
+               SELECT  
+               ((start_selling_price + start_purchasing_price)/2)::numeric  as mid 
+               from 
+                   stock_transactions  
+                       where time = 
+                       (select max(time) from stock_transactions
+                        where   time::date <  date::date   
+                        and stock_id = currncy_id ) 
+                       and stock_id = currncy_id
+               $sql$
+               LANGUAGE SQL
+        ';
+        DB::unprepared($sql);
         $sql = '
         CREATE OR REPLACE FUNCTION public.get_profit_data(
             currency_id bigint,
@@ -76,41 +111,7 @@ return new class extends Migration
         ALTER FUNCTION public.get_protfi_data(bigint, timestamp without time zone)
             OWNER TO postgres;';
         DB::unprepared($sql);
-        $sql = '    
-        CREATE OR REPLACE FUNCTION 
-        PUBLIC.get_close_mid_that_date(currncy_id bigint, date timestamp )
-               RETURNS numeric     
-               AS 	$sql$
-               SELECT  
-               ((selling_price + purchasing_price)/2)::numeric  as mid 
-               from 
-                   stock_transactions  
-                       where time = (
-                                   select max(time) from stock_transactions where   
-                                     time::date <= date::date or  time <= date and stock_id = currncy_id)
-                       and stock_id = currncy_id
-               $sql$
-               LANGUAGE SQL
-        ';
-        DB::unprepared($sql);
-        $sql = '
-        CREATE OR REPLACE FUNCTION 
-        PUBLIC.get_start_mid_that_date(currncy_id bigint, date timestamp )
-               RETURNS numeric     
-               AS 	$sql$
-               SELECT  
-               ((start_selling_price + start_purchasing_price)/2)::numeric  as mid 
-               from 
-                   stock_transactions  
-                       where time = 
-                       (select max(time) from stock_transactions
-                        where   time::date <  date::date   
-                        and stock_id = currncy_id ) 
-                       and stock_id = currncy_id
-               $sql$
-               LANGUAGE SQL
-        ';
-        DB::unprepared($sql);
+       
         $ower_sql =  '
         DROP FUNCTION IF EXISTS account_statement;
         CREATE OR REPLACE FUNCTION public.account_statement(
