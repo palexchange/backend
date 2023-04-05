@@ -57,9 +57,11 @@ class StatisticsReportGenerator
 
         $counts = DB::select(
             "
-        SELECT 'transfers' AS table_name, COUNT(*) FROM transfers where created_at::DATE = CURRENT_DATE
+        SELECT 'transfers' AS table_name, COUNT(*) FROM transfers where created_at::DATE = CURRENT_DATE and delivering_type <> 2
         UNION
-        SELECT 'exchanges' AS table_name, COUNT(*) FROM exchanges where created_at::date = CURRENT_DATE"
+        SELECT 'exchanges' AS table_name, COUNT(*) FROM exchanges where created_at::date = CURRENT_DATE
+        UNION
+        SELECT 'money_gram' AS table_name, COUNT(*) FROM transfers where created_at::date = CURRENT_DATE  and delivering_type = 2"
         );
         return response()->json(['items' => $counts, 'headers' => []]);
         // return response()->json(compact('counts'), 200);

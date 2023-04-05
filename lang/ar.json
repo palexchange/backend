@@ -60,5 +60,13 @@
     "outcomming transfer on account": "حوالة صادرة علي الحساب",
     "incoming transfer on account": "حوالة واردة علي الحساب",
     "receiver_party_id": "المستلم",
-    "creditor_in_group_curr": "دائن بعملة المجموعة"
+    "creditor_in_group_curr": "دائن بعملة المجموعة",
+    "at_date": "بتاريخ ",
+    "start_balance": "الرصيد اول اليوم",
+    "close_balance": "الرصيد أخر اليوم",
+    "close_rate": "معامل الاغلاق",
+    "start_rate": "معامل الفتح",
+    "start_usd_amount": "الرصيد الافتااحي بالدولار",
+    "close_usd_amount": "رصيد اغلاق بالدولار",
+    "usd_diff": "فرق الدولار"
 }

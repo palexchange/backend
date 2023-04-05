@@ -15,14 +15,14 @@ class StockTransaction extends BaseModel
     }
     public function scopeSearch($query, $request)
     {
-
-        $query
-            ->where(DB::raw("date_part('month',time::timestamp) "), DB::raw("date_part('month',CURRENT_DATE) "))
-            ->select(
-                'stock_id',
-                DB::raw('round(((selling_price::numeric+ purchasing_price::numeric) /2),5)as mid'),
-                DB::raw("date_part('day',time::timestamp) as day"),
-            );
+ 
+        $query->select(DB::raw('DISTINCT   stock_id'),  'mid', 'at_date')
+            ->fromSub(function ($qq) {
+                $qq->from('stock_transactions')
+                    ->select('time', 'stock_id', DB::raw('round(((selling_price::numeric + purchasing_price::numeric) /2),5)as mid'),   DB::raw('time::date as at_date'));
+            }, 'agg_tabel')
+            ->where('time', DB::raw('(select max(time) from stock_transactions  where time::date = at_date )'))
+            ->where(DB::raw("date_part('month',time::timestamp) "), DB::raw("date_part('month',CURRENT_DATE) "));
     }
     // public function getMidAttribute()
     // {
