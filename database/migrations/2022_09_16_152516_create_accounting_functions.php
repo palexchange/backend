@@ -14,6 +14,69 @@ return new class extends Migration
      */
     public function up()
     {
+        $sql = '
+        CREATE OR REPLACE FUNCTION public.get_profit_data(
+            currency_id bigint,
+            at_date timestamp without time zone)
+            RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric,usd_diff numeric, at_date timestamp without time zone) 
+            LANGUAGE \'sql\'
+            COST 100
+            VOLATILE PARALLEL UNSAFE
+            ROWS 1000
+        
+            AS $BODY$
+
+            WITH var_close_rate AS (
+                SELECT * from get_close_mid_that_date($1 , $2 )
+            ), var_start_rate AS (
+                SELECT *  from get_start_mid_that_date($1 , $2 )
+            )
+            select start_balance ,    close_balance , currency_id ,   
+            name ,close_rate , start_rate , start_usd_amount , close_usd_amount,
+            (close_usd_amount - start_usd_amount) as usd_diff ,at_date from
+               (select   start_balance ,    close_balance , currency_id ,   name ,close_rate , start_rate 
+               ,  case when currency_id = 4 then (start_balance * start_rate) 
+               else (start_balance / start_rate) end start_usd_amount , 
+               case when currency_id = 4 then (close_balance * close_rate) 
+               else (close_balance / close_rate)   end as close_usd_amount ,
+               at_date
+               
+                from (select sum(befor_balance) as start_balance ,  sum(balance) as close_balance , currency_id , currency_name as name ,close_rate , start_rate
+                from (select
+                     case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
+                     else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name
+                       , entry_transactions.currency_id  , currencies.name as currency_name ,
+                      (SELECT * FROM  var_close_rate ) as close_rate , 
+                      (SELECT * FROM  var_start_rate )  as start_rate, 
+                      case  when entries.date::date < $2::date then 
+                              case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor)
+                              else sum(entry_transactions.debtor- entry_transactions.creditor) end
+                      else 0 end as befor_balance
+                      
+                      from  
+                    entry_transactions 
+                    inner join entries on entries.id = entry_transactions.entry_id 
+                    inner join accounts on entry_transactions.account_id = accounts.id 
+                    inner join currencies on currencies.id = entry_transactions.currency_id 												   
+                    where   entry_transactions.account_id is not null 
+                    and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
+                    and entries.date::date <= $2::date
+                    and entries.document_sub_type not in (4, 5) 
+                    and case when accounts.type_id = 5 then
+                    entry_transactions.transaction_type not in (6, 8, 10 ) 
+                    else 	
+                    entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+                    and entries.type = 1    and entry_transactions.currency_id  = $1
+                    group by currency_name,accounts.id,entry_transactions.currency_id , close_rate , start_rate , entries.date
+                    order by entry_transactions.currency_id , accounts.name )agg
+                    group by currency_id,currency_name , close_rate , start_rate) suming)last_sub;
+                
+            $BODY$;
+        
+        ALTER FUNCTION public.get_protfi_data(bigint, timestamp without time zone)
+            OWNER TO postgres;';
+        DB::unprepared($sql);
+        
         $ower_sql =  '
         DROP FUNCTION IF EXISTS account_statement;
         CREATE OR REPLACE FUNCTION public.account_statement(
@@ -271,68 +334,7 @@ return new class extends Migration
                LANGUAGE SQL
         ';
         DB::unprepared($sql);
-        $sql = '
-        CREATE OR REPLACE FUNCTION public.get_profit_data(
-            currency_id bigint,
-            at_date timestamp without time zone)
-            RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric,usd_diff numeric, at_date timestamp without time zone) 
-            LANGUAGE \'sql\'
-            COST 100
-            VOLATILE PARALLEL UNSAFE
-            ROWS 1000
-        
-            AS $BODY$
 
-            WITH var_close_rate AS (
-                SELECT * from get_close_mid_that_date($1 , $2 )
-            ), var_start_rate AS (
-                SELECT *  from get_start_mid_that_date($1 , $2 )
-            )
-            select start_balance ,    close_balance , currency_id ,   
-            name ,close_rate , start_rate , start_usd_amount , close_usd_amount,
-            (close_usd_amount - start_usd_amount) as usd_diff ,at_date from
-               (select   start_balance ,    close_balance , currency_id ,   name ,close_rate , start_rate 
-               ,  case when currency_id = 4 then (start_balance * start_rate) 
-               else (start_balance / start_rate) end start_usd_amount , 
-               case when currency_id = 4 then (close_balance * close_rate) 
-               else (close_balance / close_rate)   end as close_usd_amount ,
-               at_date
-               
-                from (select sum(befor_balance) as start_balance ,  sum(balance) as close_balance , currency_id , currency_name as name ,close_rate , start_rate
-                from (select
-                     case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
-                     else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name
-                       , entry_transactions.currency_id  , currencies.name as currency_name ,
-                      (SELECT * FROM  var_close_rate ) as close_rate , 
-                      (SELECT * FROM  var_start_rate )  as start_rate, 
-                      case  when entries.date::date < $2::date then 
-                              case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor)
-                              else sum(entry_transactions.debtor- entry_transactions.creditor) end
-                      else 0 end as befor_balance
-                      
-                      from  
-                    entry_transactions 
-                    inner join entries on entries.id = entry_transactions.entry_id 
-                    inner join accounts on entry_transactions.account_id = accounts.id 
-                    inner join currencies on currencies.id = entry_transactions.currency_id 												   
-                    where   entry_transactions.account_id is not null 
-                    and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
-                    and entries.date::date <= $2::date
-                    and entries.document_sub_type not in (4, 5) 
-                    and case when accounts.type_id = 5 then
-                    entry_transactions.transaction_type not in (6, 8, 10 ) 
-                    else 	
-                    entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
-                    and entries.type = 1    and entry_transactions.currency_id  = $1
-                    group by currency_name,accounts.id,entry_transactions.currency_id , close_rate , start_rate , entries.date
-                    order by entry_transactions.currency_id , accounts.name )agg
-                    group by currency_id,currency_name , close_rate , start_rate) suming)last_sub;
-                
-            $BODY$;
-        
-        ALTER FUNCTION public.get_protfi_data(bigint, timestamp without time zone)
-            OWNER TO postgres;';
-        DB::unprepared($sql);
         $sql = "
         CREATE OR REPLACE FUNCTION public.process_inventory_dates(
             start_date date,
