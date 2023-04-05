@@ -387,7 +387,7 @@ return new class extends Migration
         TRUNCATE TABLE my_temp_table;
         END;
         \$BODY$;
-        ALTER FUNCTION public.process_inventory_dates(date, date) OWNER TO postgres;";
+ ";
         DB::unprepared($sql);
     }
 
