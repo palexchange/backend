@@ -111,7 +111,7 @@ return new class extends Migration
         ALTER FUNCTION public.get_profit_data(bigint, timestamp without time zone)
             OWNER TO postgres;';
         DB::unprepared($sql);
-       
+
         $ower_sql =  '
         DROP FUNCTION IF EXISTS account_statement;
         CREATE OR REPLACE FUNCTION public.account_statement(
@@ -341,7 +341,7 @@ return new class extends Migration
             start_date date,
             end_date date ,
             toggle_row_profit int)
-            RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric, usd_diff numeric, at_date timestamp without time zone) 
+            RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, __name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric, usd_diff numeric, at_date timestamp without time zone) 
             LANGUAGE 'plpgsql'
             COST 100
             VOLATILE PARALLEL UNSAFE
@@ -375,14 +375,14 @@ return new class extends Migration
                     CURR_COUNT := CURR_COUNT + 1;
                      END LOOP;
                 if toggle_row_profit  then
-                insert into my_temp_table  (name,usd_diff , at_date) select 'ربحية اليوم' , curr_in_day_Profit , start_date ;  
+                insert into my_temp_table  (name,usd_diff,currency_id ) select 'report__daily_profit' , curr_in_day_Profit,255  ;  
                 end if;
                  CURR_COUNT := 1 ;
                  start_date := start_date + 1;
                  curr_in_day_Profit := 0;
             END LOOP;
             RAISE NOTICE 'total_profit: %', total_profit;
-            insert into my_temp_table  (name,usd_diff) select 'مجموع الربحية  ' , total_profit ; 
+            insert into my_temp_table  (name,usd_diff,currency_id) select 'report__profit_total' , total_profit,256  ; 
         return  QUERY SELECT * FROM my_temp_table;
         TRUNCATE TABLE my_temp_table;
         END;

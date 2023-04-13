@@ -61,12 +61,12 @@
     "incoming transfer on account": "حوالة واردة علي الحساب",
     "receiver_party_id": "المستلم",
     "creditor_in_group_curr": "دائن بعملة المجموعة",
-    "at_date": "بتاريخ ",
-    "start_balance": "الرصيد اول اليوم",
-    "close_balance": "الرصيد أخر اليوم",
-    "close_rate": "معامل الاغلاق",
-    "start_rate": "معامل الفتح",
-    "start_usd_amount": "الرصيد الافتااحي بالدولار",
-    "close_usd_amount": "رصيد اغلاق بالدولار",
-    "usd_diff": "فرق الدولار"
+    "at_date": "التاريخ ",
+    "start_balance": "ر.اول اليوم",
+    "close_balance": "ر.أخر اليوم",
+    "close_rate": "سعرإغلاق",
+    "start_rate": "سعر فتح",
+    "start_usd_amount": " ر.افتتاحي $",
+    "close_usd_amount":  " ر.اغلاق $",
+    "usd_diff": "ربحية اليوم"
 }

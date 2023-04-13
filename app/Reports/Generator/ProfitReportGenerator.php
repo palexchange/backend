@@ -19,13 +19,13 @@ class ProfitReportGenerator extends BaseReportGenerator
         $from = request('from');
         $to = request('to');
         $show_daily_profit = request('show_daily_profit');
-        $sql =  "select at_date,
+        $sql =  "select at_date::date,
         start_balance,
         close_balance,
         currency_id,
-        name,
-        close_rate,
+        __name,
         start_rate,
+        close_rate,
         start_usd_amount,
         close_usd_amount,
         usd_diff from process_inventory_dates( '$from'  ,  '$to' ,$show_daily_profit)";
@@ -35,9 +35,9 @@ class ProfitReportGenerator extends BaseReportGenerator
             ['text' => __('start_balance'), 'value' => 'start_balance'],
             ['text' => __('close_balance'), 'value' => 'close_balance'],
             ['text' => __('currency_id'), 'value' => 'currency_id'],
-            ['text' => __('name'), 'value' => 'name'],
-            ['text' => __('close_rate'), 'value' => 'close_rate'],
+            // ['text' => __('name'), 'value' => 'name'],
             ['text' => __('start_rate'), 'value' => 'start_rate'],
+            ['text' => __('close_rate'), 'value' => 'close_rate'],
             ['text' => __('start_usd_amount'), 'value' => 'start_usd_amount'],
             ['text' => __('close_usd_amount'), 'value' => 'close_usd_amount'],
             ['text' => __('usd_diff'), 'value' => 'usd_diff'],
@@ -48,8 +48,8 @@ class ProfitReportGenerator extends BaseReportGenerator
             __('close_balance'),
             __('currency_id'),
             __('name'),
-            __('close_rate'),
             __('start_rate'),
+            __('close_rate'),
             __('start_usd_amount'),
             __('close_usd_amount'),
             __('usd_diff'),
