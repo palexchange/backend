@@ -364,11 +364,10 @@ return new class extends Migration
         CREATE TEMPORARY TABLE IF NOT EXISTS  my_temp_table (start_balance numeric,close_balance numeric,currency_id bigint,name character varying ,close_rate numeric,start_rate numeric ,start_usd_amount  numeric,close_usd_amount numeric,usd_diff numeric,at_date timestamp);
             
             WHILE start_date <= end_date LOOP
-                RAISE NOTICE 'start_date start_date: %', start_date;
-                
+
                      WHILE CURR_COUNT <= 7  LOOP
                     insert into my_temp_table  (start_balance,close_balance  ,currency_id  ,name,close_rate ,start_rate,start_usd_amount,close_usd_amount,usd_diff,at_date)select * from get_profit_data(CURR_COUNT , start_date);
-                     RAISE NOTICE 'CURR_COUNT: %', CURR_COUNT;
+
                     holder :=  (select coalesce(p_d.usd_diff,0) from get_profit_data(CURR_COUNT , start_date) p_d);
                      curr_in_day_Profit := curr_in_day_Profit +  coalesce(holder,0);
                     total_profit := coalesce(holder,0) + total_profit;
@@ -381,7 +380,7 @@ return new class extends Migration
                  start_date := start_date + 1;
                  curr_in_day_Profit := 0;
             END LOOP;
-            RAISE NOTICE 'total_profit: %', total_profit;
+             
             insert into my_temp_table  (name,usd_diff,currency_id) select 'report__profit_total' , total_profit,256  ; 
         return  QUERY SELECT * FROM my_temp_table;
         TRUNCATE TABLE my_temp_table;
