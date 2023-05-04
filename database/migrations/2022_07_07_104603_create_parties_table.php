@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('parties', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('number')->nullable()->unique();;
             $table->string('id_no')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();

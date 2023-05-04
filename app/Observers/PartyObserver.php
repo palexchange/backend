@@ -14,7 +14,7 @@ class PartyObserver
      */
     public function created(Party $party)
     {
-        $party->update(['number' => "agnet-1000$party->id"]);
+        //
     }
 
     /**
