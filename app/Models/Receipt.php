@@ -83,7 +83,7 @@ class Receipt extends BaseModel implements Document
             'user_id' => request('user_id'),
             'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
             'status' => 1,
-            'document_sub_type' => $this->type == 1 ? 4 : 5,
+            'document_sub_type' => $this->type == 1 ? 4 : (($this->expenses_account_id ? 7 : null) ?? 5),
             'statement' => $this->statement,
             'ref_currency_id' => $this->currency_id,
         ]);

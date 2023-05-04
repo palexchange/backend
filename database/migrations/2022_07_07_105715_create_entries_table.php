@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('type')->default(1);  // 1  used , 2 disabled
             $table->integer('status')->default(0);
             $table->integer('document_type')->nullable();
-            $table->integer('document_sub_type')->default(3); // 1=>transfer , 2 => exchange ,3 => fund_adjusment , 4=>inputs , 5 =,outputs , 6=profit_and_lose_transaction
+            $table->integer('document_sub_type')->default(3); // 1=>transfer , 2 => exchange ,3 => fund_adjusment , 4=>inputs , 5 =,outputs , 6=profit_and_lose_transaction , 7 =>expenses
             $table->unsignedBigInteger('document_id')->nullable();
             $table->bigInteger('document_number')->nullable();
             $table->foreignId('ref_currency_id')->nullable()->references('id')->on('currencies');
