@@ -35,6 +35,7 @@ class SettingSeeder extends Seeder
         $returned_commission_account = Account::create(['name' => 'مرجع', 'type_id' => 5]);
         $office_commission_account = Account::create(['name' => 'عمولة وسيط', 'type_id' => 5]);
         $transfers_commission_account = Account::create(['name' => 'عمولة حوالات', 'type_id' => 5]);
+        $extra_profit_account = Account::create(['name' => 'ربح إضافي خارجي', 'type_id' => 5]);
         $settings = [
             // ['key' => 'commission_account_id', 'value' => $commssion_account->id, 'description' => 'transfer commission account'],
             // ['key' => 'transfer_commission_account_id', 'value' => $transfer_commission_account->id,  'description' => 'transfer commission account'],
@@ -49,6 +50,7 @@ class SettingSeeder extends Seeder
             ['key' => 'returned_commission_account_id', 'value' => $returned_commission_account->id, 'description' => 'returned_commission_account'],
             ['key' => 'office_commission_account_id', 'value' => $office_commission_account->id, 'description' => 'office_commission_account'],
             ['key' => 'transfers_commission_account_id', 'value' => $transfers_commission_account->id, 'description' => 'transfer_commission_account'],
+            ['key' => 'extra_profit_account_id', 'value' => $extra_profit_account->id, 'description' => 'transfer_commission_account'],
             ['key' => 'days_to_search_before', 'value' => 14, 'description' => 'default value to search before'],
             // ['key' => 'losses_and_profits', 'value' => $losses_and_profits->id, 'description' => 'losses and profits account'],
         ];

@@ -121,7 +121,8 @@ class User extends Authenticatable
                             'exchange_difference_account_id',
                             'returned_commission_account_id',
                             'office_commission_account_id',
-                            'transfers_commission_account_id'
+                            'transfers_commission_account_id',
+                            'extra_profit_account_id'
                         ]
                     )->pluck('value')->all();
 
@@ -261,7 +262,8 @@ class User extends Authenticatable
                     'exchange_difference_account_id',
                     'returned_commission_account_id',
                     'office_commission_account_id',
-                    'transfers_commission_account_id'
+                    'transfers_commission_account_id',
+                    'extra_profit_account_id'
                 ]
             )->pluck('value')->all();
         $sum = 0;
@@ -316,7 +318,6 @@ class User extends Authenticatable
 
 
         $sql = '
-       
 select sum(balance) as balance , currency_id , currency_name as name from (select
 case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
 else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name

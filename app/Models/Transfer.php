@@ -196,7 +196,7 @@ class Transfer extends BaseModel implements Document
                 $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
                 : $this->transfer_commission;
             $transfer_commission_inDoller = $this->toDoller($t_amount, $this->transfer_commission_currency, $this->transfer_commission_exchange_rate);
-            $transfer_commission_inDoller = round($transfer_commission_inDoller, 0);
+            $transfer_commission_inDoller = round($transfer_commission_inDoller, 3);
             $transactions[] = [
                 'account_id' => $this->delivering_type == 3 ? $account_id : $transfer_commission_box_id,
                 'amount' => $t_amount,
@@ -239,7 +239,7 @@ class Transfer extends BaseModel implements Document
             $o_amount = $this->office_commission_type == 1 ?
                 $this->calcCommissionAmmount($this->office_amount_befor_commission, $this->office_commission)
                 : $this->office_commission;
-            $office_commission_amount_usd = $office_exchange_rate == 1 ? $office_commission_amount_usd : round($office_commission_amount_usd, 0);
+            $office_commission_amount_usd = $office_exchange_rate == 1 ? $office_commission_amount_usd : round($office_commission_amount_usd, 3);
             $office_commission_amount_usd = $this->office_currency_id == 4 ? $o_amount * $office_exchange_rate :  $o_amount / $office_exchange_rate;
             $transactions[] = [
                 'account_id' => $office_commission_account_id,
@@ -258,7 +258,7 @@ class Transfer extends BaseModel implements Document
                 $this->calcCommissionAmmount($this->office_amount_befor_commission, $this->returned_commission)
                 : $this->returned_commission;
             $returned_commission_amount_usd = $this->office_currency_id == 4 ? $f_amount * $office_exchange_rate : $f_amount / $office_exchange_rate;
-            $returned_commission_amount_usd = $office_exchange_rate == 1 ? $returned_commission_amount_usd : round($returned_commission_amount_usd, 0);
+            $returned_commission_amount_usd = $office_exchange_rate == 1 ? $returned_commission_amount_usd : round($returned_commission_amount_usd, 3);
             $transactions[] = [
                 // 'account_id' => $transfer_commission_box_id, //$commission_box_id,
                 'account_id' => $returned_commission_account_id, //$commission_box_id,
@@ -279,7 +279,7 @@ class Transfer extends BaseModel implements Document
             if (abs($currency_diff) > 0) {
                 $transactions[] = [
                     'account_id' => $exchange_difference_account_id,
-                    'amount' => round(abs($currency_diff), 0),
+                    'amount' => round(abs($currency_diff),3),
                     'transaction_type' => 9,
                     'on_account_balance_id' => $this->get_user_account_id(1),
                     'exchange_rate' => 1,
