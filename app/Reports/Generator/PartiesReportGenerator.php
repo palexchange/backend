@@ -128,6 +128,121 @@ class PartiesReportGenerator extends BaseReportGenerator
         }
         return response()->json(['items' => $parties, 'headers' => $headers]);
     }
+
+    public static function onePartyInEveryCurr(Request $request)
+    {
+        $from_date = request('from_date');
+        $to_date = request('to_date');
+        $show_zeros = request('show_zeros');
+        $party_id = request('party_id');
+
+        if ($from_date == null) $from_date = '0001-01-01';
+        if ($to_date == null) $to_date = '9999-12-31';
+
+        $headers = [
+
+            [
+                'text' => __('name'),
+                'value' => 'party_name'
+            ],
+            [
+                'text' => __('dollar_balance'),
+                'value' => 'dolar'
+            ],
+            [
+                'text' => __('shekel_balance'),
+                'value' => 'shekel'
+            ],
+            [
+                'text' => __('dinar_balance'),
+                'value' => 'dinar'
+            ],
+            [
+                'text' => __('euro_balance'),
+                'value' => 'euro'
+            ],
+            [
+                'text' => __('derham_balance'),
+                'value' => 'derham'
+            ],
+            [
+                'text' => __('reyal_balance'),
+                'value' => 'reyal'
+            ],
+            [
+                'text' => __('pound_balance'),
+                'value' => 'pound'
+            ],
+        ];
+
+        $from_date = Carbon::parse($from_date)->toDateString();
+        $to_date = Carbon::parse($to_date)->toDateString();
+
+        if ($show_zeros == 1) {
+            $sql = "
+            select Party_Name, sum(dolar) dolar, sum(shekel) shekel, sum(dinar) dinar, sum(euro) euro, sum(derham) derham, sum(rial) rial, sum(pound) pound, sum(sum_using_tr_ex_rate) sum_using_tr_exchange, sum(sum_using_last_ex_rate) as sum_using_last_ex_rate 
+            from (
+                select p.name as Party_Name, 
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 1) as dolar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 2) as shekel,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 3) as dinar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 4) as euro,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 5) as derham,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 6) as rial,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 7) as pound,
+                    sum(e.creditor - e.debtor) / e.exchange_rate as sum_using_tr_ex_rate,
+                    Sum(e.creditor - e.debtor) / get_cur_exch_rate(e.currency_id) as sum_using_last_ex_rate
+                from parties p inner join entry_transactions e
+                            using(account_id)
+                            inner join currencies cur on cur.id = e.currency_id
+                            where e.created_at::date >= '$from_date' and e.created_at::date <= '$to_date' 
+                            group by (p.name,e.currency_id,e.exchange_rate)
+            ) a 
+            group by Party_Name
+            ";
+        } else {
+            $sql = "
+            select Party_Name, sum(dolar) dolar, sum(shekel) shekel, sum(dinar) dinar, sum(euro) euro, sum(derham) derham, sum(rial) rial, sum(pound) pound, sum(sum_using_tr_ex_rate) sum_using_tr_exchange, sum(sum_using_last_ex_rate) as sum_using_last_ex_rate 
+            from (
+                select p.name as Party_Name, 
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 1) as dolar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 2) as shekel,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 3) as dinar,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 4) as euro,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 5) as derham,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 6) as rial,
+                    sum(e.creditor - e.debtor) filter (where e.currency_id = 7) as pound,
+                    sum(e.creditor - e.debtor) / e.exchange_rate as sum_using_tr_ex_rate,
+                    Sum(e.creditor - e.debtor) / get_cur_exch_rate(e.currency_id) as sum_using_last_ex_rate
+                from parties p inner join entry_transactions e
+                            using(account_id)
+                            inner join currencies cur on cur.id = e.currency_id
+                            where e.created_at::date >= '$from_date' and e.created_at::date <= '$to_date' and p.id = '$party_id'  
+                            group by (p.name,e.currency_id,e.exchange_rate) HAVING   SUM(e.creditor - e.debtor) <> 0
+            ) a 
+            group by Party_Name
+            ";
+        }
+
+        $parties = DB::select($sql);
+
+        if ($request->download == true) {
+            $report_headers = [
+                __('name'),
+                __('dollar_balance'),
+                __('shekel_balance'),
+                __('dinar_balance'),
+                __('euro_balance'),
+                __('derham_balance'),
+                __('reyal_balance'),
+                __('pound_balance'),
+            ];
+            // $options = ['transaction_type' => [1 => 1], 'document_type' => [1 => __('transfer'), 3 => __('exchange')]];
+            return parent::returnFile($parties, $report_headers);
+        }
+        return response()->json(['items' => $parties, 'headers' => $headers]);
+    }
+
     public static function partiesTotalInOneCurr(Request $request)
     {
         $from_date = request('from_date');
