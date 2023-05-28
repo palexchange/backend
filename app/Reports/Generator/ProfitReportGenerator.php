@@ -13,38 +13,52 @@ use Illuminate\Support\Facades\DB;
 
 class ProfitReportGenerator extends BaseReportGenerator
 {
-    public static function profit()
+    public static function profit(Request $request)
     {
+
         $from = request('from');
         $to = request('to');
+        $show_daily_profit = request('show_daily_profit');
+        $sql =  "select at_date::date,
+        start_balance,
+        close_balance,
+        currency_id,
+        __name,
+        start_rate,
+        close_rate,
+        start_usd_amount,
+        close_usd_amount,
+        usd_diff from process_inventory_dates( '$from'  ,  '$to' ,$show_daily_profit)";
 
-        $accounts_ids = DB::table('accounts')->where("type_id", 3)->where('is_transaction', true)->get('id');
-        $accounts_ids->transform(function ($i) {
-            return $i->id;
-        });
-        $array = $accounts_ids->toArray();
-        $accounts_ids_raw = join(',', $array);
-
-        $entry_transactions_sql = "
-        select 
-        sum(debtor - creditor),
-        currency_id
-         from 
-
-        entry_transactions 
-        
-        left join stocks.currency_id = entry_transations.currency_id
-        left join stock_transactions.stock_id = stocks.id
-        where entry_transactions.account_id in ($accounts_ids_raw) group by entry_transactions.currency_id";
-        dd(DB::select($entry_transactions_sql));
-        $first_sql = "select  * from stock_transactions  where time < (select  max(time) from stock_transactions)
-        order by time desc limit 7";
-        $second_sql = "select * from stock_transactions  where time = (select  max(time) from stock_transactions)";
-        $transactions = StockTransaction::orderBy('time', 'desc');
-        $first = DB::select($first_sql);
-        dd($first);
-        $second = DB::select($second_sql);
-        dd($second);
+        $headers = [
+            ['text' => __('at_date'), 'value' => 'at_date'],
+            ['text' => __('start_balance'), 'value' => 'start_balance'],
+            ['text' => __('close_balance'), 'value' => 'close_balance'],
+            ['text' => __('currency_id'), 'value' => 'currency_id'],
+            // ['text' => __('name'), 'value' => 'name'],
+            ['text' => __('start_rate'), 'value' => 'start_rate'],
+            ['text' => __('close_rate'), 'value' => 'close_rate'],
+            ['text' => __('start_usd_amount'), 'value' => 'start_usd_amount'],
+            ['text' => __('close_usd_amount'), 'value' => 'close_usd_amount'],
+            ['text' => __('usd_diff'), 'value' => 'usd_diff'],
+        ];
+        $report_headers = [
+            __('at_date'),
+            __('start_balance'),
+            __('close_balance'),
+            __('currency_id'),
+            __('name'),
+            __('start_rate'),
+            __('close_rate'),
+            __('start_usd_amount'),
+            __('close_usd_amount'),
+            __('usd_diff'),
+        ];
+        $items = DB::select($sql);
+        if ($request->download == true) {
+            return parent::returnFile($items, $report_headers);
+        }
+        return response()->json(['items' => $items, 'headers' => $headers]);
     }
     public static function  accountStatementReport(Request $request)
     {

@@ -14,6 +14,104 @@ return new class extends Migration
      */
     public function up()
     {
+        $sql = '    
+        CREATE OR REPLACE FUNCTION 
+        PUBLIC.get_close_mid_that_date(currncy_id bigint, date timestamp )
+               RETURNS numeric     
+               AS 	$sql$
+               SELECT  
+               ((selling_price + purchasing_price)/2)::numeric  as mid 
+               from 
+                   stock_transactions  
+                       where time = (
+                                   select max(time) from stock_transactions where   
+                                     time::date <= date::date or  time <= date and stock_id = currncy_id)
+                       and stock_id = currncy_id
+               $sql$
+               LANGUAGE SQL
+        ';
+        DB::unprepared($sql);
+        $sql = '
+        CREATE OR REPLACE FUNCTION 
+        PUBLIC.get_start_mid_that_date(currncy_id bigint, date timestamp )
+               RETURNS numeric     
+               AS 	$sql$
+               SELECT  
+               ((start_selling_price + start_purchasing_price)/2)::numeric  as mid 
+               from 
+                   stock_transactions  
+                       where time = 
+                       (select max(time) from stock_transactions
+                        where   time::date <  date::date   
+                        and stock_id = currncy_id ) 
+                       and stock_id = currncy_id
+               $sql$
+               LANGUAGE SQL
+        ';
+        DB::unprepared($sql);
+        $sql = '
+        CREATE OR REPLACE FUNCTION public.get_profit_data(
+            currency_id bigint,
+            at_date timestamp without time zone)
+            RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric,usd_diff numeric, at_date timestamp without time zone) 
+            LANGUAGE \'sql\'
+            COST 100
+            VOLATILE PARALLEL UNSAFE
+            ROWS 1000
+        
+            AS $BODY$
+
+            WITH var_close_rate AS (
+                SELECT * from get_close_mid_that_date($1 , $2 )
+            ), var_start_rate AS (
+                SELECT *  from get_start_mid_that_date($1 , $2 )
+            )
+            select start_balance ,    close_balance , currency_id ,   
+            name ,close_rate , start_rate , start_usd_amount , close_usd_amount,
+            (close_usd_amount - start_usd_amount) as usd_diff ,at_date from
+               (select   start_balance ,    close_balance , currency_id ,   name ,close_rate , start_rate 
+               ,  case when currency_id = 4 then (start_balance * start_rate) 
+               else (start_balance / start_rate) end start_usd_amount , 
+               case when currency_id = 4 then (close_balance * close_rate) 
+               else (close_balance / close_rate)   end as close_usd_amount ,
+               at_date
+               
+                from (select sum(befor_balance) as start_balance ,  sum(balance) as close_balance , currency_id , currency_name as name ,close_rate , start_rate
+                from (select
+                     case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
+                     else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name
+                       , entry_transactions.currency_id  , currencies.name as currency_name ,
+                      (SELECT * FROM  var_close_rate ) as close_rate , 
+                      (SELECT * FROM  var_start_rate )  as start_rate, 
+                      case  when entries.date::date < $2::date then 
+                              case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor)
+                              else sum(entry_transactions.debtor- entry_transactions.creditor) end
+                      else 0 end as befor_balance
+                      
+                      from  
+                    entry_transactions 
+                    inner join entries on entries.id = entry_transactions.entry_id 
+                    inner join accounts on entry_transactions.account_id = accounts.id 
+                    inner join currencies on currencies.id = entry_transactions.currency_id 												   
+                    where   entry_transactions.account_id is not null 
+                    and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
+                    and entries.date::date <= $2::date
+                    and entries.document_sub_type not in (4, 5) 
+                    and case when accounts.type_id = 5 then
+                    entry_transactions.transaction_type not in (6, 8, 10 ) 
+                    else 	
+                    entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+                    and entries.type = 1    and entry_transactions.currency_id  = $1
+                    group by currency_name,accounts.id,entry_transactions.currency_id , close_rate , start_rate , entries.date
+                    order by entry_transactions.currency_id , accounts.name )agg
+                    group by currency_id,currency_name , close_rate , start_rate) suming)last_sub;
+                
+            $BODY$;
+        
+        ALTER FUNCTION public.get_profit_data(bigint, timestamp without time zone)
+            OWNER TO postgres;';
+        DB::unprepared($sql);
+
         $ower_sql =  '
         DROP FUNCTION IF EXISTS account_statement;
         CREATE OR REPLACE FUNCTION public.account_statement(
@@ -233,6 +331,62 @@ return new class extends Migration
         end;
         $$;
         ";
+        DB::unprepared($sql);
+
+
+
+
+        $sql = "
+        CREATE OR REPLACE FUNCTION public.process_inventory_dates(
+            start_date date,
+            end_date date ,
+            toggle_row_profit int)
+            RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, __name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric, usd_diff numeric, at_date timestamp without time zone) 
+            LANGUAGE 'plpgsql'
+            COST 100
+            VOLATILE PARALLEL UNSAFE
+            ROWS 1000
+        
+        AS \$BODY$
+        DECLARE
+            minDate DATE := (select min(date) from entries);
+            maxDate DATE := (select max(date) from entries);
+              mainStartDate DATE ;
+            CURR_COUNT integer := 1;
+            curr_in_day_Profit numeric := 0;
+            total_profit numeric := 0 ;
+                holder numeric := 0 ;
+         
+        BEGIN
+            start_date	= (case  when  minDate::date >= start_date::date  then minDate else start_date end);
+            end_date	= (case  when  maxDate::date <= end_date::date  then maxDate else end_date end);
+            mainStartDate = start_date;
+        CREATE TEMPORARY TABLE IF NOT EXISTS  my_temp_table (start_balance numeric,close_balance numeric,currency_id bigint,name character varying ,close_rate numeric,start_rate numeric ,start_usd_amount  numeric,close_usd_amount numeric,usd_diff numeric,at_date timestamp);
+            
+            WHILE start_date <= end_date LOOP
+
+                     WHILE CURR_COUNT <= 7  LOOP
+                    insert into my_temp_table  (start_balance,close_balance  ,currency_id  ,name,close_rate ,start_rate,start_usd_amount,close_usd_amount,usd_diff,at_date)select * from get_profit_data(CURR_COUNT , start_date);
+
+                    holder :=  (select coalesce(p_d.usd_diff,0) from get_profit_data(CURR_COUNT , start_date) p_d);
+                     curr_in_day_Profit := curr_in_day_Profit +  coalesce(holder,0);
+                    total_profit := coalesce(holder,0) + total_profit;
+                    CURR_COUNT := CURR_COUNT + 1;
+                     END LOOP;
+                if toggle_row_profit  then
+                insert into my_temp_table  (name,usd_diff,currency_id ) select 'report__daily_profit' , curr_in_day_Profit,255  ;  
+                end if;
+                 CURR_COUNT := 1 ;
+                 start_date := start_date + 1;
+                 curr_in_day_Profit := 0;
+            END LOOP;
+             
+            insert into my_temp_table  (name,usd_diff,currency_id) select 'report__profit_total' , total_profit,256  ; 
+        return  QUERY SELECT * FROM my_temp_table;
+        TRUNCATE TABLE my_temp_table;
+        END;
+        \$BODY$;
+ ";
         DB::unprepared($sql);
     }
 

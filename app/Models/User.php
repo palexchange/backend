@@ -21,7 +21,17 @@ class User extends Authenticatable
     ];
     // protected $with = ['accounts'];
 
-    protected $appends = ['start_main_active_accounts', 'main_active_accounts', 'active_accounts', 'daily_exchange_transactions', 'daily_exchange_profit', 'daily_transfer_profit', 'exchnages_profit', 'transfers_profit', 'funds_accounts_balance', 'start_funds_accounts_balance'];
+    protected $appends = [
+        'start_main_active_accounts',
+        'main_active_accounts', 'active_accounts',
+        'daily_exchange_transactions',
+        'daily_exchange_profit',
+        'daily_transfer_profit',
+        'exchnages_profit',
+        'transfers_profit',
+        'funds_accounts_balance',
+        'start_funds_accounts_balance'
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -114,11 +124,13 @@ class User extends Authenticatable
                             'transfers_commission_account_id'
                         ]
                     )->pluck('value')->all();
+
                 return collect($account->toArray())
                     ->put(
                         'price',
-                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
                             ->where('on_account_balance_id', $account->id)
+                            ->where('type', 1)
                             ->sum(DB::raw(' creditor - debtor '))
                     )->all();
             })->toArray();
@@ -144,8 +156,9 @@ class User extends Authenticatable
                 return collect($account->toArray())
                     ->put(
                         'price',
-                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
                             ->where('on_account_balance_id', $account->id)
+                            ->where('type', 1)
                             ->sum(DB::raw(' creditor - debtor '))
                     )->all();
             })->toArray();
@@ -171,10 +184,12 @@ class User extends Authenticatable
                 return collect($account->toArray())
                     ->put(
                         'start_price',
-                        EntryTransaction::whereIn('account_id', $profit_accounts_id)
+                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
                             ->where('on_account_balance_id', $account->id)
-                            ->whereDate('created_at', '<', Carbon::today()->toDateString())
+                            ->where('type', 1)
+                            ->whereDate('entry_transactions.created_at', '<', Carbon::today()->toDateString())
                             ->sum(DB::raw(' creditor - debtor '))
+
                     )->all();
             })->toArray();
     }
@@ -227,7 +242,6 @@ class User extends Authenticatable
                     $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
                     $end =  ($account->net_balance * $close_mid);
                 } else {
-
                     $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
                     $end =  ($account->net_balance / $close_mid);
                 }
@@ -250,10 +264,19 @@ class User extends Authenticatable
                     'transfers_commission_account_id'
                 ]
             )->pluck('value')->all();
-        $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
-            ->whereIn('account_id', $profit_accounts_id)
-            ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
-            ->sum(DB::raw('ac_creditor - ac_debtor '));
+        $sum = 0;
+        if ($this->role == 1) {
+            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+                ->whereIn('account_id', $profit_accounts_id)
+                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
+                ->sum(DB::raw('ac_creditor - ac_debtor '));
+        } else {
+            $sum = Entry::join('entry_transactions', 'entry_transactions.entry_id', 'entries.id')
+                ->where('entries.user_id', $this->id)
+                ->whereIn('account_id', $profit_accounts_id)
+                ->whereDate('entry_transactions.created_at', Carbon::today()->toDateString())
+                ->sum(DB::raw('ac_creditor - ac_debtor '));
+        }
 
         return  $sum;
     }
@@ -293,45 +316,51 @@ class User extends Authenticatable
 
 
         $sql = '
-        select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
-        sub_table.acc_currency_id as currency_id ,sub_table.name 
-       from  (
-           select 
-           case when ac.type_id in (6,5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
-           , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
-           from
-               entry_transactions et
-               join accounts ac on ac.id = et.account_id 
-               join user_accounts u_ac on ac.id = u_ac.account_id 
-               join entries en on en.id = et.entry_id 
-               join currencies crr on crr.id = ac.currency_id 
-        where ac.is_transaction = true and 
-        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
-        
-       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
-';
+       
+select sum(balance) as balance , currency_id , currency_name as name from (select
+case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
+else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name
+  , entry_transactions.currency_id  , currencies.name as currency_name from  
+entry_transactions 
+inner join entries on entries.id = entry_transactions.entry_id 
+inner join accounts on entry_transactions.account_id = accounts.id 
+inner join currencies on currencies.id = entry_transactions.currency_id 												   
+where   entry_transactions.account_id is not null 
+and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
+and entries.document_sub_type not in (4, 5) 
+and case when accounts.type_id = 5 then
+entry_transactions.transaction_type not in (6, 8, 10 ) 
+else 	
+entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+and entries.type = 1  
+group by currency_name,accounts.id,entry_transactions.currency_id
+order by entry_transactions.currency_id , accounts.name)agg
+group by currency_id,currency_name';
         $data = DB::select($sql);
         return $data;
     }
     public function getStartFundsAccountsBalanceAttribute()
     {
-        $sql = 'select  round(sum(sub_table.balance)::numeric  , 3)  as balance ,
-        sub_table.acc_currency_id as currency_id ,sub_table.name 
-       from  (
-           select 
-           case when ac.type_id in (6,5) then sum(et.creditor- et.debtor) else sum(et.debtor- et.creditor) end  as balance 
-           , et.currency_id , crr.name  as name ,ac.currency_id as acc_currency_id  
-           from
-               entry_transactions et
-               join accounts ac on ac.id = et.account_id 
-               join user_accounts u_ac on ac.id = u_ac.account_id 
-               join entries en on en.id = et.entry_id 
-               join currencies crr on crr.id = ac.currency_id 
-        where ac.is_transaction = true and 
-        ac.type_id in (4 ,3 , 5 )  and en.document_sub_type not in (4,5,6) and et.transaction_type not in (6, 8)
-         and  en.date < CURRENT_DATE  
-       group by et.currency_id ,crr.name ,ac.name,ac.currency_id , ac.type_id   ) as sub_table group by sub_table.name , sub_table.acc_currency_id order by currency_id asc
-';
+        $sql = ' 
+        select sum(balance) as balance , currency_id , currency_name as name from (select
+         case when accounts.type_id in (5) then sum(entry_transactions.creditor- entry_transactions.debtor) 
+         else sum(entry_transactions.debtor- entry_transactions.creditor) end  as balance , accounts.name
+           , entry_transactions.currency_id  , currencies.name as currency_name from  
+        entry_transactions 
+        inner join entries on entries.id = entry_transactions.entry_id 
+        inner join accounts on entry_transactions.account_id = accounts.id 
+        inner join currencies on currencies.id = entry_transactions.currency_id 												   
+        where   entry_transactions.account_id is not null 
+        and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
+        and entries.document_sub_type not in (4, 5) 
+        and case when accounts.type_id = 5 then
+        entry_transactions.transaction_type not in (6, 8, 10 ) 
+        else 	
+        entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+        and entries.type = 1  and  entries.date < CURRENT_DATE 
+        group by currency_name,accounts.id,entry_transactions.currency_id
+        order by entry_transactions.currency_id , accounts.name)agg
+        group by currency_id,currency_name';
         $data = DB::select($sql);
         return $data;
     }

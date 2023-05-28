@@ -13,7 +13,7 @@ class Transfer extends BaseModel implements Document
 {
     use HasFactory;
     public static $export_options = ['type' => [0 => "حوالة صادرة", 1 => "حوالة واردة"], 'status' => [0 => "مسودة", 1 => "معتمدة"], 'commission_side' => [1 => 'المرسل', 2 => 'المستقبل']];
-    protected $appends = ['profit'];
+    protected $appends = ['profit', 'sender_party_name', 'receiver_party_name', 'office_name', 'user_name'];
     protected $with = ['receiver_party', 'sender_party', 'image', 'office', 'user'];
     protected $casts = [
         'transfer_commission' => Rounded::class,
@@ -103,7 +103,7 @@ class Transfer extends BaseModel implements Document
             'account_id' => $account_id, // $this->user_account_id
             'amount' => $sender_amount,
             'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
-            'transaction_type' => $this->delivering_type == 3 ? 1 : 6, // 6 not include to net_balance
+            'transaction_type' => 6,
             'exchange_rate' => $this->exchange_rate_to_delivery_currency,
             'currency_id' => $this->delivery_currency_id,
             'type' => 0,
@@ -130,7 +130,7 @@ class Transfer extends BaseModel implements Document
                 'account_id' => $transfers_commission_account_id, //$transfer_profit_account_id,
                 'amount' => $t_amount,
                 'ac_amount' => $transfer_commission_inDoller,
-                'transaction_type' => 1,
+                'transaction_type' => 2,
                 'on_account_balance_id' => $this->get_user_account_id($this->transfer_commission_currency),
                 'exchange_rate' => $this->transfer_commission_exchange_rate,
                 'currency_id' => $this->transfer_commission_currency,
@@ -211,7 +211,7 @@ class Transfer extends BaseModel implements Document
                 'account_id' => $transfers_commission_account_id, //$transfer_profit_account_id,
                 'amount' => $t_amount,
                 'ac_amount' => $transfer_commission_inDoller,
-                'transaction_type' => 1,
+                'transaction_type' => 2,
                 'exchange_rate' => $this->transfer_commission_exchange_rate,
                 'currency_id' => $this->transfer_commission_currency,
                 'on_account_balance_id' => $this->get_user_account_id($this->transfer_commission_currency),
@@ -321,8 +321,8 @@ class Transfer extends BaseModel implements Document
         $amount =  $this->office_amount_in_office_currency == 0 ?  $this->office_amount : $this->office_amount_in_office_currency;
         $transactions[] = [
             'account_id' => $this->office->account_id, // $this->user_account_id moew moew moew moew moew
-            'amount' => $this->on_dollar_account ? ($amount * $this->exchange_rate_to_office_currency) : $amount,
-            'ac_amount' => $amount * $this->exchange_rate_to_office_currency,
+            'amount' => $this->on_dollar_account ? $this->office_amount : $amount,
+            'ac_amount' => $this->office_amount,
             'transaction_type' => 1,
             'currency_id' => $this->on_dollar_account ? 1 : $this->office_currency_id,
             'exchange_rate' => $this->on_dollar_account ? 1 : (1 / $this->exchange_rate_to_office_currency),
@@ -373,9 +373,6 @@ class Transfer extends BaseModel implements Document
         //returned_commission
         $returned_commission_amount_usd = 0;
         if ($this->returned_commission > 0) {
-            logger("this->returned_commission");
-            logger($this->returned_commission);
-
             $returned_commission_amount_usd = round($this->returned_commission * $this->exchange_rate_to_office_currency, 1);
             $transactions[] = [
                 'account_id' => $office_commission_account_id,
@@ -390,24 +387,8 @@ class Transfer extends BaseModel implements Document
         }
         $t_amount_indoller = 0;
         //transfer_commission
-        if ($this->transfer_commission > 0 && $this->delivering_type == 2) {
-            $t_amount = $this->is_commission_percentage == 1 ?
-                $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
-                : $this->transfer_commission;
-            $t_amount_indoller = $t_amount;
-            $transactions[] = [
-                'account_id' => $transfers_commission_account_id,
-                'amount' => $t_amount,
-                'ac_amount' => $t_amount,
-                'on_account_balance_id' => $this->get_user_account_id(1),
-                'transaction_type' => 2,
-                'currency_id' => 1,
-                'exchange_rate' => 1,
-                'type' =>  1,
-            ];
-        }
 
-        if ($this->transfer_commission > 0 && $this->delivering_type != 2) {
+        if ($this->transfer_commission > 0) {
             $t_amount = $this->is_commission_percentage == 1 ?
                 $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
                 : $this->transfer_commission;
@@ -431,6 +412,7 @@ class Transfer extends BaseModel implements Document
             $transactions[] = [
                 'account_id' => $exchange_difference_account_id,
                 'amount' => abs($currency_diff),
+                'on_account_balance_id' => $this->get_user_account_id(1),
                 'transaction_type' => 9,
                 'exchange_rate' => 1,
                 'type' => $currency_diff > 0 ?  1 : 0,
@@ -479,29 +461,17 @@ class Transfer extends BaseModel implements Document
             'exchange_rate' => $this->on_dollar_account ? 1 : (1 / $this->exchange_rate_to_office_currency),
             'type' => 0,
         ];
-        if ($this->delivering_type != 4) {
-            if ($this->delivering_type == 2) {
-                $transactions[] = [
-                    'account_id' => $user_account_id,
-                    'currency_id' => $this->received_currency_id,
-                    'amount' =>   $this->received_amount,
-                    'exchange_rate' => $this->transfer_commission_exchange_rate,
-                    'ac_amount' => $this->received_amount * $this->transfer_commission_exchange_rate,
-                    'transaction_type' => 10,
-                    'type' => 1,
-                ];
-            } else {
-                $transactions[] = [
-                    'account_id' =>  $user_account_id,
-                    'amount' => $this->final_received_amount,
-                    'ac_amount' => $this->toDoller($this->final_received_amount, $this->received_currency_id,  $this->transfer_commission_exchange_rate),
-                    'currency_id' => $this->received_currency_id || 1,
-                    'exchange_rate' => $this->transfer_commission_exchange_rate || 1, //$this->delivering_type == 2 ? 1 : number_format($this->received_amount / $this->a_received_amount, 3, '.', ""),
-                    'transaction_type' =>  10,
-                    'type' => 1,
-                ];
-            }
-        }
+
+        $transactions[] = [
+            'account_id' => $user_account_id,
+            'currency_id' => $this->received_currency_id,
+            'amount' =>   $this->received_amount,
+            'exchange_rate' => $this->transfer_commission_exchange_rate,
+            'ac_amount' => $this->received_amount * $this->transfer_commission_exchange_rate,
+            'transaction_type' => 10,
+            'type' => 1,
+        ];
+
         //office_commission
         $office_commission_amount_usd = 0;
         if ($this->office_commission > 0) {
@@ -524,8 +494,6 @@ class Transfer extends BaseModel implements Document
         //returned_commission
         $returned_commission_amount_usd = 0;
         if ($this->returned_commission > 0) {
-            logger("this->returned_commission");
-            logger($this->returned_commission);
 
             $returned_commission_amount_usd = round($this->returned_commission * $this->exchange_rate_to_office_currency, 1);
             $transactions[] = [
@@ -578,14 +546,47 @@ class Transfer extends BaseModel implements Document
         $office_total_comission = $office_commission_amount_usd - $returned_commission_amount_usd;
         $office_total_comission  = round($office_total_comission, 1);
         $currency_diff = $this->profit - $office_total_comission - $t_amount_indoller;
-        if (abs($currency_diff) > 0) {
+        // if (abs($currency_diff) > 0 && $this->received_currency_id == 1) {
+        //     $transactions[] = [
+        //         'account_id' => $exchange_difference_account_id,
+        //         'amount' => abs($currency_diff),
+        //         'transaction_type' => 9,
+        //         'exchange_rate' => 1,
+        //         'on_account_balance_id' => $this->get_user_account_id(1),
+        //         'type' => $currency_diff > 0 ?  1 : 0,
+        //     ];
+        // }
+
+
+        if ($this->received_currency_id != 1) {
             $transactions[] = [
-                'account_id' => $exchange_difference_account_id,
-                'amount' => abs($currency_diff),
-                'transaction_type' => 9,
-                'exchange_rate' => 1,
-                'on_account_balance_id' => $this->get_user_account_id(1),
-                'type' => $currency_diff > 0 ?  1 : 0,
+                'account_id' => $this->get_user_account_id(1), // $this->user_account_id moew moew moew moew moew
+                'amount' =>   $amount,
+                'ac_amount' => $amount,
+                'transaction_type' => 15,
+                'currency_id' =>  1,
+                'exchange_rate' =>  1,
+                'type' => 0,
+            ];
+
+            // if (abs($currency_diff) > 0) {
+            //     $transactions[] = [
+            //         'account_id' => $this->get_user_account_id(1),
+            //         'amount' => abs($currency_diff),
+            //         'transaction_type' => 1,
+            //         'exchange_rate' => 1,
+            //         'type' => $currency_diff > 0 ?  1 : 0,
+            //     ];
+            // }
+
+            $transactions[] = [
+                'account_id' => $user_account_id,
+                'currency_id' => $this->received_currency_id,
+                'amount' =>   $this->received_amount,
+                'exchange_rate' => $this->transfer_commission_exchange_rate,
+                'ac_amount' => $this->received_amount * $this->transfer_commission_exchange_rate,
+                'transaction_type' => 16,
+                'type' => 1,
             ];
         }
 
@@ -647,8 +648,8 @@ class Transfer extends BaseModel implements Document
                     'account_id' => $this->receiver_party->account_id,
                     'exchange_rate' => $exchange_rate,
                     'currency_id' => $this->received_currency_id,
-                    'creditor' =>     $this->received_amount,
-                    'ac_creditor' => $this->received_amount /  $exchange_rate,
+                    'creditor' =>     $this->final_received_amount,
+                    'ac_creditor' => $this->final_received_amount /  $exchange_rate,
                     'debtor' => 0,
                     'ac_debtor' => 0,
                     'transaction_type' => 1,
@@ -662,7 +663,7 @@ class Transfer extends BaseModel implements Document
                     'debtor' =>  0,
                     'ac_debtor' => 0,
                     'creditor' =>   $this->final_received_amount, // $this->to_send_amount * $exchange_rate,
-                    'ac_creditor' => $this->final_received_amount *  $exchange_rate, //$this->to_send_amount,
+                    'ac_creditor' => $this->final_received_amount / $exchange_rate, //$this->to_send_amount,
                     'transaction_type' => 0,
                 ];
             }
@@ -673,7 +674,7 @@ class Transfer extends BaseModel implements Document
                     'exchange_rate' => $exchange_rate,
                     'currency_id' => $this->received_currency_id,
                     'debtor' =>   $this->final_received_amount,
-                    'ac_debtor' => $this->final_received_amount * $exchange_rate,
+                    'ac_debtor' => $this->final_received_amount / $exchange_rate,
                     'creditor' => 0,
                     'ac_creditor' => 0,
                     'transaction_type' => 1,
@@ -844,17 +845,33 @@ class Transfer extends BaseModel implements Document
     {
         return $this->belongsTo(Party::class, 'sender_party_id');
     }
+    public function getSenderPartyNameAttribute()
+    {
+        return $this->sender_party()->first()->name;
+    }
     public function receiver_party()
     {
         return $this->belongsTo(Party::class, 'receiver_party_id');
+    }
+    public function getReceiverPartyNameAttribute()
+    {
+        return $this->receiver_party()->first()->name;
     }
     public function office()
     {
         return $this->belongsTo(Party::class, 'office_id');
     }
+    public function getOfficeNameAttribute()
+    {
+        return $this->office()->first()->name;
+    }
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function getUserNameAttribute()
+    {
+        return $this->user()->first()->name;
     }
     public function getProfitAttribute()
     {
@@ -868,10 +885,7 @@ class Transfer extends BaseModel implements Document
                 return
                     number_format($this->office_amount - $this->a_received_amount, 3, '.', "");
             }
-            return number_format(($this->to_send_amount * $this->exchange_rate_to_office_currency) -
-                $this->a_received_amount -
-                ($this->returned_commission * $this->exchange_rate_to_office_currency) +
-                ($this->office_commission * $this->exchange_rate_to_office_currency), 3, '.', "");
+            return number_format($this->office_amount - $this->a_received_amount);
         }
     }
     public function ExchangeDiffernce()

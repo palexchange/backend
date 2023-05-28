@@ -40,9 +40,10 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
         $box_doller_id = $this->who == 1 ?  11 : 25;
         $box_shikle_id = $this->who == 1 ? 12 : 26;
         $box_denar_id = $this->who == 1 ? 13 : 27;
+        $box_euro_id = $this->who == 1 ? 14 : 28;
         $box_pond_id = $this->who == 1 ? 17 : 31;
         $box_reyal_id = $this->who == 1 ? 16 : 30;
-        $moneygram_account_id = 38;
+        $moneygram_account_id = 54;
 
 
         if ($row[0]) {
@@ -214,6 +215,40 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
                     'ac_debtor' => ($row[5] > 0) ? abs($row[5]) / 3.49 : 0,
                     'ac_creditor' => !($row[5] > 0) ? abs($row[5]) / 3.49 : 0,
                     'transaction_type' => !($row[5] > 0) ? 1 : 0,
+                ]);
+            }
+            if (isset($row[6])) {
+                if (gettype($row[6]) != 'integer') return;
+                $entry = Entry::create([
+                    'user_id' => $this->who + 1,
+                    'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
+                    'status' => 1,
+                    'document_sub_type' => $row[6]  > 0 ? 5 : 4,
+                    'statement' => " $name 'ترصيد'",
+                    // 'ref_currency_id' => $this->reference_currency_id,
+                ]);
+
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => !($row[6] > 0) ? abs($row[6]) : 0,
+                    'creditor' => $row[6] > 0 ? abs($row[6]) : 0,
+                    'account_id' => $account->id,
+                    'exchange_rate' => 3.49,
+                    'currency_id' => 4,   //,$this->received_currency_id,
+                    'ac_debtor' => !($row[6] > 0) ? abs($row[6]) / 3.49 : 0,
+                    'ac_creditor' => $row[6] > 0 ? abs($row[6]) / 3.49 : 0,
+                    'transaction_type' => $row[6] > 0 ? 1 : 0,
+                ]);
+                EntryTransaction::create([
+                    'entry_id' => $entry->id,
+                    'debtor' => ($row[6] > 0) ? abs($row[6]) : 0,
+                    'creditor' => !($row[6] > 0) ? abs($row[6]) : 0,
+                    'account_id' =>  $box_euro_id,
+                    'exchange_rate' => 3.49,
+                    'currency_id' => 4,   //,$this->received_currency_id,
+                    'ac_debtor' => ($row[6] > 0) ? abs($row[6]) / 3.49 : 0,
+                    'ac_creditor' => !($row[6] > 0) ? abs($row[6]) / 3.49 : 0,
+                    'transaction_type' => !($row[6] > 0) ? 1 : 0,
                 ]);
             }
         } else {

@@ -10,7 +10,9 @@ use App\Listeners\HandleDocumentDeletedEvent;
 use App\Listeners\HandleDocumentStoreEvent;
 use App\Listeners\HandleDocumentUpdatedEvent;
 use App\Listeners\SetStockListener;
+use App\Models\Party;
 use App\Models\User;
+use App\Observers\PartyObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -50,6 +52,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         User::observe(UserObserver::class);
+        Party::observe(PartyObserver::class);
     }
 
     /**

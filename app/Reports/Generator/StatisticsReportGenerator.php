@@ -27,20 +27,20 @@ class StatisticsReportGenerator
         $now = Carbon::now()->toDateString();
         $transfers = DB::select("
         WITH months AS (SELECT * FROM generate_series(1, 12) AS t(n))
-SELECT TO_CHAR( TO_DATE(months.n::TEXT , 'MM'),'Month') AS MONTH , COUNT(issued_at) as transfers_count  FROM transfers
-RIGHT JOIN months ON EXTRACT(MONTH from issued_at) = months.n 
-where EXTRACT(YEAR from NOW())  = EXTRACT(YEAR from issued_at)
-GROUP BY months.n  
-ORDER By months.n;
-");
+            SELECT TO_CHAR( TO_DATE(months.n::TEXT , 'MM'),'Month') AS MONTH , COUNT(issued_at) as transfers_count  FROM transfers
+            RIGHT JOIN months ON EXTRACT(MONTH from issued_at) = months.n 
+            where EXTRACT(YEAR from NOW())  = EXTRACT(YEAR from issued_at)
+            GROUP BY months.n  
+            ORDER By months.n;
+            ");
         $exchanges = DB::select("
         WITH months AS (SELECT * FROM generate_series(1, 12) AS t(n))
-SELECT TO_CHAR( TO_DATE(months.n::TEXT , 'MM'),'Month') AS MONTH , COUNT(issued_at) as transfers_count  FROM transfers
-RIGHT JOIN months ON EXTRACT(MONTH from issued_at) = months.n 
-where EXTRACT(YEAR from NOW())  = EXTRACT(YEAR from issued_at)
-GROUP BY months.n  
-ORDER By months.n;
-");
+            SELECT TO_CHAR( TO_DATE(months.n::TEXT , 'MM'),'Month') AS MONTH , COUNT(issued_at) as transfers_count  FROM transfers
+            RIGHT JOIN months ON EXTRACT(MONTH from issued_at) = months.n 
+            where EXTRACT(YEAR from NOW())  = EXTRACT(YEAR from issued_at)
+            GROUP BY months.n  
+            ORDER By months.n;
+            ");
         $months = [];
         $counts = [];
         foreach ($transfers as $el) {
@@ -50,5 +50,20 @@ ORDER By months.n;
 
         $data = compact('months', 'counts');
         return response()->json(compact('data'), 200);
+    }
+
+    public static function exchangeRransfersCount()
+    {
+
+        $counts = DB::select(
+            "
+        SELECT 'transfers' AS table_name, COUNT(*) FROM transfers where created_at::DATE = CURRENT_DATE and delivering_type <> 2
+        UNION
+        SELECT 'exchanges' AS table_name, COUNT(*) FROM exchanges where created_at::date = CURRENT_DATE
+        UNION
+        SELECT 'money_gram' AS table_name, COUNT(*) FROM transfers where created_at::date = CURRENT_DATE  and delivering_type = 2"
+        );
+        return response()->json(['items' => $counts, 'headers' => []]);
+        // return response()->json(compact('counts'), 200);
     }
 }

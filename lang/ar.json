@@ -59,5 +59,14 @@
     "incoming transfer moneygram": "حوالة واردة موني غرام",
     "outcomming transfer on account": "حوالة صادرة علي الحساب",
     "incoming transfer on account": "حوالة واردة علي الحساب",
-    "creditor_in_group_curr": "دائن بعملة المجموعة"
+    "receiver_party_id": "المستلم",
+    "creditor_in_group_curr": "دائن بعملة المجموعة",
+    "at_date": "التاريخ ",
+    "start_balance": "ر.اول اليوم",
+    "close_balance": "ر.أخر اليوم",
+    "close_rate": "سعرإغلاق",
+    "start_rate": "سعر فتح",
+    "start_usd_amount": " ر.افتتاحي $",
+    "close_usd_amount":  " ر.اغلاق $",
+    "usd_diff": "ربحية اليوم"
 }

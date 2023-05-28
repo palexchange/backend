@@ -31,6 +31,7 @@ class StoreEntryTransactionRequest extends FormRequest
             'ac_debtor' => 'sometimes|numeric',
             'creditor' => 'required|numeric',
             'ac_creditor' => 'sometimes|numeric',
+            'transaction_type' => 'sometimes|numeric',
             'exchange_rate' => 'sometimes|numeric',
             'account_id' => 'required|exists:accounts,id',
             'source_type' => 'sometimes|integer',

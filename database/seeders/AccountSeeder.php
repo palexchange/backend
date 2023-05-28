@@ -61,15 +61,33 @@ class AccountSeeder extends Seeder
 
 
         $acc = Account::create(['name' => 'حساب المصروفات', 'type_id' => 7, 'currency_id' => 1]);
-        Account::create(['name' => 'م.كهرباء', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.بلدية', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.ضريبة', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.ضيافة', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.مولد', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.قرطاسية', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.مواصلات', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.إيجار', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
-        Account::create(['name' => 'م.عمولات بنكية', 'type_id' => 7, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.كهرباء', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.بلدية', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.ضريبة', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.ضيافة', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.مولد', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.قرطاسية', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.مواصلات', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.إيجار', 'type_id' => 7, 'currency_id' => 2, 'parent_id' => $acc->id]);
+        // Account::create(['name' => 'م.عمولات بنكية', 'type_id' => 7, 'parent_id' => $acc->id]);
+
+        Account::create(['name' => 'م.سلطة النقد', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.بلدية ومياه ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.فاتورة كهرباء', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.كهرباء مولد ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.قرطاسيه واوراق ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.رواتب ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.ضيافة ومشروبات ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.صيانة آلات الصرافة والتصوير', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.فواتير الهاتف والانترنت ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.الجوال والاتصالات', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.مواصلات وتنقل ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.عمولات بنكية ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.اصدار دفاتر شيكات ', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.بدل ايجار المحل', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.اتعاب مدقق الحسابات', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'م.ضريبة', 'type_id' => 7, 'parent_id' => $acc->id]);
+        Account::create(['name' => 'توزيع ارباح', 'type_id' => 7, 'parent_id' => $acc->id]);
         // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 3, 'parent_id' => $acc->id]);
         // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 4, 'parent_id' => $acc->id]);
         // Account::create(['name' => '', 'type_id' => 7, 'currency_id' => 5, 'parent_id' => $acc->id]);

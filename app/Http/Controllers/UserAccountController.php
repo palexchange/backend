@@ -30,22 +30,13 @@ class UserAccountController extends Controller
     }
     public function store(StoreUserAccountRequest $request)
     {
-        // dd($request->all());
+
         $validated = $request->validated();
-        // dd($validated);
         $items = $validated['items'];
-        // dd($items);
-
         unset($validated['items']);
-
         foreach ($items as $item) {
             UserAccount::updateOrCreate($item);
         }
-        // $userAccount = UserAccount::create($request->validated());
-        // if ($request->translations) {
-        //     foreach ($request->translations as $translation)
-        //         $userAccount->setTranslation($translation['field'], $translation['locale'], $translation['value'])->save();
-        // }
         return response()->json(['data' => [
             'message' => 'Created Successfully'
         ]]);

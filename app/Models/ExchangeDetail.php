@@ -40,7 +40,7 @@ class ExchangeDetail extends BaseModel
             'currency_id' =>  $this->currency_id,
             'creditor' => $out ?  $this->amount : 0,
             'debtor' => !$out ?  $this->amount : 0,
-            'transaction_type' => $out ?   0 : 1,
+            'transaction_type' => $out ?   17 : 18,
             'ac_creditor' => $out ?   $usd_amount : 0,
             'ac_debtor' => !$out ?   $usd_amount : 0,
             'exchange_rate' => $this->usd_factor

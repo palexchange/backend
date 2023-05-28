@@ -28,7 +28,7 @@ class TransferController extends Controller
     }
     public function index(Request $request)
     {
-        return TransferResource::collection(Transfer::Search($request)->Sort($request)->paginate($this->pagination));
+        return TransferResource::collection(Transfer::without(['receiver_party', 'sender_party', 'image', 'office', 'user'])->Search($request)->Sort($request)->paginate($this->pagination));
     }
     public function store(StoreTransferRequest $request)
     {

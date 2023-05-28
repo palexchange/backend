@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\DB;
 class Receipt extends BaseModel implements Document
 {
     use HasFactory;
-    protected $appends = ['from_account_name', 'to_account_name'];
-    protected $with = ['user', 'currency'];
+    protected $appends = ['from_account_name', 'to_account_name', 'user_name', 'currency_name'];
     public function confirm()
     {
         if ($this->type == 3) {
@@ -21,62 +20,23 @@ class Receipt extends BaseModel implements Document
             $this->log_receipt();
         }
     }
-    // public function dispose()
-    // {
-
-    //     $old_entry = $this->entry;
-    //     try {
-    //         DB::beginTransaction();
-    //         $entry = $this->entry()->create([
-    //             'user_id' => request('user_id'),
-    //             'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
-    //             'status' => 1,
-    //             'document_sub_type' => $this->type == 1 ? 4 : 5,
-    //             'statement' => $old_entry->statement,
-    //             'ref_currency_id' => $this->reference_currency_id,
-    //             'inverse_entry_id' =>  $old_entry->id
-    //         ]);
-    //         foreach ($old_entry->transactions as $transaction) {
-    //             EntryTransaction::create([
-    //                 'entry_id' => $entry->id,
-    //                 'debtor' => $transaction->creditor,
-    //                 'creditor' => $transaction->debtor,
-    //                 'account_id' => $transaction->account_id,
-    //                 'exchange_rate' => $transaction->exchange_rate,
-    //                 'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
-    //                 'ac_debtor' => $transaction->ac_creditor,
-    //                 'ac_creditor' => $transaction->ac_debtor,
-    //                 'transaction_type' => !$transaction->transaction_type,
-    //             ]);
-    //         }
-    //         DB::commit();
-    //     } catch (\Exception $e) {
-    //         DB::rollback();
-    //         throw $e;
-    //     }
-    // }
     public function entry()
     {
         return $this->morphOne(Entry::class, 'document');
     }
-    public function user()
+    public function getUserNameAttribute()
     {
-        return $this->belongsTo(User::class);
+        return DB::table("users")->where('id', $this->user_id)->first()->name;
+    }
+    public function getFromAccountAttribute()
+    {
+        return DB::table("accounts")->where('id', $this->from_account_id)->first();
+    }
+    public function getToAccountAttribute()
+    {
+        return DB::table("accounts")->where('id', $this->to_account_id)->first();
     }
 
-    public function from_account()
-    {
-        return $this->belongsTo(Account::class, 'from_account_id', 'id');
-    }
-    public function to_account()
-    {
-        return $this->belongsTo(Account::class, 'to_account_id', 'id');
-    }
-    public function getFromAccountCurrencyIdAttribute()
-    {
-        $currency = $this->from_account->currency()->pluck('id')->toArray();
-        return isset($currency[0]) ? $currency[0] : 1;
-    }
     public function getFromAccountNameAttribute()
     {
         return $this->from_account->name;
@@ -94,7 +54,6 @@ class Receipt extends BaseModel implements Document
             'status' => 1,
             'document_sub_type' => 3,
             'statement' => 'fund_adjustment',
-            'ref_currency_id' => $this->from_account_currency_id,
         ]);
 
         EntryTransaction::create([
@@ -124,7 +83,7 @@ class Receipt extends BaseModel implements Document
             'user_id' => request('user_id'),
             'date' => Carbon::now()->timezone('Asia/Gaza')->toDateTimeString(),
             'status' => 1,
-            'document_sub_type' => $this->type == 1 ? 4 : 5,
+            'document_sub_type' => $this->type == 1 ? 4 : (($this->expenses_account_id ? 7 : null) ?? 5),
             'statement' => $this->statement,
             'ref_currency_id' => $this->currency_id,
         ]);
@@ -178,9 +137,9 @@ class Receipt extends BaseModel implements Document
 
 
 
-    public function currency()
+    public function getCurrencyNameAttribute()
     {
-        return $this->belongsTo(Currency::class);
+        return DB::table("currencies")->where('id', $this->currency_id)->first()->name;
     }
 
     // public function getPartyNameAttribute()
@@ -210,7 +169,7 @@ class Receipt extends BaseModel implements Document
         return $user->accounts()
             ->where('status', 1)
             ->where('main', true)
-            ->where('accounts.currency_id', $this->currency()->first("id")->id)
+            ->where('accounts.currency_id', $this->currency_id)
             ->first(['accounts.id'])->id;
     }
     public function scopeSort($query, $request)
