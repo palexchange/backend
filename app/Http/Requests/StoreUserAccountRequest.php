@@ -24,11 +24,12 @@ class StoreUserAccountRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|exists:users,id',
-            'account_id' => 'required|exists:accounts,id',
-            'currency_id' => 'nullable|exists:currencies,id',
-            'name' => 'nullable',
-            'status' => 'sometimes|numeric',
+            'items.*.user_id' => 'required|exists:users,id',
+            'items.*.account_id' => 'required|exists:accounts,id',
+            'items.*.currency_id' => 'nullable|exists:currencies,id',
+            'items.*.name' => 'nullable',
+            'items.*.status' => 'sometimes|numeric',
+            'items.*.id' => 'nullable',
         ];
     }
 }
