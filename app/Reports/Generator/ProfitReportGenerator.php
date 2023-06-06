@@ -16,8 +16,8 @@ class ProfitReportGenerator extends BaseReportGenerator
     public static function profit(Request $request)
     {
 
-        $from = request('from');
-        $to = request('to');
+        $from = request('from') ?? '12-12-2022';
+        $to = request('to') ?? Carbon::today()->toDateString();
         $show_daily_profit = request('show_daily_profit');
         $sql =  "select at_date::date,
         start_balance,

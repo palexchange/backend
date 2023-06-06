@@ -81,10 +81,10 @@ class PartiesReportGenerator extends BaseReportGenerator
                 from parties p inner join entry_transactions e
                             using(account_id)
                             inner join currencies cur on cur.id = e.currency_id
-                            where e.created_at::date >= '$from_date' and e.created_at::date <= '$to_date' 
+                            where e.created_at::date >= '0001-01-01' and e.created_at::date <= '9999-12-31'  __FOR_One_party 
                             group by (p.name,e.currency_id,e.exchange_rate)
             ) a 
-            group by Party_Name
+            group by Party_Name;
             ";
         } else {
             $sql = "
@@ -103,13 +103,18 @@ class PartiesReportGenerator extends BaseReportGenerator
                 from parties p inner join entry_transactions e
                             using(account_id)
                             inner join currencies cur on cur.id = e.currency_id
-                            where e.created_at::date >= '$from_date' and e.created_at::date <= '$to_date' 
+                            where e.created_at::date >= '0001-01-01' and e.created_at::date <= '2050-12-21' __FOR_One_party  
                             group by (p.name,e.currency_id,e.exchange_rate) HAVING   SUM(e.creditor - e.debtor) <> 0
             ) a 
             group by Party_Name
             ";
         }
 
+        if (request('party_id')) {
+            $sql =  str_replace('__FOR_One_party', "and p.id = " . request('party_id'), $sql);
+        } else {
+            $sql =  str_replace('__FOR_One_party', " " . request('party_id'), $sql);
+        }
         $parties = DB::select($sql);
 
         if ($request->download == true) {
