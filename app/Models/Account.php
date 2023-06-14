@@ -14,6 +14,10 @@ class Account extends BaseModel
     protected $appends = ['inputs_balance',   'balance', 'user_account_id', 'net_balance', 'start_net_balance', 'inventory_balance', 'usd_balance'];
     protected $hidden = ['entry_transactions', 'user_accounts'];
 
+    public function party()
+    {
+        return $this->hasOne(Party::class)->withDefault(['name' => 'must assign a currency', 'id' => 999]);
+    }
     public function currency()
     {
         return $this->belongsTo(Currency::class)->withDefault(['name' => 'must assign a currency', 'id' => 999]);

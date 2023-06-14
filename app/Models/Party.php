@@ -58,6 +58,10 @@ class Party extends BaseModel
     }
     public function scopeSearch($query, $request)
     {
+        $query->when($request->party_account_id, function ($q, $party_account_id) {
+            $q->where('account_id', $party_account_id);
+        });
+        
         $query->when($request->party_ids, function ($q, $party_ids) {
             $q->whereIn('id', $party_ids);
         });

@@ -279,7 +279,7 @@ class Transfer extends BaseModel implements Document
             if (abs($currency_diff) > 0) {
                 $transactions[] = [
                     'account_id' => $exchange_difference_account_id,
-                    'amount' => round(abs($currency_diff),3),
+                    'amount' => round(abs($currency_diff), 3),
                     'transaction_type' => 9,
                     'on_account_balance_id' => $this->get_user_account_id(1),
                     'exchange_rate' => 1,
@@ -361,14 +361,24 @@ class Transfer extends BaseModel implements Document
             $office_commission_amount_usd = $ac_o_amount;
             $transactions[] = [
                 'account_id' => $returned_commission_account_id,
-                'amount' => $o_amount,
+                'amount' => $ac_o_amount, //$o_amount,
                 'ac_amount' => $ac_o_amount,
                 'transaction_type' => 4,
                 'on_account_balance_id' => $this->get_user_account_id($this->office_currency_id),
-                'currency_id' => $this->office_currency_id,
-                'exchange_rate' => 1 / $this->exchange_rate_to_office_currency,
+                'currency_id' => 1, //$this->office_currency_id,
+                'exchange_rate' => 1, //1 / $this->exchange_rate_to_office_currency,
                 'type' =>  1,
             ];
+            // $transactions[] = [
+            //     'account_id' => $returned_commission_account_id,
+            //     'amount' => $o_amount,
+            //     'ac_amount' => $ac_o_amount,
+            //     'transaction_type' => 4,
+            //     'on_account_balance_id' => $this->get_user_account_id(1),//$this->get_user_account_id($this->office_currency_id),
+            //     'currency_id' => $this->office_currency_id,
+            //     'exchange_rate' => 1 / $this->exchange_rate_to_office_currency,
+            //     'type' =>  1,
+            // ];
         }
         //returned_commission
         $returned_commission_amount_usd = 0;
