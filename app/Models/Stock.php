@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 class Stock extends BaseModel
 {
     use HasFactory;
-    protected $appends = ['currency_name', 'ref_currency_name', 'mid', 'close_mid'];
+    protected $appends = ['name',  'mid', 'close_mid'];
+    // protected $appends = ['currency_name', 'ref_currency_name', 'mid', 'close_mid'];
     public function currency()
     {
         return $this->hasOne(Currency::class, 'id', 'currency_id');
@@ -18,9 +19,9 @@ class Stock extends BaseModel
     {
         return $this->hasOne(Currency::class, 'id', 'ref_currency_id');
     }
-    public function getCurrencyNameAttribute()
+    public function getNameAttribute()
     {
-        return $this->currency->name;
+        return $this->currency()->get('currencies.name')->first()->name;
     }
     public function getMidAttribute()
     {
