@@ -69,7 +69,7 @@ class Account extends BaseModel
     }
     public function getStartNetBalanceAttribute()
     {
-        if ($this->balance == 0) return  0;
+        // if ($this->balance == 0) return  0;
         // if ($this->id != 11) return  0;
         DB::connection()->enableQueryLog();
         $amount = $this->entry_transactions()
@@ -98,7 +98,7 @@ class Account extends BaseModel
 
     public function getNetBalanceTodayAttribute()
     {
-        if ($this->balance == 0) return  0;
+        // if ($this->balance == 0) return  0;
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereDate(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
@@ -130,7 +130,7 @@ class Account extends BaseModel
     public function getInputsBalanceAttribute()
     {
 
-        if ($this->balance == 0) return  0;
+        // if ($this->balance == 0) return  0;
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereIn('entries.document_sub_type', [4, 5])
@@ -162,7 +162,7 @@ class Account extends BaseModel
 
     // public function getOpenNetBalanceAttribute()
     // {
-    //     if ($this->balance == 0) return  0;
+        // if ($this->balance == 0) return  0;
     //     $amount = $this->entry_transactions()
     //         ->join('entries', 'entries.id', 'entry_transactions.entry_id')
     //         ->whereNotIn('entries.document_sub_type',  [4, 5])
