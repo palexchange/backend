@@ -354,6 +354,7 @@ class Transfer extends BaseModel implements Document
         //office_commission
         $office_commission_amount_usd = 0;
         if ($this->office_commission > 0) {
+
             $o_amount = $this->office_commission_type == 1 ?
                 $this->calcCommissionAmmount($this->office_amount_in_office_currency, $this->office_commission)
                 : $this->office_commission;
@@ -383,7 +384,10 @@ class Transfer extends BaseModel implements Document
         //returned_commission
         $returned_commission_amount_usd = 0;
         if ($this->returned_commission > 0) {
-            $returned_commission_amount_usd = round($this->returned_commission * $this->exchange_rate_to_office_currency, 1);
+            $returned_commission_amount = $this->returned_commission_type == 1 ?
+                $this->calcCommissionAmmount($this->office_amount_in_office_currency, $this->returned_commission)
+                : $this->office_commission;
+            $returned_commission_amount_usd = round($returned_commission_amount * $this->exchange_rate_to_office_currency, 1);
             $transactions[] = [
                 'account_id' => $office_commission_account_id,
                 'amount' => $this->returned_commission,
