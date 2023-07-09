@@ -36,6 +36,7 @@ class StoreExchangeRequest extends FormRequest
             'status' => 'nullable|numeric',
             // 'exchange_rate' => 'nullable|numeric',
             'user_id' => 'required|exists:users,id',
+            'page_name' => 'nullable',
             // 'amount_after' => 'nullable|numeric',
 
 

@@ -29,6 +29,7 @@ return new class extends Migration
             // $table->float('amount_after')->default(0);
             $table->float('profit', 18, 5)->default(0);
             $table->integer('status')->default(0);
+            $table->string('page_name')->nullable();
             $table->timestamps();
         });
     }

@@ -117,7 +117,7 @@ class Exchange extends BaseModel implements Document
                     'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
                     'ac_debtor' => $transaction->ac_creditor,
                     'ac_creditor' => $transaction->ac_debtor,
-                    'transaction_type' => !$transaction->transaction_type,
+                    'transaction_type' => $transaction->transaction_type,
                 ]);
             }
             $old_entry->type = 2;

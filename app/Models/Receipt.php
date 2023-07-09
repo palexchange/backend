@@ -87,6 +87,7 @@ class Receipt extends BaseModel implements Document
             'statement' => $this->statement,
             'ref_currency_id' => $this->currency_id,
         ]);
+
         EntryTransaction::create([
             'entry_id' => $entry->id,
             'account_id' => $this->from_account_id,
@@ -96,6 +97,7 @@ class Receipt extends BaseModel implements Document
             'ac_debtor' => $this->type == 1 ? 0 : ($this->from_amount / $this->exchange_rate),
             'ac_creditor' => $this->type == 1 ? ($this->from_amount / $this->exchange_rate) : 0,
             'transaction_type' => $this->expenses_account_id ? 7 : ($this->type == 1 ? 0 : 1),
+            'on_account_balance_id' => $this->from_account_id == 59 ? $this->to_account_id : null, // 59  extra proft account
             'exchange_rate' => $this->exchange_rate
         ]);
         EntryTransaction::create([
@@ -222,7 +224,7 @@ class Receipt extends BaseModel implements Document
                     'currency_id' => $transaction->currency_id,   //,$this->received_currency_id,
                     'ac_debtor' => $transaction->ac_creditor,
                     'ac_creditor' => $transaction->ac_debtor,
-                    'transaction_type' => !$transaction->transaction_type,
+                    'transaction_type' => $transaction->transaction_type,
                 ]);
             }
             $old_entry->type = 2;

@@ -249,7 +249,6 @@ class User extends Authenticatable
                 $this->total_start_dollars += $start;
                 $this->total_final_dollars += $end;
             });
-
         return   $this->total_final_dollars - $this->total_start_dollars;
     }
     public function getDailyTransferProfitAttribute()
