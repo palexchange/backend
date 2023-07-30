@@ -151,7 +151,8 @@ class User extends Authenticatable
                             'exchange_difference_account_id',
                             'returned_commission_account_id',
                             'office_commission_account_id',
-                            'transfers_commission_account_id'
+                            'transfers_commission_account_id',
+                            'extra_profit_account_id'
                         ]
                     )->pluck('value')->all();
                 return collect($account->toArray())
@@ -179,7 +180,8 @@ class User extends Authenticatable
                             'exchange_difference_account_id',
                             'returned_commission_account_id',
                             'office_commission_account_id',
-                            'transfers_commission_account_id'
+                            'transfers_commission_account_id',
+                            'extra_profit_account_id'
                         ]
                     )->pluck('value')->all();
                 return collect($account->toArray())
