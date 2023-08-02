@@ -386,15 +386,16 @@ class Transfer extends BaseModel implements Document
         $returned_commission_amount_usd = 0;
         if ($this->returned_commission > 0) {
             $returned_commission_amount = $this->returned_commission_type == 1 ?
-                $this->calcCommissionAmmount($this->office_amount_in_office_currency, $this->returned_commission)
+                $this->calcCommissionAmmount($this->to_send_amount, $this->returned_commission)
                 : $this->returned_commission;
-            $returned_commission_amount_usd = round($returned_commission_amount * $this->exchange_rate_to_office_currency, 2);
+            $returned_commission_amount_usd = $this->office_currency_id == 4 ? round($returned_commission_amount / $this->exchange_rate_to_office_currency, 2) : round($returned_commission_amount * $this->exchange_rate_to_office_currency, 2);
+            // $returned_commission_amount_usd = round($returned_commission_amount * $this->exchange_rate_to_office_currency, 2);
             $transactions[] = [
                 'account_id' => $office_commission_account_id,
                 'amount' =>  $returned_commission_amount,
                 'ac_amount' => $returned_commission_amount_usd, // $this->returned_commission * $this->exchange_rate_to_office_currency,
                 'transaction_type' => 3,
-                'on_account_balance_id' => $this->get_user_account_id($this->office_currency_id),
+                'on_account_balance_id' => $this->get_user_account_id(1),
                 'currency_id' => $this->office_currency_id,
                 'exchange_rate' => 1 / $this->exchange_rate_to_office_currency,
                 'type' =>  0,

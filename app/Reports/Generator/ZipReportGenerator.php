@@ -18,11 +18,11 @@ class ZipReportGenerator
     {
         $from = request('from');
         $to = request('to');
-        $type = request('transfer_type') ?? 1;
+        $type = request('transfer_type') ? [request('transfer_type')] : [1, 2];
         $party_column = $type == 0 ? 'sender_party_id' : 'receiver_party_id';
         $party_id = request($party_column);
         $images = Transfer::where('delivering_type', 2)
-            ->where('type', $type)
+            ->whereIn('type', $type)
             ->where(DB::raw('issued_at::date'), '>=', $from)
             ->where(DB::raw('issued_at::date'), '<=', $to)
             ->where($party_column, $party_id)->get()
@@ -52,9 +52,9 @@ class ZipReportGenerator
         }
 
         if ($zip->open($zipFile, ZipArchive::CREATE) === true) {
-            foreach ($images as $image) {
+            foreach ($images as $index => $image) {
                 $path = storage_path() . '\\app\\public\\' . $image['path'];
-                $zip->addFile($path,  $image['name']);
+                $zip->addFile($path, $index + 1 . '_' . $image['name']);
             }
             $zip->close();
         } else {
