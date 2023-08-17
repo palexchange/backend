@@ -894,10 +894,16 @@ class Transfer extends BaseModel implements Document
             }
             return  number_format($this->final_received_amount - $this->other_amounts_on_receiver - $this->office_amount, 2, '.', "");
         } else {
-            // if ($this->delivering_type == 2) {
-            //     return
-            //         number_format($this->office_amount - $this->a_received_amount, 2, '.', "");
-            // }
+            if ($this->delivering_type == 2) {
+
+                $commission_amount = $this->is_commission_percentage == 1 ?
+                    $this->calcCommissionAmmount($this->to_send_amount, $this->transfer_commission)
+                    : $this->transfer_commission;
+                $t_commission_amount = $this->transfer_commission_currency == 4 ?  $this->office_exchange_rate_to_usd * $commission_amount : $commission_amount / $this->office_exchange_rate_to_usd;
+
+                return
+                    number_format($this->office_amount - $this->a_received_amount + $t_commission_amount, 2, '.', "");
+            }
             return number_format($this->office_amount - $this->a_received_amount, 2, '.', "");
         }
     }

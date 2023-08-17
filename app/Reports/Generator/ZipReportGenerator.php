@@ -18,9 +18,10 @@ class ZipReportGenerator
     {
         $from = request('from');
         $to = request('to');
-        $type = request('transfer_type') ? [request('transfer_type')] : [1, 2];
-        $party_column = $type == 0 ? 'sender_party_id' : 'receiver_party_id';
+        $type = request('transfer_type') >= 0 ? [request('transfer_type')] : [1, 0];
+        $party_column = $type[0] == 0 ? 'sender_party_id' : 'receiver_party_id';
         $party_id = request($party_column);
+
         $images = Transfer::where('delivering_type', 2)
             ->whereIn('type', $type)
             ->where(DB::raw('issued_at::date'), '>=', $from)
