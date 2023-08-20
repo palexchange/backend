@@ -47,7 +47,7 @@ class PartyImport implements ToModel, WithStartRow,  WithLimit
 
 
         if ($row[0]) {
-
+            logger($row);
             $name = $this->who == 1 ? "$row[0]  ' كاظم'" : "$row[0]  ' احمد'";
 
             $account = Account::create(['name' => "$name", 'type_id' =>  1]);
