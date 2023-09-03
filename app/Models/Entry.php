@@ -55,6 +55,12 @@ class Entry extends BaseModel
         $query->when($request->status, function ($q, $status) {
             $q->where('status', $status);
         });
+        $query->when($request->document_id, function ($q, $document_id) {
+            $q->where('document_id', $document_id);
+        });
+        $query->when($request->document_type, function ($q, $document_type) {
+            $q->where('document_type', $document_type);
+        });
     }
     public function dispose()
     {

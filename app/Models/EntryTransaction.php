@@ -23,6 +23,19 @@ class EntryTransaction extends BaseModel
         $query->when($request->entry_id,  function ($query, $entry_id) {
             $query->where('entry_id', $entry_id);
         });
+        $query->when($request->document_id, function ($q, $document_id) {
+            $q->join('entries', function ($join) use ($document_id) {
+                $join->on('entries.id', '=', 'entry_transactions.entry_id')
+                    ->where('entries.document_id', $document_id);
+            });
+        });
+        $query->when($request->document_type, function ($q, $document_type) {
+            $q->where('entries.document_type', $document_type);
+        });
+    }
+    public function entry()
+    {
+        return $this->belongsTo(Entry::class);
     }
     public function account()
     {

@@ -26,7 +26,13 @@ class EntryController extends Controller
     }
     public function index(Request $request)
     {
-        return EntryResource::collection(Entry::search($request)->sort($request)->paginate($this->pagination));
+        $class = Entry::class;
+        if ($request->document_type) {
+            $class =  $class::with('transactions')->search($request)->sort($request);
+        } else {
+            $class =  $class::search($request)->sort($request);
+        }
+        return EntryResource::collection($class->paginate($this->pagination));
     }
     public function store(StoreEntryRequest $request)
     {

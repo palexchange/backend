@@ -146,6 +146,7 @@ return new class extends Migration
 				sender_name character varying(255),
 				receiver_name character varying(255),
                   inside integer,
+                  capital double precision,
                   acc_balance double precision) 
             LANGUAGE "plpgsql"
             COST 100
@@ -183,7 +184,8 @@ return new class extends Migration
                         case when entries.date<date_from  then null else users.name end ,
 					coalesce(p_s.name ,p_f.name),
 					coalesce(p_r.name,p_t.name) ,
-                        case when entries.date<date_from then 1 else 0 end as inside
+                        case when entries.date<date_from then 1 else 0 end as inside ,
+                        get_capital_balance(entries.date , a_id) as capital
                     from entry_transactions 
                     inner join entries ON entries.id = entry_transactions.entry_id
 					left join transfers ON entries.document_id = transfers.id and entries.document_type = 1
@@ -386,6 +388,18 @@ return new class extends Migration
         TRUNCATE TABLE my_temp_table;
         END;
         \$BODY$;
+ ";
+        DB::unprepared($sql);
+        $sql = "
+        create or replace function get_capital_balance(_date timestamp without time zone , _account_id bigint)
+ 	returns double precision as $$
+	  	SELECT  sum( et.debtor - et.creditor ) from entry_transactions et  join entries  e on et.entry_id = e.id  
+ 		where et.transaction_type not in (5, 6, 8, 10, 2, 3, 4, 9) 
+ 		and e.document_sub_type not in (4,5,6)
+ 		and e.type = 1
+  		and e.date::TIMESTAMP <= _date
+  		and et.account_id = _account_id
+	$$ LANGUAGE sql;
  ";
         DB::unprepared($sql);
     }

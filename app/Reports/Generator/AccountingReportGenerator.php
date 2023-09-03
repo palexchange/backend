@@ -103,6 +103,10 @@ class AccountingReportGenerator extends BaseReportGenerator
                 'value' => 'acc_balance'
             ],
             [
+                'text' => __('public.capital'), //دائن بعملة المجموهة
+                'value' => 'capital'
+            ],
+            [
                 'text' => __('statement'), // اسم الحركة
                 'value' => 'statement'
             ],
@@ -162,6 +166,7 @@ class AccountingReportGenerator extends BaseReportGenerator
             ac_debtor,
             ac_creditor,
             acc_balance,
+            capital,
             statement
             from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , 'الرصيد الإجمالي', '$user_id')t order by date ";
         } else {
@@ -180,6 +185,7 @@ class AccountingReportGenerator extends BaseReportGenerator
             ac_debtor,
             ac_creditor,
             acc_balance,
+            capital,
             statement
             from account_statement($account,'$from','$tto',false , $currency_ids ,$curr_len , 'الرصيد الإجمالي', '$user_id')t order by date ";
         }

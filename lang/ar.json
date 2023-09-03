@@ -4,6 +4,7 @@
     "public.transaction_type": "نوع الحركة",
     "public.debtor": "مدين",
     "public.creditor": "دائن",
+    "public.capital": "رأس المال",
     "currency_name": "العملة",
     "balance": "الرصيد",
     "public.accumulated_balance": "الرصيد التراكمي",
