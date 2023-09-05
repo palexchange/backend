@@ -175,7 +175,7 @@ class Transfer extends BaseModel implements Document
         $office_commission_account_id = Setting::find('office_commission_account_id')?->value;
         $transfers_commission_account_id = Setting::find('transfers_commission_account_id')?->value;
         $transactions = [];
-
+        $diff_curr_between_office = true;
         $sender_amount =    $this->delivering_type == 2 ? $this->final_received_amount : $this->to_send_amount; // $this->final_received_amount;
         $account_id = $this->delivering_type == 3 ? $this->sender_party->account_id : $this->user_account_id; // $entry->ref_currency->account_id;
         // transfer amount
@@ -183,12 +183,22 @@ class Transfer extends BaseModel implements Document
             'account_id' => $account_id, // $this->user_account_id
             'amount' => $sender_amount,
             'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
-            'transaction_type' => $this->delivering_type == 3 ? 1 : 6, // 6 not include to net_balance
+            'transaction_type' =>  6, // 6  include to net_balance
             'exchange_rate' => $this->exchange_rate_to_delivery_currency,
             'currency_id' => $this->delivery_currency_id,
             'type' => 0,
         ];
-
+        if ($this->delivering_type == 3) {
+            $transactions[] = [
+                'account_id' => $this->user_account_id, // $this->user_account_id
+                'amount' => $sender_amount,
+                'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
+                'transaction_type' => 20, // 6  include to net_balance
+                'exchange_rate' => $this->exchange_rate_to_delivery_currency,
+                'currency_id' => $this->delivery_currency_id,
+                'type' => 0,
+            ];
+        }
         $transfer_commission_box_id = $this->get_user_account_id($this->transfer_commission_currency);
         $transfer_commission_inDoller = 0;
         if ($this->transfer_commission > 0) {
@@ -216,6 +226,18 @@ class Transfer extends BaseModel implements Document
                 'currency_id' => $this->transfer_commission_currency,
                 'on_account_balance_id' => $this->get_user_account_id($this->transfer_commission_currency),
                 'type' =>  1,
+            ];
+        }
+
+        if ($diff_curr_between_office) {
+            $transactions[] = [
+                'account_id' => $this->get_user_account_id($this->office_currency_id),
+                'amount' => $this->office_amount_in_office_currency ?? $this->office_amount,
+                'ac_amount' => $this->office_amount,
+                'transaction_type' => 19,
+                'currency_id' => $this->office_currency_id,
+                'exchange_rate' => 1 / Stock::find($this->office_currency_id)->close_mid,
+                'type' => 1,
             ];
         }
 

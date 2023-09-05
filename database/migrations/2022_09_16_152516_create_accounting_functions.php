@@ -37,7 +37,7 @@ return new class extends Migration
                RETURNS numeric     
                AS 	$sql$
                SELECT  
-               ((start_selling_price + start_purchasing_price)/2)::numeric  as mid 
+               ((selling_price + purchasing_price)/2)::numeric  as mid 
                from 
                    stock_transactions  
                        where time = 
@@ -98,9 +98,9 @@ return new class extends Migration
                     and entries.date::date <= $2::date
                     and entries.document_sub_type not in (4, 5) 
                     and case when accounts.type_id = 5 then
-                    entry_transactions.transaction_type not in (6, 8, 10 ) 
+                    entry_transactions.transaction_type not in ( 8, 10, 5) 
                     else 	
-                    entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+                    entry_transactions.transaction_type not in ( 8, 10, 2, 3, 4, 9 ) end
                     and entries.type = 1    and entry_transactions.currency_id  = $1
                     group by currency_name,accounts.id,entry_transactions.currency_id , close_rate , start_rate , entries.date
                     order by entry_transactions.currency_id , accounts.name )agg

@@ -224,34 +224,32 @@ class User extends Authenticatable
     public $total_final_dollars = 0;
     public function getDailyExchangeProfitAttribute()
     {
+        foreach ($this->start_main_active_accounts as $account) {
+            $account = Account::find($account['id']);
+            $mid = $account->mid;
+            $close_mid = $account->close_mid;
+            $start = 0;
+            if ($account->currency_id == 4) {
+                $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
+            } else {
+                $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
+            }
+            $this->total_start_dollars += $start;
+        };
+        foreach ($this->main_active_accounts as $account) {
+            $account = Account::find($account['id']);
 
-
-        // $this->accounts()->where('status', 1)->get()
-        //     ->each(function ($account) {
-        //         $this->total_dollars = $this->total_dollars + $account->net_balance_in_dollar;
-        //     });
-        $ss = $this->accounts()
-            ->leftJoin('entry_transactions', 'accounts.id', 'entry_transactions.account_id')
-            ->leftJoin('entries', 'entries.id', 'entry_transactions.entry_id')
-            ->where(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
-            ->where('user_accounts.status', 1)->distinct()
-            ->get()
-            ->each(function ($account) {
-                $mid = $account->mid;
-                $close_mid = $account->close_mid;
-                $start = 0;
-                $end = 0;
-                if ($account->currency_id == 4) {
-                    $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
-                    $end =  ($account->net_balance * $close_mid);
-                } else {
-                    $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
-                    $end =  ($account->net_balance / $close_mid);
-                }
-                $this->total_start_dollars += $start;
-                $this->total_final_dollars += $end;
-            });
-        return   $this->total_final_dollars - $this->total_start_dollars;
+            $mid = $account->mid;
+            $close_mid = $account->close_mid;
+            $end = 0;
+            if ($account->currency_id == 4) {
+                $end =  ($account->net_balance * $close_mid);
+            } else {
+                $end =  ($account->net_balance / $close_mid);
+            }
+            $this->total_final_dollars += $end;
+        };
+        return  $this->total_final_dollars - $this->total_start_dollars;
     }
     public function getDailyTransferProfitAttribute()
     {
@@ -331,9 +329,9 @@ where   entry_transactions.account_id is not null
 and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
 and entries.document_sub_type not in (4, 5) 
 and case when accounts.type_id = 5 then
-entry_transactions.transaction_type not in (6, 8, 10 ) 
+entry_transactions.transaction_type not in ( 8, 10 , 5 ) 
 else 	
-entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+entry_transactions.transaction_type not in ( 8, 10, 2, 3, 4, 9 ) end
 and entries.type = 1  
 group by currency_name,accounts.id,entry_transactions.currency_id
 order by entry_transactions.currency_id , accounts.name)agg
@@ -356,9 +354,9 @@ group by currency_id,currency_name';
         and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
         and entries.document_sub_type not in (4, 5) 
         and case when accounts.type_id = 5 then
-        entry_transactions.transaction_type not in (6, 8, 10 ) 
+        entry_transactions.transaction_type not in ( 8, 10 , 5 ) 
         else 	
-        entry_transactions.transaction_type not in (6, 8, 10, 2, 3, 4, 9 ) end
+        entry_transactions.transaction_type not in ( 8, 10, 2, 3, 4, 9 ) end
         and entries.type = 1  and  entries.date < CURRENT_DATE 
         group by currency_name,accounts.id,entry_transactions.currency_id
         order by entry_transactions.currency_id , accounts.name)agg
