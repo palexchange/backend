@@ -261,6 +261,8 @@ class AccountingReportGenerator extends BaseReportGenerator
                     18 => "حركة صرافة واردة  ",
                     19 => "مبلغ بين وسيط  ",
                     20 => "مبلغ حوالة علي الحساب",
+                    21 => "مبلغ حوالة صادرة موني غرام",
+
                     // 7 => 7, 470746 , (752 , 689) , 55 - 58
                 ],
                 'document_type' => [

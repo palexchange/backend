@@ -394,7 +394,7 @@ return new class extends Migration
         create or replace function get_capital_balance(_date timestamp without time zone , _account_id bigint)
  	returns double precision as $$
 	  	SELECT  sum( et.debtor - et.creditor ) from entry_transactions et  join entries  e on et.entry_id = e.id  
- 		where et.transaction_type not in (5, 6, 8, 10, 2, 3, 4, 9) 
+ 		where et.transaction_type not in (5, 8, 10, 2, 3, 4, 9 , 21) 
  		and e.document_sub_type not in (4,5,6)
  		and e.type = 1
   		and e.date::TIMESTAMP <= _date

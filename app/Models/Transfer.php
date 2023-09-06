@@ -103,7 +103,7 @@ class Transfer extends BaseModel implements Document
             'account_id' => $account_id, // $this->user_account_id
             'amount' => $sender_amount,
             'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
-            'transaction_type' => 6,
+            'transaction_type' => 21,
             'exchange_rate' => $this->exchange_rate_to_delivery_currency,
             'currency_id' => $this->delivery_currency_id,
             'type' => 0,
@@ -305,6 +305,13 @@ class Transfer extends BaseModel implements Document
                     'amount' => round(abs($currency_diff), 2),
                     'transaction_type' => 9,
                     'on_account_balance_id' => $this->get_user_account_id(1),
+                    'exchange_rate' => 1,
+                    'type' =>  $currency_diff > 0 ?  1 : 0,
+                ];
+                $transactions[] = [
+                    'account_id' => $this->get_user_account_id(1),
+                    'amount' => round(abs($currency_diff), 2),
+                    'transaction_type' => 9,
                     'exchange_rate' => 1,
                     'type' =>  $currency_diff > 0 ?  1 : 0,
                 ];
