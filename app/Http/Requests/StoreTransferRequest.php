@@ -75,7 +75,8 @@ class StoreTransferRequest extends FormRequest
             'a_received_amount_exchange_rate' => 'nullable|numeric',
             'on_dollar_account' => 'nullable|boolean',
             'started_at' => 'sometimes|date',
-            'moneygram_on_beneficiary_id' => 'required_if:delivering_type,1|exists:parties,id',
+            'office_amount_befor_commission' => 'sometimes',
+            'moneygram_on_beneficiary_id' => 'required_if:delivering_type,5|exists:parties,id',
 
         ];
     }

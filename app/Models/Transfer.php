@@ -210,6 +210,15 @@ class Transfer extends BaseModel implements Document
             ];
         } else {
             $transactions[] = [
+                'account_id' => $account_id, // $this->user_account_id
+                'amount' => $sender_amount,
+                'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
+                'transaction_type' =>  3, // 6  include to net_balance
+                'exchange_rate' => $this->exchange_rate_to_delivery_currency,
+                'currency_id' => $this->delivery_currency_id,
+                'type' => 0,
+            ];
+            $transactions[] = [
                 'account_id' => $sender_account_id, // $this->user_account_id
                 'amount' => $sender_amount,
                 'ac_amount' => $sender_amount * $this->exchange_rate_to_delivery_currency,
@@ -265,7 +274,7 @@ class Transfer extends BaseModel implements Document
         $office_commission_box_id = $this->get_user_account_id($this->office_currency_id);
         $office_exchange_rate =  $this->office_exchange_rate_to_usd;
         $office_commission_amount_usd = 0;
-
+        $o_amount = 0;
         if ($this->office_commission > 0) {
             $o_amount = $this->office_commission_type == 1 ?
                 $this->calcCommissionAmmount($this->office_amount_befor_commission, $this->office_commission)
@@ -298,10 +307,12 @@ class Transfer extends BaseModel implements Document
 
 
         $returned_commission_amount_usd = 0;
+        $f_amount = 0;
         if ($this->returned_commission > 0) {
             $f_amount = $this->returned_commission_type == 1 ?
                 $this->calcCommissionAmmount($this->office_amount_befor_commission, $this->returned_commission)
                 : $this->returned_commission;
+
             $returned_commission_amount_usd = $this->office_currency_id == 4 ? $f_amount * $office_exchange_rate : $f_amount / $office_exchange_rate;
             $returned_commission_amount_usd = $office_exchange_rate == 1 ? $returned_commission_amount_usd : round($returned_commission_amount_usd, 2);
             $transactions[] = [
@@ -329,7 +340,7 @@ class Transfer extends BaseModel implements Document
         }
 
 
-        $party_amount = $this->office_amount_in_office_currency + $this->returned_commission - $this->office_commission;
+        $party_amount = $this->office_amount_in_office_currency + $f_amount - $o_amount;
         $transactions[] = [
             'account_id' => $party_office_box,
             'amount' => $party_amount,
@@ -466,7 +477,7 @@ class Transfer extends BaseModel implements Document
             'exchange_rate' => 1,
             'type' => 0,
         ];
-        
+
         $transactions[] = [
             'account_id' => $this->get_user_account_id(1), // $this->user_account_id moew moew moew moew moew
             'amount' => $this->on_dollar_account ? ($amount * $this->exchange_rate_to_office_currency) : $amount,
@@ -504,8 +515,6 @@ class Transfer extends BaseModel implements Document
                 'exchange_rate' =>  $this->office_exchange_rate_to_usd,
                 'type' =>  0,
             ];
-
-          
         }
 
 
