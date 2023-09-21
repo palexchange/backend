@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('type')->default(0); // 0 OUT COMING , 1 INCOMING
             $table->integer('status')->default(0); // 
             $table->integer('number')->nullable(); // 
-            $table->integer('delivering_type')->default(1); // 1=> hand / 2=> money gram / 3=> on account  /4=> in account 
+            $table->integer('delivering_type')->default(1); // 1=> hand / 2=> money gram / 3=> on account  /4=> in account // 5=> moneygram on account
             $table->foreignId('sender_party_id')->nullable()->references('id')->on('parties');
             $table->string('sender_id_no')->nullable();
             $table->string('sender_phone')->nullable();
@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('receiver_notes')->nullable();
             $table->foreignId('receiver_country_id')->nullable()->references('id')->on('countries');
             $table->foreignId('receiver_city_id')->nullable()->references('id')->on('cities');
+            $table->foreignId('moneygram_on_beneficiary_id')->nullable()->references('id')->on('cities');
 
             $table->integer('commission_side')->default(1); // 1 sender ,  2 receiver
             $table->float('transfer_commission')->default(0);

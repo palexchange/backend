@@ -25,7 +25,7 @@ class User extends Authenticatable
         'start_main_active_accounts',
         'main_active_accounts', 'active_accounts',
         'daily_exchange_transactions',
-        'daily_exchange_profit',
+        'daily_profit',
         'daily_transfer_profit',
         'exchnages_profit',
         'transfers_profit',
@@ -129,10 +129,7 @@ class User extends Authenticatable
                 return collect($account->toArray())
                     ->put(
                         'price',
-                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
-                            ->where('on_account_balance_id', $account->id)
-                            ->where('type', 1)
-                            ->sum(DB::raw(' creditor - debtor '))
+                        0
                     )->all();
             })->toArray();
     }
@@ -158,10 +155,7 @@ class User extends Authenticatable
                 return collect($account->toArray())
                     ->put(
                         'price',
-                        EntryTransaction::join('entries', 'entries.id', 'entry_id')->whereIn('account_id', $profit_accounts_id)
-                            ->where('on_account_balance_id', $account->id)
-                            ->where('type', 1)
-                            ->sum(DB::raw(' creditor - debtor '))
+                        0
                     )->all();
             })->toArray();
     }
@@ -219,37 +213,16 @@ class User extends Authenticatable
         }
         return  $count;
     }
-    public $open_total_dollars = 0;
-    public $total_start_dollars = 0;
-    public $total_final_dollars = 0;
-    public function getDailyExchangeProfitAttribute()
+    public $total_profit = 0;
+    public function getDailyProfitAttribute()
     {
         foreach ($this->start_main_active_accounts as $account) {
             $account = Account::find($account['id']);
-            $mid = $account->mid;
-            $close_mid = $account->close_mid;
-            $start = 0;
-            if ($account->currency_id == 4) {
-                $start =  ($account->net_balance * $mid) - ($account->net_balance_today * $mid);
-            } else {
-                $start =  ($account->net_balance / $mid) - ($account->net_balance_today / $mid);
-            }
-            $this->total_start_dollars += $start;
+            $profit = 0;
+            $profit =  $account->close_account_net_balance_in_dollar - $account->start_account_net_balance_in_dollar;
+            $this->total_profit += $profit;
         };
-        foreach ($this->main_active_accounts as $account) {
-            $account = Account::find($account['id']);
-
-            $mid = $account->mid;
-            $close_mid = $account->close_mid;
-            $end = 0;
-            if ($account->currency_id == 4) {
-                $end =  ($account->net_balance * $close_mid);
-            } else {
-                $end =  ($account->net_balance / $close_mid);
-            }
-            $this->total_final_dollars += $end;
-        };
-        return  $this->total_final_dollars - $this->total_start_dollars;
+        return  $this->total_profit;
     }
     public function getDailyTransferProfitAttribute()
     {
@@ -326,12 +299,12 @@ inner join entries on entries.id = entry_transactions.entry_id
 inner join accounts on entry_transactions.account_id = accounts.id 
 inner join currencies on currencies.id = entry_transactions.currency_id 												   
 where   entry_transactions.account_id is not null 
-and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
-and entries.document_sub_type not in (4, 5) 
+and accounts.type_id in (4 ,3 ) and accounts.is_transaction = true
+and entries.document_sub_type not in (4, 5 , 6) 
 and case when accounts.type_id = 5 then
 entry_transactions.transaction_type not in ( 8, 10 , 5 ) 
 else 	
-entry_transactions.transaction_type not in ( 5,  8, 10, 2, 3, 4, 21 ) end
+entry_transactions.transaction_type not in (15 ) end
 and entries.type = 1  
 group by currency_name,accounts.id,entry_transactions.currency_id
 order by entry_transactions.currency_id , accounts.name)agg
@@ -351,12 +324,12 @@ group by currency_id,currency_name';
         inner join accounts on entry_transactions.account_id = accounts.id 
         inner join currencies on currencies.id = entry_transactions.currency_id 												   
         where   entry_transactions.account_id is not null 
-        and accounts.type_id in (4 ,3 , 5 ) and accounts.is_transaction = true
-        and entries.document_sub_type not in (4, 5) 
+        and accounts.type_id in (4 ,3 ) and accounts.is_transaction = true
+        and entries.document_sub_type not in (4, 5 , 6) 
         and case when accounts.type_id = 5 then
         entry_transactions.transaction_type not in ( 8, 10 , 5 ) 
         else 	
-        entry_transactions.transaction_type not in ( 5,  8, 10, 2, 3, 4, 21 ) end
+        entry_transactions.transaction_type not in ( 15 ) end
         and entries.type = 1  and  entries.date < CURRENT_DATE 
         group by currency_name,accounts.id,entry_transactions.currency_id
         order by entry_transactions.currency_id , accounts.name)agg

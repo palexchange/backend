@@ -58,8 +58,8 @@ class Account extends BaseModel
         if ($this->balance == 0) return  0;
         $amount = $this->entry_transactions()
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
-            ->whereNotIn('entries.document_sub_type',  [4, 5]) // 
-            ->whereNotIn('entry_transactions.transaction_type',  [5,  8, 10, 2, 3, 4, 21])
+            ->whereNotIn('entries.document_sub_type',  [4, 5, 6]) // 
+            ->whereNotIn('entry_transactions.transaction_type',  [15])
             ->where('entries.type',  1)
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {
@@ -76,7 +76,7 @@ class Account extends BaseModel
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereNotIn('entries.document_sub_type',  [4, 5, 6]) // 
             ->where('entries.type',  1)
-            ->whereNotIn('entry_transactions.transaction_type',  [5,  8, 10, 2, 3, 4, 21])
+            ->whereNotIn('entry_transactions.transaction_type',  [15])
             ->whereDate('entry_transactions.created_at', '<', Carbon::today()->toDateString())
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         $queries = DB::getQueryLog();
@@ -88,7 +88,8 @@ class Account extends BaseModel
     }
     public function getInventoryBalanceAttribute()
     {
-        $amount = $this->entry_transactions()->whereNotIn('transaction_type', [9, 3, 4, 11, 16, 15, 19, 20]) // commissions
+        $amount = $this->entry_transactions()
+            ->whereNotIn('transaction_type', [3, 5, 6, 7, 8, 9, 10, 11, 13, 18 , 21 ]) // commissions
             ->sum(DB::raw('debtor - creditor'));
         if (gettype($amount) == 'string') {
             $amount =  substr($amount, 0, 8);
@@ -103,7 +104,7 @@ class Account extends BaseModel
             ->join('entries', 'entries.id', 'entry_transactions.entry_id')
             ->whereDate(DB::raw('entries.date::date'), '=', Carbon::today()->toDateString())
             // ->whereIn('entries.transaction_type',  [2])
-            ->whereIn('transaction_type',  [17, 18, 16, 15])
+            ->whereNotIn('transaction_type',  [15])
             ->where('entries.type',  1)
             ->sum(DB::raw('entry_transactions.debtor - entry_transactions.creditor'));
         if (gettype($amount) == 'string') {
@@ -189,5 +190,24 @@ class Account extends BaseModel
         $query->when($request->no_party, function ($query, $is_transaction) {
             $query->where("type_id", '!=', 1);
         });
+    }
+
+
+    public function getStartAccountNetBalanceInDollarAttribute()
+    {
+
+        if ($this->currency_id == 4) {
+            return $this->start_net_balance * $this->mid;
+        } else {
+            return $this->start_net_balance / $this->mid;
+        }
+    }
+    public function getCloseAccountNetBalanceInDollarAttribute()
+    {
+        if ($this->currency_id == 4) {
+            return $this->net_balance * $this->close_mid;
+        } else {
+            return $this->net_balance / $this->close_mid;
+        }
     }
 }

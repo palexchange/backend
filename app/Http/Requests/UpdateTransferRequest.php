@@ -75,6 +75,7 @@ class UpdateTransferRequest extends FormRequest
             'returned_commission_type' => 'sometimes|integer',
             'started_at' => 'sometimes|date',
             'a_received_amount_exchange_rate' => 'nullable|numeric',
+            'moneygram_on_beneficiary_id' => 'required_if:delivering_type,1|exists:parties,id',
         ];
     }
 }
