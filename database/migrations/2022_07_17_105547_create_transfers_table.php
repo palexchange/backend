@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('receiver_notes')->nullable();
             $table->foreignId('receiver_country_id')->nullable()->references('id')->on('countries');
             $table->foreignId('receiver_city_id')->nullable()->references('id')->on('cities');
-            $table->foreignId('moneygram_on_beneficiary_id')->nullable()->references('id')->on('cities');
+            $table->foreignId('moneygram_on_beneficiary_id')->nullable()->references('id')->on('parties');
 
             $table->integer('commission_side')->default(1); // 1 sender ,  2 receiver
             $table->float('transfer_commission')->default(0);
