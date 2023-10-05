@@ -50,9 +50,10 @@ return new class extends Migration
         ';
         DB::unprepared($sql);
         $sql = '
-        CREATE OR REPLACE FUNCTION public.get_profit_data(
+        CREATE OR REPLACE FUNCTION public.get_profit_user_data(
             currency_id bigint,
-            at_date timestamp without time zone)
+            at_date timestamp without time zone,
+            user_id bigint)
             RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric,usd_diff numeric, at_date timestamp without time zone) 
             LANGUAGE \'sql\'
             COST 100
@@ -101,14 +102,13 @@ return new class extends Migration
                     entry_transactions.transaction_type not in ( 8, 10, 5) 
                     else 	
                     entry_transactions.transaction_type not in (15 ) end
-                    and entries.type = 1    and entry_transactions.currency_id  = $1
+                    and entries.type = 1  and entry_transactions.currency_id  = $1
+					and $3 is null or entry_transactions.account_id in (select get_user_inventories($3,$1))
                     group by currency_name,accounts.id,entry_transactions.currency_id , close_rate , start_rate , entries.date
                     order by entry_transactions.currency_id , accounts.name )agg
                     group by currency_id,currency_name , close_rate , start_rate) suming)last_sub;
-                
-            $BODY$;
         
-        ALTER FUNCTION public.get_profit_data(bigint, timestamp without time zone)
+        ALTER FUNCTION public.get_profit_user_data(bigint, timestamp without time zone)
             OWNER TO postgres;';
         DB::unprepared($sql);
 
@@ -315,6 +315,15 @@ return new class extends Migration
        ";
         DB::unprepared($sql);
 
+        $sql = 'cREATE OR REPLACE FUNCTION get_user_inventories(user_id bigint , currency_id bigint)
+        RETURNS SETOF bigint AS $$
+          select account_id
+          FROM user_accounts WHERE user_id = user_id and main = true and currency_id =$2
+        $$
+        LANGUAGE SQL;
+       ';
+        DB::unprepared($sql);
+
         $sql = "create or replace function get_cur_exch_rate(curr_id bigint)
         returns DECIMAL
         language plpgsql
@@ -342,7 +351,8 @@ return new class extends Migration
         CREATE OR REPLACE FUNCTION public.process_inventory_dates(
             start_date date,
             end_date date ,
-            toggle_row_profit int)
+            toggle_row_profit int,
+            user_id bigint)
             RETURNS TABLE(start_balance numeric, close_balance numeric, currency_id bigint, __name character varying, close_rate numeric, start_rate numeric, start_usd_amount numeric, close_usd_amount numeric, usd_diff numeric, at_date timestamp without time zone) 
             LANGUAGE 'plpgsql'
             COST 100
@@ -368,9 +378,9 @@ return new class extends Migration
             WHILE start_date <= end_date LOOP
 
                      WHILE CURR_COUNT <= 7  LOOP
-                    insert into my_temp_table  (start_balance,close_balance  ,currency_id  ,name,close_rate ,start_rate,start_usd_amount,close_usd_amount,usd_diff,at_date)select * from get_profit_data(CURR_COUNT , start_date);
+                    insert into my_temp_table  (start_balance,close_balance  ,currency_id  ,name,close_rate ,start_rate,start_usd_amount,close_usd_amount,usd_diff,at_date)select * from get_profit_user_data(CURR_COUNT , start_date , $4);
 
-                    holder :=  (select coalesce(p_d.usd_diff,0) from get_profit_data(CURR_COUNT , start_date) p_d);
+                    holder :=  (select coalesce(p_d.usd_diff,0) from get_profit_user_data(CURR_COUNT , start_date , $4) p_d);
                      curr_in_day_Profit := curr_in_day_Profit +  coalesce(holder,0);
                     total_profit := coalesce(holder,0) + total_profit;
                     CURR_COUNT := CURR_COUNT + 1;

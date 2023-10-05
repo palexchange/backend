@@ -275,6 +275,8 @@ class AccountingReportGenerator extends BaseReportGenerator
                     21 => "مبلغ من موني غرام واردة مسجل",
                     22 => "مبلغ موني غرام واردة للتسليم",
 
+                    23 => "مبلغ مصروف",
+
 
 
 

@@ -329,7 +329,7 @@ group by currency_id,currency_name';
         and case when accounts.type_id = 5 then
         entry_transactions.transaction_type not in ( 8, 10 , 5 ) 
         else 	
-        entry_transactions.transaction_type not in ( 15 ) end
+        entry_transactions.transaction_type not in (15) end
         and entries.type = 1  and  entries.date < CURRENT_DATE 
         group by currency_name,accounts.id,entry_transactions.currency_id
         order by entry_transactions.currency_id , accounts.name)agg

@@ -19,6 +19,10 @@ class ProfitReportGenerator extends BaseReportGenerator
         $from = request('from') ?? '12-12-2022';
         $to = request('to') ?? Carbon::today()->toDateString();
         $show_daily_profit = request('show_daily_profit');
+        $user_id = request('selected_user_id');
+        if ($user_id) {
+            $user_id = ",  $user_id";
+        }
         $sql =  "select at_date::date,
         start_balance,
         close_balance,
@@ -28,7 +32,7 @@ class ProfitReportGenerator extends BaseReportGenerator
         close_rate,
         start_usd_amount,
         close_usd_amount,
-        usd_diff from process_inventory_dates( '$from'  ,  '$to' ,$show_daily_profit)";
+        usd_diff from process_inventory_dates( '$from'  ,  '$to' ,$show_daily_profit $user_id)";
 
         $headers = [
             ['text' => __('at_date'), 'value' => 'at_date'],

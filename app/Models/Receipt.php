@@ -96,7 +96,7 @@ class Receipt extends BaseModel implements Document
             'creditor' => $this->type == 1 ?  $this->from_amount : 0,
             'ac_debtor' => $this->type == 1 ? 0 : ($this->from_amount / $this->exchange_rate),
             'ac_creditor' => $this->type == 1 ? ($this->from_amount / $this->exchange_rate) : 0,
-            'transaction_type' => $this->expenses_account_id ? 7 : ($this->type == 1 ? 0 : 1),
+            'transaction_type' => $this->expenses_account_id ? 23 : ($this->type == 1 ? 0 : 1),
             'on_account_balance_id' => $this->from_account_id == 59 ? $this->to_account_id : null, // 59  extra proft account
             'exchange_rate' => $this->exchange_rate
         ]);
@@ -108,7 +108,7 @@ class Receipt extends BaseModel implements Document
             'creditor' => $this->type == 1 ?    0 : $this->from_amount,
             'ac_debtor' => $this->type == 1 ? ($this->from_amount / $this->exchange_rate) : 0,
             'ac_creditor' => $this->type == 1 ? 0 : ($this->from_amount / $this->exchange_rate),
-            'transaction_type' => $this->expenses_account_id ? 7 : ($this->type == 1 ? 1 : 0),
+            'transaction_type' => $this->expenses_account_id ? 23 : ($this->type == 1 ? 1 : 0),
             'exchange_rate' => $this->exchange_rate
         ]);
         if ($this->type == 2 && $this->expenses_account_id) {
@@ -120,7 +120,7 @@ class Receipt extends BaseModel implements Document
                 'creditor' =>   0,
                 'ac_debtor' => ($this->from_amount / $this->exchange_rate),
                 'ac_creditor' => 0,
-                'transaction_type' => 7,
+                'transaction_type' => 23,
                 'exchange_rate' => $this->exchange_rate
             ]);
             EntryTransaction::create([
@@ -131,7 +131,7 @@ class Receipt extends BaseModel implements Document
                 'creditor' =>     $this->from_amount,
                 'ac_debtor' => 0,
                 'ac_creditor' => ($this->from_amount / $this->exchange_rate),
-                'transaction_type' =>   7,
+                'transaction_type' =>   23,
                 'exchange_rate' => $this->exchange_rate
             ]);
         }
