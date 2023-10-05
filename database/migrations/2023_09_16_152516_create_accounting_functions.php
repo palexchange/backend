@@ -14,6 +14,35 @@ return new class extends Migration
      */
     public function up()
     {
+        $sql = 'cREATE OR REPLACE FUNCTION get_user_inventories(user_id bigint , currency_id bigint)
+        RETURNS SETOF bigint AS $$
+          select account_id
+          FROM user_accounts WHERE user_id = user_id and main = true and currency_id =$2
+        $$
+        LANGUAGE SQL;
+       ';
+        DB::unprepared($sql);
+
+        $sql = "create or replace function get_cur_exch_rate(curr_id bigint)
+        returns DECIMAL
+        language plpgsql
+        as
+        $$
+        declare
+            exchange_rate decimal;
+        begin
+            select round(cast(float8((start_selling_price + start_purchasing_price) / 2) as numeric), 10)
+            into exchange_rate
+            from stocks
+            where id = curr_id
+            order by updated_at desc limit 1;
+            
+            return exchange_rate;
+        end;
+        $$;
+        ";
+        DB::unprepared($sql);
+        
         $sql = '    
         CREATE OR REPLACE FUNCTION 
         PUBLIC.get_close_mid_that_date(currncy_id bigint, date timestamp )
@@ -60,7 +89,7 @@ return new class extends Migration
             VOLATILE PARALLEL UNSAFE
             ROWS 1000
         
-            AS $BODY$
+            AS $$
 
             WITH var_close_rate AS (
                 SELECT * from get_close_mid_that_date($1 , $2 )
@@ -107,9 +136,8 @@ return new class extends Migration
                     group by currency_name,accounts.id,entry_transactions.currency_id , close_rate , start_rate , entries.date
                     order by entry_transactions.currency_id , accounts.name )agg
                     group by currency_id,currency_name , close_rate , start_rate) suming)last_sub;
-        
-        ALTER FUNCTION public.get_profit_user_data(bigint, timestamp without time zone)
-            OWNER TO postgres;';
+        $$
+';
         DB::unprepared($sql);
 
         $ower_sql =  '
@@ -315,34 +343,7 @@ return new class extends Migration
        ";
         DB::unprepared($sql);
 
-        $sql = 'cREATE OR REPLACE FUNCTION get_user_inventories(user_id bigint , currency_id bigint)
-        RETURNS SETOF bigint AS $$
-          select account_id
-          FROM user_accounts WHERE user_id = user_id and main = true and currency_id =$2
-        $$
-        LANGUAGE SQL;
-       ';
-        DB::unprepared($sql);
 
-        $sql = "create or replace function get_cur_exch_rate(curr_id bigint)
-        returns DECIMAL
-        language plpgsql
-        as
-        $$
-        declare
-            exchange_rate decimal;
-        begin
-            select round(cast(float8((start_selling_price + start_purchasing_price) / 2) as numeric), 10)
-            into exchange_rate
-            from stocks
-            where id = curr_id
-            order by updated_at desc limit 1;
-            
-            return exchange_rate;
-        end;
-        $$;
-        ";
-        DB::unprepared($sql);
 
 
 
